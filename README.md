@@ -2,6 +2,8 @@
 - Install VSCode
     - https://code.visualstudio.com/download
 
+- Install Git
+    - https://git-scm.com/download/win
     - Configure git user in the terminal
         ```
         git config --global user.name "My Name"
