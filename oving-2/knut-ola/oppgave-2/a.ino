@@ -19,7 +19,10 @@ void loop()
 {
     sensorValue = analogRead(sensorPin);
 
+    /* Bruker map for enkel kode og sikre
+     riktige verdier som brukes videre i array*/
     sensorValueVoltage = map(sensorValue, 0, 1023, 0, 4);
+    // ønsker å printe ut analog read for å se hva se hva som blir printet
     sensorValueVoltage2 = sensorValue;
 
     if (i == 0)
