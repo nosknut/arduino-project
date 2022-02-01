@@ -1,6 +1,6 @@
 long randNumber;
 const int but = 2;
-const unsigned long wait = 5000;
+const unsigned long wait = 5001;
 unsigned long prev = 0;
 int lastBut = 0;
 
