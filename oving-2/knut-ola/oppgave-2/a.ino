@@ -19,12 +19,13 @@ void loop()
 {
     sensorValue = analogRead(sensorPin);
 
-    sensorValueVoltage = sensorValue / 200;
+    sensorValueVoltage = map(sensorValue, 0, 1023, 0, 4);
     sensorValueVoltage2 = sensorValue;
 
     if (i == 0)
     { // forsikrer at det blir printet noe første gang
         Serial.println(meld[sensorValueVoltage]);
+        Serial.println(sensorValueVoltage);
         Serial.println(sensorValueVoltage2);
         i++;
     }
@@ -34,6 +35,7 @@ void loop()
     {
 
         Serial.println(meld[sensorValueVoltage]);
+        Serial.println(sensorValueVoltage);
         Serial.println(sensorValueVoltage2);
     }
 
