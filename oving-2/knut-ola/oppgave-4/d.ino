@@ -84,7 +84,7 @@ void testTallOgPrint()
 void loop()
 {
     tilstand = digitalRead(knapp);
-    Serial.println(tilstand);
+    //Serial.println(tilstand);
     if (tilstand == true)
     {
         digitalWrite(redLed, HIGH);
