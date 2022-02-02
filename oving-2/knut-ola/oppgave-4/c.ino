@@ -18,16 +18,16 @@ void setup()
 
 // ettersom vi ikke har lært å finne lengde på array
 // hardkoder jeg det inn for nå
-int testTall(int inputTall, int array)
+int testTall(int inputTall, int inputArray)
 {
     for (int i = 0; i < 6; i++)
     {
-        if (inputTall == testTall)
+        if (inputTall == inputArray[i])
         {
-            i++;
+            inputArray[i] += 1;
         }
     }
-    return i;
+    return inputArray;
 }
 
 void loop()
@@ -35,8 +35,7 @@ void loop()
     for (int i = 0; i < 10001; i++)
     {
         randomTall = random(1, 7);
-        tallet1 += testTall(randomTall, 1);
-        tallet1 += testTall(randomTall, 1);
+        arrayTall = testTall(randomTall, arrayTall);
     }
-    Serial.println(randomTall);
+    Serial.println(arrayTall);
 }
