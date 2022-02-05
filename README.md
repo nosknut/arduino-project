@@ -20,3 +20,11 @@
 
 - Install the VSCode Arduino Extension
     - https://marketplace.visualstudio.com/items?itemName=vsciot-vscode.vscode-arduino
+
+- After creating a project and main.ino file
+    - ctrl + shift + P
+    - Type: Arduino: Initialize
+    - Hit Enter
+    - Select the main.ino file
+    - Select the correct board
+    - After some time the IDE should generate all required configs
