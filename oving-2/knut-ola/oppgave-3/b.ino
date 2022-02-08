@@ -14,7 +14,8 @@ void loop()
 {
     sensorValue = analogRead(sensorPin);
 
-    // Fant øvre og nedre grense til 450 (lysest) og 982 (mørkest) på photoresistor
+    // Fant øvre og nedre grense til 450 (lysest)
+    // og 982 (mørkest) på photoresistor
     sensorValueRange = map(sensorValue, 450, 982, 0, 255);
     analogWrite(led, sensorValueRange);
 }
