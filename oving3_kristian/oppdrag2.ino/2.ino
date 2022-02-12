@@ -1,21 +1,24 @@
 #include <ezButton.h>
 
-int redLED = 10;    //RGB-rød
-int greenLED = 9;   //RGB-grønn
-int buzzerPin = 11; //Buzzer
+int redLED = 10;    // RGB-rød
+int greenLED = 9;   // RGB-grønn
+int buzzerPin = 11; // Buzzer
 
-int LED1 = 6;     //Spiller 1 - LED
-int LED2 = 7;     //Spiller 2	- LED
-ezButton SW1 = 3; //Spiller 1 - knapp
-ezButton SW2 = 4; //Spiller 2 - knapp
+int LED1 = 6;     // Spiller 1 - LED
+int LED2 = 7;     // Spiller 2	- LED
+ezButton SW1 = 3; // Spiller 1 - knapp
+ezButton SW2 = 4; // Spiller 2 - knapp
 
-int winner = 0;       //Initialiserer vinnerindikatoren
-int winnerBeep = 750; //Buzzer-pitchen for vinnerfanfaren
-int fault = 0;        //Initialiserer feilindikatoren
-int faultBeep = 200;  //Buzzer-pitchen for feillyden
+int winner = 0;       // Initialiserer vinnerindikatoren
+int winnerBeep = 750; // Buzzer-pitchen for vinnerfanfaren
+int fault = 0;        // Initialiserer feilindikatoren
+int faultBeep = 200;  // Buzzer-pitchen for feillyden
 
 unsigned long wait = 0;
 unsigned long now = 0;
+// random variabler
+long randomTall;
+const int seedPin = A0;
 
 void setup()
 {
@@ -24,12 +27,24 @@ void setup()
     pinMode(greenLED, OUTPUT);
     pinMode(LED1, OUTPUT);
     pinMode(LED2, OUTPUT);
+
+    // random seed og tall
+    randomSeed(analogRead(seedPin));
+    randomTall = random(3, 7);
+}
+void buttonStart()
+{
+    SW1.loop();
+    SW2.loop();
+
+    SW1.setDebounceTime(50);
+    SW2.setDebounceTime(50);
 }
 
 void loop()
 {
-    SW1.loop();
-    SW2.loop();
+    buttonStart();
+    // Serial.println(randomTall);
 
     if (SW1.isPressed())
     {
@@ -58,4 +73,5 @@ void loop()
         digitalWrite(LED2, LOW);
         digitalWrite(redLED, LOW);
     }
+    Serial.println(digitalRead(greenLED));
 }
