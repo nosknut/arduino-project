@@ -12,17 +12,10 @@ int LED2 = 7;     // Spiller 2	- LED
 ezButton SW1 = 3; // Spiller 1 - knapp
 ezButton SW2 = 4; // Spiller 2 - knapp
 
-int winner = 0;       // Initialiserer vinnerindikatoren
-int winnerBeep = 750; // Buzzer-pitchen for vinnerfanfaren
-int fault = 0;        // Initialiserer feilindikatoren
-int faultBeep = 200;  // Buzzer-pitchen for feillyden
-
-unsigned long wait = 0;
-unsigned long now = 0;
-
 // random variabler
 long randomTall;
 const int seedPin = A0;
+long currentTime = 0;
 
 void setup()
 {
@@ -96,24 +89,45 @@ void loop()
 {
     buttonStart();
 
-    const long timeRedLed = millis() + (randomTall * 1000);
-    if (millis() < timeRedLed)
+    long time = millis() - currentTime;
+    const long timeRedLed = (randomTall * 1000);
+    const long timeGreenLed = timeRedLed + 1000;
+    if (time < timeRedLed)
     {
         digitalWrite(redLED, HIGH);
+        digitalWrite(greenLED, LOW);
         Serial.println("RedLedLyser");
+        if (SW1.isPressed())
+        {
+            feilLyd(LED1);
+        }
+        if (SW2.isPressed())
+        {
+            feilLyd(LED2);
+        }
     }
-    if (millis() >= (randomTall * 1000))
+    if (time >= timeRedLed && time <= timeGreenLed)
     {
         digitalWrite(redLED, LOW);
         digitalWrite(greenLED, HIGH);
-    }
+        Serial.print("GreenLedLyser");
 
-    if (SW1.isPressed())
-    {
-        vinnerFanfaren(LED1);
+        if (SW1.isPressed())
+        {
+            vinnerFanfaren(LED1);
+        }
+        if (SW2.isPressed())
+        {
+            vinnerFanfaren(LED2);
+        }
     }
-    if (SW2.isPressed())
+    // resetter tid og lager nytt randomTall
+    if (time > timeGreenLed)
     {
-        feilLyd(LED2);
+        digitalWrite(redLED, LOW);
+        digitalWrite(greenLED, LOW);
+        randomTall = random(1, 7);
+        delay(1000);
+        currentTime = millis();
     }
 }
