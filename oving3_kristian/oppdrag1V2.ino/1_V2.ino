@@ -34,49 +34,72 @@ void setup()
 // funksjon for vinnerlyd, tar inn LED-pinne variabel
 void vinnerFanfaren(int ledPin)
 {
-    for (int i = 1; i < 10; i++)
+    if (ledPin != 0)
     {
-        tone(buzzerPin, 750 * i);
-        if (i % 2 == 0)
+        for (int i = 1; i < 10; i++)
         {
-            digitalWrite(greenLED, HIGH);
-            digitalWrite(ledPin, LOW);
+            tone(buzzerPin, 750 * i);
+            if (i % 2 == 0)
+            {
+                digitalWrite(greenLED, HIGH);
+                digitalWrite(ledPin, LOW);
+            }
+            else
+            {
+                digitalWrite(greenLED, LOW);
+                digitalWrite(ledPin, HIGH);
+            }
+            delay(100);
         }
-        else
-        {
-            digitalWrite(greenLED, LOW);
-            digitalWrite(ledPin, HIGH);
-        }
-        delay(100);
+        digitalWrite(greenLED, LOW);
+        digitalWrite(ledPin, LOW);
+        delay(500);
+        noTone(buzzerPin);
     }
-    digitalWrite(greenLED, LOW);
-    digitalWrite(ledPin, LOW);
-    delay(500);
-    noTone(buzzerPin);
 }
 
 // feil lyd funksjon, tar inn LED-pinne
 void feilLyd(int ledPin)
 {
-    for (int i = 10; i > 1; i--)
+    // hvis ledPin = 0 er ingen knapp trykket
+    if (ledPin != 0)
     {
-        tone(buzzerPin, 750 * i);
-        if (i % 2 == 0)
+        for (int i = 10; i > 1; i--)
         {
-            digitalWrite(redLED, HIGH);
-            digitalWrite(ledPin, LOW);
+            tone(buzzerPin, 750 * i);
+            if (i % 2 == 0)
+            {
+                digitalWrite(redLED, HIGH);
+                digitalWrite(ledPin, LOW);
+            }
+            else
+            {
+                digitalWrite(redLED, LOW);
+                digitalWrite(ledPin, HIGH);
+            }
+            delay(100);
         }
-        else
-        {
-            digitalWrite(redLED, LOW);
-            digitalWrite(ledPin, HIGH);
-        }
-        delay(100);
+        digitalWrite(redLED, LOW);
+        digitalWrite(ledPin, LOW);
+        delay(500);
+        noTone(buzzerPin);
     }
-    digitalWrite(redLED, LOW);
-    digitalWrite(ledPin, LOW);
-    delay(500);
-    noTone(buzzerPin);
+}
+
+int knappeTrykk(ezButton knapp_1, ezButton knapp_2)
+{
+    if (knapp_1.isPressed())
+    {
+        return LED1;
+    }
+    if (knapp_2.isPressed())
+    {
+        return LED2;
+    }
+    else
+    {
+        return 0;
+    }
 }
 
 void resetFunksjon()
@@ -114,16 +137,7 @@ void loop()
         digitalWrite(greenLED, LOW); // setter redLed low
         Serial.println("RedLedLyser");
         // hvis noen trykker i løkken, kjøres feilLyd til LED 1 eller 2
-        if (SW1.isPressed() && lag == false)
-        {
-            lag = true;
-            feilLyd(LED1);
-        }
-        if (SW2.isPressed() && lag == false)
-        {
-            lag = true;
-            feilLyd(LED2);
-        }
+        feilLyd(knappeTrykk(SW1, SW2));
     }
     // hvis tid er større enn redled men mindre enn green led
     //  sett farge til grønn og se etter knappetrykk
@@ -132,17 +146,8 @@ void loop()
         digitalWrite(redLED, LOW);
         digitalWrite(greenLED, HIGH);
         Serial.print("GreenLedLyser");
-
-        if (SW1.isPressed() && lag == false)
-        {
-            lag = true;
-            vinnerFanfaren(LED1);
-        }
-        if (SW2.isPressed() && lag == false)
-        {
-            lag = true;
-            vinnerFanfaren(LED2);
-        }
+        // hvis noen trykker i løkken, kjøres vinnerlyd til LED 1 eller 2
+        vinnerFanfaren(knappeTrykk(SW1, SW2));
     }
     // resetter tid og lager nytt randomTall
     if (time > timeGreenLed)
