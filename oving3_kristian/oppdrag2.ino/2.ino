@@ -77,7 +77,39 @@ sjekkVinner(ledPin);*/
     {
         Serial.println("Taperen er spiller 2, du er for rask, trykk når den er grønn");
     }*/
+
+// vinnerFanfaren funksjon, tar inn LED-pinne og bruker millis()
+/*void vinnerFanfarenMedMillis(int ledPin)
+{
+    bool loop = true;
+    int i = 1;
+    while (loop)
+    {
+        int buzzerTone = 10000 - 750 * i;
+        tone(buzzerPin, buzzerTone);
+        if (millis() % 200 == 0)
+        {
+            digitalWrite(redLED, HIGH);
+            digitalWrite(ledPin, LOW);
+            i++;
+        }
+        else
+        {
+            digitalWrite(redLED, LOW);
+            digitalWrite(ledPin, HIGH);
+        }
+        if (i * 750 > 10000)
+        {
+            loop = false;
+        }
+    }
+    digitalWrite(redLED, LOW);
+    digitalWrite(ledPin, LOW);
+    noTone(buzzerPin);
+}
+
 Serial.println("Press Any Button To Restart");
+
 if (SW1.isPressed())
 {
     gameOver = false;
@@ -91,14 +123,15 @@ while (gameWon)
 {
     buttonStart();
     Serial.print("Game Won!!!");
-    /*if (vinner)
+    if (vinner)
     {
         Serial.println("Vinneren er spiller 1! Gratulerer");
     }
     if (vinner = false)
     {
         Serial.println("Vinneren er spiller 2! Gratulerer");
-    }*/
+    }
+
     Serial.println("Press Any Button To Restart");
     if (SW1.isPressed())
     {
@@ -108,41 +141,12 @@ while (gameWon)
     {
         gameWon = false;
     }
-}
-* /
-    void loop()
+}*/
+
+void loop()
 {
     buttonStart();
     // Serial.println(randomTall);
-
-    /*if (SW1.isPressed())
-    {
-        Serial.println("Spiller 1 trykk");
-        digitalWrite(LED1, HIGH);
-        digitalWrite(greenLED, HIGH);
-    }
-
-    if (SW2.isPressed())
-    {
-        Serial.println("Spiller 2 trykk");
-        digitalWrite(LED2, HIGH);
-        digitalWrite(redLED, HIGH);
-    }
-    // if release
-    if (SW1.isReleased())
-    {
-        Serial.println("Spiller 1 av");
-        digitalWrite(LED1, LOW);
-        digitalWrite(greenLED, LOW);
-    }
-
-    if (SW2.isReleased())
-    {
-        Serial.println("Spiller 2 av");
-        digitalWrite(LED2, LOW);
-        digitalWrite(redLED, LOW);
-    }
-    Serial.println(digitalRead(greenLED));*/
 
     const long time = millis();
     const long timeRedLed = (randomTall * 1000);

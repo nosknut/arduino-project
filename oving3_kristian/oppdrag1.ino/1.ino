@@ -1,8 +1,6 @@
 #include <ezButton.h>
 
-const unsigned long eventInterval = 1000;
-unsigned long prevInterval = 0;
-
+// variabler
 int redLED = 10;    // RGB-rød
 int greenLED = 9;   // RGB-grønn
 int buzzerPin = 11; // Buzzer
@@ -15,10 +13,13 @@ ezButton SW2 = 4; // Spiller 2 - knapp
 // random variabler
 long randomTall;
 const int seedPin = A0;
-long currentTime = 0;
+long currentTime = 0; // tidsvariabel
+
+bool lag = false; // variabel for å forsikre at begge ikke kan vinne
 
 void setup()
 {
+    // starter serial og definerer LED som OUTPUT
     Serial.begin(9600);
     pinMode(redLED, OUTPUT);
     pinMode(greenLED, OUTPUT);
@@ -30,6 +31,7 @@ void setup()
     randomTall = random(3, 7);
 }
 
+// funksjon for vinnerlyd, tar inn LED-pinne variabel
 void vinnerFanfaren(int ledPin)
 {
     for (int i = 1; i < 10; i++)
@@ -51,8 +53,10 @@ void vinnerFanfaren(int ledPin)
     digitalWrite(ledPin, LOW);
     delay(500);
     noTone(buzzerPin);
+    resetFunksjon();
 }
 
+// feil lyd funksjon, tar inn LED-pinne
 void feilLyd(int ledPin)
 {
     for (int i = 10; i > 1; i--)
@@ -74,8 +78,19 @@ void feilLyd(int ledPin)
     digitalWrite(ledPin, LOW);
     delay(500);
     noTone(buzzerPin);
+    resetFunksjon();
 }
 
+void resetFunksjon()
+{
+    digitalWrite(redLED, LOW);
+    digitalWrite(greenLED, LOW);
+    randomTall = random(1, 7);
+    currentTime = millis();
+    lag = false;
+}
+
+// starter button-loops og setter debounce
 void buttonStart()
 {
     SW1.loop();
@@ -88,22 +103,28 @@ void buttonStart()
 void loop()
 {
     buttonStart();
-
+    // modifiserer tidsvariabelen "time" med variabel "currentTime"
     long time = millis() - currentTime;
+    // definerer tiden for rød og grønn LED
     const long timeRedLed = (randomTall * 1000);
     const long timeGreenLed = timeRedLed + 1000;
+
+    // tester om noen trykker mens tiden er mindre enn "timeRedLed"
     if (time < timeRedLed)
     {
         digitalWrite(redLED, HIGH);
         digitalWrite(greenLED, LOW);
         Serial.println("RedLedLyser");
-        if (SW1.isPressed())
+        // hvis noen trykker i løkken, kjøres feilLyd til LED 1 eller 2
+        if (SW1.isPressed() && lag == false)
         {
             feilLyd(LED1);
+            lag = true;
         }
-        if (SW2.isPressed())
+        if (SW2.isPressed() && lag == false)
         {
             feilLyd(LED2);
+            lag = true;
         }
     }
     if (time >= timeRedLed && time <= timeGreenLed)
@@ -112,22 +133,21 @@ void loop()
         digitalWrite(greenLED, HIGH);
         Serial.print("GreenLedLyser");
 
-        if (SW1.isPressed())
+        if (SW1.isPressed() && lag == false)
         {
             vinnerFanfaren(LED1);
+            lag = true;
         }
-        if (SW2.isPressed())
+        if (SW2.isPressed() && lag == false)
         {
             vinnerFanfaren(LED2);
+            lag = true;
         }
     }
     // resetter tid og lager nytt randomTall
     if (time > timeGreenLed)
     {
-        digitalWrite(redLED, LOW);
-        digitalWrite(greenLED, LOW);
-        randomTall = random(1, 7);
+        resetFunksjon();
         delay(1000);
-        currentTime = millis();
     }
 }
