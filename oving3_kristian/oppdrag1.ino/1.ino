@@ -79,6 +79,7 @@ void feilLyd(int ledPin)
     noTone(buzzerPin);
 }
 
+// reset funksjon som lager nytt random tall og resetter lys, tid og lag
 void resetFunksjon()
 {
     digitalWrite(redLED, LOW);
