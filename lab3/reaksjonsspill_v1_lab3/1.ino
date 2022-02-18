@@ -6,10 +6,10 @@ int greenLED = 9;   // RGB-grønn
 int blueLED = 8;    // RGB-blå
 int buzzerPin = 11; // Buzzer
 
-int LED1 = 6;     // Spiller 1 - LED
-int LED2 = 7;     // Spiller 2	- LED
-ezButton SW1 = 3; // Spiller 1 - knapp
-ezButton SW2 = 4; // Spiller 2 - knapp
+int LED1 = 6;          // Spiller 1 - LED
+int LED2 = 7;          // Spiller 2	- LED
+ezButton BUTTON_1 = 3; // Spiller 1 - knapp
+ezButton BUTTON_2 = 4; // Spiller 2 - knapp
 
 // random variabler
 long randomTall;
@@ -56,14 +56,14 @@ void setup()
     randomTallBlue = random(1, 11);
 
     // setter debounce
-    // SW1.setDebounceTime(50);
-    // SW2.setDebounceTime(50);
+    // BUTTON_1.setDebounceTime(50);
+    // BUTTON_2.setDebounceTime(50);
 
     // printer hvordan styre program:
     Serial.println("Med dette programmet kan du styre med tre bokstaver:");
     Serial.println("S - starter nytt spill");
     Serial.println("Q - avslutter spillet, viser poeng");
-    Serial.println("R - resetter spillet");
+    Serial.println("R - resetter spillet\n");
 }
 
 void vinnerFanfaren(int ledPin)
@@ -128,8 +128,8 @@ void resetFunksjon()
 // starter button-loops og setter debounce
 void buttonStart()
 {
-    SW1.loop();
-    SW2.loop();
+    BUTTON_1.loop();
+    BUTTON_2.loop();
 }
 
 char charToLowerCase(char input)
@@ -168,7 +168,7 @@ void printInstructions()
     Serial.println("Med dette programmet kan du styre med tre bokstaver:");
     Serial.println("S - starter nytt spill");
     Serial.println("Q - avslutter spillet, viser poeng");
-    Serial.println("R - resetter spillet");
+    Serial.println("R - resetter spillet\n");
 }
 
 // printer game stats
@@ -224,7 +224,7 @@ void gameLoop()
         digitalWrite(redLED, HIGH);  // setter greenLed high
         digitalWrite(greenLED, LOW); // setter redLed low
         // hvis noen trykker i løkken, kjøres feilLyd til LED 1 eller 2
-        if (SW1.isPressed())
+        if (BUTTON_1.isPressed())
         {
             Serial.println("player one klikk");
             points[0]--;
@@ -233,7 +233,7 @@ void gameLoop()
             gameStats();
             return;
         }
-        if (SW2.isPressed())
+        if (BUTTON_2.isPressed())
         {
             Serial.println("player two klikk");
             points[1]--;
@@ -257,7 +257,7 @@ void gameLoop()
             digitalWrite(greenLED, HIGH);
         }
         //-----knapp 1--------
-        if (SW1.isPressed())
+        if (BUTTON_1.isPressed())
         {
             Serial.println("player one klikk");
             poengFunksjon(timeGreenLed, time, 1);
@@ -267,7 +267,7 @@ void gameLoop()
             return;
         }
         //-----Knapp 2--------
-        if (SW2.isPressed())
+        if (BUTTON_2.isPressed())
         {
             Serial.println("player two klikk");
             poengFunksjon(timeGreenLed, time, 2);
