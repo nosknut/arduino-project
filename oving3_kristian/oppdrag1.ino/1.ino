@@ -15,8 +15,6 @@ long randomTall;
 const int seedPin = A0;
 long currentTime = 0; // tidsvariabel
 
-bool lag = false; // variabel for å forsikre at begge ikke kan vinne
-
 void setup()
 {
     // starter serial og definerer LED som OUTPUT
@@ -25,6 +23,9 @@ void setup()
     pinMode(greenLED, OUTPUT);
     pinMode(LED1, OUTPUT);
     pinMode(LED2, OUTPUT);
+    // setter dbounce
+    SW1.setDebounceTime(50);
+    SW2.setDebounceTime(50);
 
     // random seed og tall
     randomSeed(analogRead(seedPin));
@@ -86,7 +87,6 @@ void resetFunksjon()
     digitalWrite(greenLED, LOW);
     randomTall = random(1, 7);
     currentTime = millis();
-    lag = false;
 }
 
 // starter button-loops og setter debounce
@@ -94,9 +94,6 @@ void buttonStart()
 {
     SW1.loop();
     SW2.loop();
-
-    SW1.setDebounceTime(50);
-    SW2.setDebounceTime(50);
 }
 
 void loop()
@@ -115,14 +112,13 @@ void loop()
         digitalWrite(greenLED, LOW); // setter redLed low
         Serial.println("RedLedLyser");
         // hvis noen trykker i løkken, kjøres feilLyd til LED 1 eller 2
-        if (SW1.isPressed() && lag == false)
+        if (SW1.isPressed())
         {
-            lag = true;
             feilLyd(LED1);
         }
-        if (SW2.isPressed() && lag == false)
+        else if (SW2.isPressed())
+
         {
-            lag = true;
             feilLyd(LED2);
         }
     }
@@ -134,14 +130,12 @@ void loop()
         digitalWrite(greenLED, HIGH);
         Serial.print("GreenLedLyser");
 
-        if (SW1.isPressed() && lag == false)
+        if (SW1.isPressed())
         {
-            lag = true;
             vinnerFanfaren(LED1);
         }
-        if (SW2.isPressed() && lag == false)
+        else if (SW2.isPressed())
         {
-            lag = true;
             vinnerFanfaren(LED2);
         }
     }
