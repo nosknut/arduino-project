@@ -28,9 +28,17 @@ enum class GameState
     IDLE
 };
 
+enum class PrintCommand
+{
+    RESET,
+    DONE,
+    IDLE
+};
+
 // switch funksjonalitet:
 char inByte; // variabel switch
 GameState gameState = GameState::IDLE;
+PrintCommand printCommand = PrintCommand::IDLE;
 
 void setup()
 {
@@ -38,6 +46,7 @@ void setup()
     Serial.begin(9600);
     pinMode(redLED, OUTPUT);
     pinMode(greenLED, OUTPUT);
+    pinMode(blueLED, OUTPUT);
     pinMode(LED1, OUTPUT);
     pinMode(LED2, OUTPUT);
 
@@ -47,11 +56,11 @@ void setup()
     randomTallBlue = random(1, 11);
 
     // setter debounce
-    SW1.setDebounceTime(50);
-    SW2.setDebounceTime(50);
+    // SW1.setDebounceTime(50);
+    // SW2.setDebounceTime(50);
 
     // printer hvordan styre program:
-    Serial.println("Med dette programmet kan du styre 3 LED's");
+    Serial.println("Med dette programmet kan du styre med tre bokstaver:");
     Serial.println("S - starter nytt spill");
     Serial.println("Q - avslutter spillet, viser poeng");
     Serial.println("R - resetter spillet");
@@ -110,7 +119,9 @@ void resetFunksjon()
 {
     digitalWrite(redLED, LOW);
     digitalWrite(greenLED, LOW);
+    digitalWrite(blueLED, LOW);
     randomTall = random(1, 7);
+    randomTallBlue = random(1, 11);
     currentTime = millis();
 }
 
@@ -134,37 +145,68 @@ void switchFunksjon(char input)
     {
     case 'S':
     case 's': // sjekker både stor og liten "s"
-        Serial.print("knappetrykk s");
         resetFunksjon();
         gameState = GameState::RUNNING;
         break;
     case 'Q':
     case 'q': // sjekker både stor og liten "q"
-        Serial.print("knappetrykk q");
         gameState = GameState::DONE;
+        printCommand = PrintCommand::DONE;
         break;
     case 'R':
     case 'r': // sjekker både stor og liten "r"
-        Serial.print("knappetrykk r");
         resetFunksjon();
         gameState = GameState::RESET;
+        printCommand = PrintCommand::RESET;
         break;
-
-    default:
-        Serial.println("Ugyldig kommando!");
     }
 }
 // printer instruksjoner med en valgt delay
-void printInstructions(int delayTime)
+void printInstructions()
 {
-    if (millis() % delayTime == 0)
-    {
-        // printer hvordan styre program:
-        Serial.println("Med dette programmet kan du styre 3 LED's");
-        Serial.println("S - starter nytt spill");
-        Serial.println("Q - avslutter spillet, viser poeng");
-        Serial.println("R - resetter spillet");
+    // printer hvordan styre program:
+    Serial.println("Med dette programmet kan du styre med tre bokstaver:");
+    Serial.println("S - starter nytt spill");
+    Serial.println("Q - avslutter spillet, viser poeng");
+    Serial.println("R - resetter spillet");
+}
+
+// printer game stats
+void gameStats()
+{
+    Serial.print("Spiller 1 har: ");
+    Serial.println(points[0]);
+    Serial.print("Spiller 2 har: ");
+    Serial.println(points[1]);
+}
+
+// tar inn tidLED og hvilken spiller (1 indeksert, funksjonen gjør om til 0 selv)
+void poengFunksjon(float timeLed, float gameTime, int player)
+{
+    player--; // ettersom array 0 indekserer
+    float diff = timeLed - gameTime;
+    float responseTime = 1000 - diff; // 1000 = greenLedTid
+    if (digitalRead(blueLED))
+    {                        // hvis trykk når blå:
+        points[player] -= 2; // - 2 poeng
     }
+    else
+    {
+        if (responseTime < 200)
+        {
+            points[player] += 3;
+        }
+        else if (responseTime < 400)
+        {
+            points[player] += 2;
+        }
+        else
+        {
+            points[player]++;
+        }
+    }
+    Serial.print(responseTime);
+    Serial.println("ms");
 }
 
 // selve spill-loop
@@ -179,29 +221,25 @@ void gameLoop()
     // tester om noen trykker mens tiden er mindre enn "timeRedLed"
     if (time < timeRedLed)
     {
-        if (randomTallBlue > 7)
-        {
-            digitalWrite(blueLED, HIGH);
-        }
-        else
-        {
-            digitalWrite(redLED, HIGH); // setter greenLed high
-        }
+        digitalWrite(redLED, HIGH);  // setter greenLed high
         digitalWrite(greenLED, LOW); // setter redLed low
-        Serial.println("RedLedLyser");
         // hvis noen trykker i løkken, kjøres feilLyd til LED 1 eller 2
         if (SW1.isPressed())
         {
+            Serial.println("player one klikk");
             points[0]--;
             feilLyd(LED1);
             resetFunksjon();
+            gameStats();
             return;
         }
         if (SW2.isPressed())
         {
+            Serial.println("player two klikk");
             points[1]--;
             feilLyd(LED2);
             resetFunksjon();
+            gameStats();
             return;
         }
     }
@@ -210,21 +248,32 @@ void gameLoop()
     if (time >= timeRedLed && time <= timeGreenLed)
     {
         digitalWrite(redLED, LOW);
-        digitalWrite(greenLED, HIGH);
-        Serial.print("GreenLedLyser");
-
+        if (randomTallBlue > 7)
+        {
+            digitalWrite(blueLED, HIGH);
+        }
+        else
+        {
+            digitalWrite(greenLED, HIGH);
+        }
+        //-----knapp 1--------
         if (SW1.isPressed())
         {
-            points[0]++;
+            Serial.println("player one klikk");
+            poengFunksjon(timeGreenLed, time, 1);
             vinnerFanfaren(LED1);
             resetFunksjon();
+            gameStats();
             return;
         }
+        //-----Knapp 2--------
         if (SW2.isPressed())
         {
-            points[1]++;
+            Serial.println("player two klikk");
+            poengFunksjon(timeGreenLed, time, 2);
             vinnerFanfaren(LED2);
             resetFunksjon();
+            gameStats();
             return;
         }
     }
@@ -239,27 +288,23 @@ void gameLoop()
 void endGame()
 {
     Serial.println("Spillet er ferdig!");
-    Serial.println("Spiller ");
+    Serial.print("Spiller ");
     if (points[0] > points[1])
     {
         Serial.print("1 vant!!!!");
-        Serial.println("Spiller 1 fikk ");
-        Serial.print(points[0]);
+        Serial.print("Spiller 1 fikk ");
+        Serial.println(points[0]);
     }
     if (points[0] < points[1])
     {
         Serial.print("2 vant!!!!");
-        Serial.println("Spiller 2 fikk ");
-        Serial.print(points[1]);
+        Serial.print("Spiller 2 fikk ");
+        Serial.println(points[1]);
     }
-    printInstructions(2000); // passer på at det ikke printer for ofte
-}
-
-void resetGame()
-{
-    points[0] = 0;           // setter spiller_1 poeng == 0
-    points[1] = 0;           // setter spiller_2 poeng == 0
-    printInstructions(2000); // passer på at det ikke printer for ofte
+    printInstructions(); // passer på at det ikke printer for ofte
+    // resetter poeng etter print
+    points[0] = 0;
+    points[1] = 0;
 }
 
 void loop()
@@ -272,22 +317,37 @@ void loop()
     }
 
     // sjekker om noen har fått 5 poeng
-    if (points[0] == 5 || points[1] == 5)
+    if (points[0] >= 5 || points[1] >= 5)
     {
         gameState = GameState::DONE;
+        printCommand = PrintCommand::DONE;
     }
 
     //----If-settninger for å teste GameState----
+    //-----Game: RUNNING-------
     if (gameState == GameState::RUNNING)
     {
         gameLoop();
     }
+    //-----Game: DONE--------
     if (gameState == GameState::DONE)
     {
-        endGame();
+        if (printCommand == PrintCommand::DONE)
+        {
+            endGame();
+            printCommand = PrintCommand::IDLE;
+        }
     }
+    //-----Game: RESET-------
     if (gameState == GameState::RESET)
     {
-        resetGame();
+        if (printCommand == PrintCommand::RESET)
+        {
+            points[0] = 0;
+            points[1] = 0;
+            Serial.print("Game er resatt, følg instruksjoner: ");
+            printInstructions();
+            printCommand = PrintCommand::IDLE;
+        }
     }
 }

@@ -1,6 +1,6 @@
 {
     "board": "arduino:avr:uno",
-    "sketch": "oving3_kristian\\oppdrag1.ino\\1.ino",
+    "sketch": "lab3\\reaksjonsspill_v1_lab3\\1.ino",
     "port": "COM3",
     "programmer": "arduino:arduinoisp"
 }
