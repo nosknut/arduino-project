@@ -55,10 +55,6 @@ void setup()
     randomTall = random(3, 7);
     randomTallBlue = random(1, 11);
 
-    // setter debounce
-    // BUTTON_1.setDebounceTime(50);
-    // BUTTON_2.setDebounceTime(50);
-
     // printer hvordan styre program:
     Serial.println("Med dette programmet kan du styre med tre bokstaver:");
     Serial.println("S - starter nytt spill");
@@ -132,6 +128,7 @@ void buttonStart()
     BUTTON_2.loop();
 }
 
+// setter bokstav til liten bokstav
 char charToLowerCase(char input)
 {
     String lowerCaseInput = String(input);
@@ -143,17 +140,14 @@ void switchFunksjon(char input)
 {
     switch (charToLowerCase(input))
     {
-    case 'S':
     case 's': // sjekker både stor og liten "s"
         resetFunksjon();
         gameState = GameState::RUNNING;
         break;
-    case 'Q':
     case 'q': // sjekker både stor og liten "q"
         gameState = GameState::DONE;
         printCommand = PrintCommand::DONE;
         break;
-    case 'R':
     case 'r': // sjekker både stor og liten "r"
         resetFunksjon();
         gameState = GameState::RESET;
@@ -192,6 +186,7 @@ void poengFunksjon(float timeLed, float gameTime, int player)
     }
     else
     {
+        // gir mer poeng basert på reaksjonstid
         if (responseTime < 200)
         {
             points[player] += 3;
@@ -285,6 +280,7 @@ void gameLoop()
     }
 }
 
+// endgame funksjon, priner score til hvem som vant
 void endGame()
 {
     Serial.println("Spillet er ferdig!");
