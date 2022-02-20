@@ -1,45 +1,20 @@
+// The "//-LaTeX:SectionName;" anchors
+// for auto generated repors.
+// See: ../report/report.tex
+// NB!
+// There can not be a /* type comment on the
+// line directly below an anchor.
+
+//-LaTeX:imports;
 #include <Arduino.h>
 #include <Ramp.h>
 #include <Servo.h>
 #include <Range.h>
 #include <ApplicationConfig.h>
+#include <Photoresistor.h>
+//-LaTeX:End_Section;
 
-class Photoresistor
-{
-    // Start with oposite values
-    Range limits = Range(1023, 0);
-    const int pin;
-
-public:
-    Photoresistor(const int pin) : pin(pin)
-    {
-    }
-
-    int mapWithinLimits(const int value)
-    {
-        return map(value, limits.minValue, limits.maxValue, 0, 1023);
-    }
-    int read()
-    {
-        const int value = analogRead(pin);
-        // Always update the limits
-        if (value < limits.minValue)
-        {
-            limits.minValue = value;
-        }
-        if (value > limits.maxValue)
-        {
-            limits.maxValue = value;
-        }
-        return mapWithinLimits(value);
-    }
-
-    void setup()
-    {
-        pinMode(pin, INPUT);
-    }
-};
-
+//-LaTeX:CLAMPING;
 const int clampAngle(const int value, const Range range)
 {
     return min(max(value, range.minValue), range.maxValue);
@@ -57,7 +32,9 @@ const int clampSpeed(const int value, const Range range)
     }
     return value;
 }
+//-LaTeX:End_Section;
 
+//-LaTeX:Motor_Control;
 enum class MotorDirection
 {
     CLOCKWISE,
@@ -108,12 +85,23 @@ void setMotorSpeed(const MotorConfig motorConfig, const int speed)
         speed > 0 ? MotorDirection::CLOCKWISE : MotorDirection::COUNTERCLOCKWISE);
 }
 
+void setupMotor(const MotorConfig motorConfig)
+{
+    pinMode(motorConfig.enablePin, OUTPUT);
+    pinMode(motorConfig.in1Pin, OUTPUT);
+    pinMode(motorConfig.in2Pin, OUTPUT);
+}
+//-LaTeX:End_Section;
+
+//-LaTeX:Servo_Control;
 void setServoPosition(const ServoConfig servoConfig, Servo servo, const int position)
 {
     const int targetPosition = clampAngle(position, servoConfig.angleLimits);
     servo.write(targetPosition);
 }
+//-LaTeX:End_Section;
 
+//-LaTeX:Emergency_Stop;
 // Exercise 5
 void emergencyStopInterrupt()
 {
@@ -134,17 +122,12 @@ void setupEmergencyStop()
     // the emergancy stop is not activated.
     attachInterrupt(digitalPinToInterrupt(pin), emergencyStopInterrupt, RISING);
 }
+//-LaTeX:End_Section;
 
+//-LaTeX:setup;
 ramp servoRamp;
 Servo servo;
 Photoresistor photoresistor(appConfig.photoresistorPin);
-
-void setupMotor(const MotorConfig motorConfig)
-{
-    pinMode(motorConfig.enablePin, OUTPUT);
-    pinMode(motorConfig.in1Pin, OUTPUT);
-    pinMode(motorConfig.in2Pin, OUTPUT);
-}
 
 void setup()
 {
@@ -155,11 +138,16 @@ void setup()
     setupMotor(appConfig.motorConfig);
     pinMode(appConfig.potmeterPin, INPUT);
 }
+//-LaTeX:End_Section;
 
+//-LaTeX:Center_Potmeter;
 const int centerAnalogInput(const int value)
 {
     return map(value, 0, 1023, -255, 255);
 }
+//-LaTeX:End_Section;
+
+//-LaTeX:Exercise_3;
 
 /*
     This does not guard the motor from directions switching during full speed
@@ -180,19 +168,24 @@ void rampMotorTo(const MotorConfig motorConfig, const int rampTime, const int sp
 void fadeLoop()
 {
     const int rampTime = 2000;
-    rampMotorTo(appConfig.motorConfig, rampTime, 255, MotorDirection::CLOCKWISE);
-    rampMotorTo(appConfig.motorConfig, rampTime, 0, MotorDirection::CLOCKWISE);
-    rampMotorTo(appConfig.motorConfig, rampTime, 255, MotorDirection::COUNTERCLOCKWISE);
-    rampMotorTo(appConfig.motorConfig, rampTime, 0, MotorDirection::COUNTERCLOCKWISE);
+    MotorConfig motorConfig = appConfig.motorConfig;
+    rampMotorTo(motorConfig, rampTime, 255, MotorDirection::CLOCKWISE);
+    rampMotorTo(motorConfig, rampTime, 0, MotorDirection::CLOCKWISE);
+    rampMotorTo(motorConfig, rampTime, 255, MotorDirection::COUNTERCLOCKWISE);
+    rampMotorTo(motorConfig, rampTime, 0, MotorDirection::COUNTERCLOCKWISE);
 }
+//-LaTeX:End_Section;
 
+//-LaTeX:Exercise_4;
 // Exercise 4
 void centeredPotmeterMotorControlLoop()
 {
     const int potmeterValue = analogRead(appConfig.potmeterPin);
     setMotorSpeed(appConfig.motorConfig, centerAnalogInput(potmeterValue));
 }
+//-LaTeX:End_Section;
 
+//-LaTeX:Exercise_6;
 // Exercise 6
 void potmeterFadeLoop()
 {
@@ -212,7 +205,9 @@ void potmeterFadeLoop()
         setServoPosition(appConfig.servoConfig, servo, servoRamp.getValue());
     }
 }
+//-LaTeX:End_Section;
 
+//-LaTeX:Exercise_7;
 // Exercise 7
 void directPotmeterServoControlLoop()
 {
@@ -220,7 +215,9 @@ void directPotmeterServoControlLoop()
     const int servoPosition = map(potmeterValue, 0, 1023, 0, 180);
     setServoPosition(appConfig.servoConfig, servo, servoPosition);
 }
+//-LaTeX:End_Section;
 
+//-LaTeX:Exercise_8;
 // Exercise 8
 void speedIndicator()
 {
@@ -230,7 +227,9 @@ void speedIndicator()
     setServoPosition(appConfig.servoConfig, servo, servoPosition);
     setMotorSpeed(appConfig.motorConfig, motorSpeed);
 }
+//-LaTeX:End_Section;
 
+//-LaTeX:Exercise_9;
 // Exercise 9
 void photoresistorSpeedControl()
 {
@@ -240,8 +239,30 @@ void photoresistorSpeedControl()
     setServoPosition(appConfig.servoConfig, servo, servoPosition);
     setMotorSpeed(appConfig.motorConfig, motorSpeed);
 }
+//-LaTeX:End_Section;
 
+//-LaTeX:loop;
 void loop()
 {
-    speedIndicator();
+    // Uncomment code to run an exercise
+    // NB! These procedures are not designed for concurrent runs
+
+    // Exercise 3
+    // fadeLoop();
+
+    // Exercise 4
+    // centeredPotmeterMotorControlLoop();
+
+    // Exercise 6
+    // potmeterFadeLoop();
+
+    // Exercise 7
+    // directPotmeterServoControlLoop();
+
+    // Exercise 8
+    // speedIndicator();
+
+    // Exercise 9
+    // photoresistorSpeedControl();
 }
+//-LaTeX:End_Section;

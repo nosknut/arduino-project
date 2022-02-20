@@ -62,13 +62,20 @@
 \usepackage{color}
 \usepackage[dvipsnames]{xcolor}
 
+%https://tex.stackexchange.com/questions/245842/i-am-trying-to-get-the-image-full-screen-and-landscape
+\usepackage{graphicx}
+\usepackage[a4paper,margin=1in]{geometry}
+\usepackage{lscape}
+\usepackage{rotating}
+\usepackage{pdflscape}
+
 \definecolor{dkgreen}{rgb}{0,0.6,0}
 \definecolor{gray}{rgb}{0.5,0.5,0.5}
 \definecolor{mauve}{rgb}{0.58,0,0.82}
 
 \lstset{frame=tb,
-  language=C++,
-  aboveskip=3mm,
+language=C++,
+aboveskip=3mm,
   belowskip=3mm,
   showstringspaces=false,
   columns=flexible,
@@ -80,7 +87,15 @@
   stringstyle=\color{mauve},
   breaklines=true,
   breakatwhitespace=true,
-  tabsize=3
+  tabsize=3,
+  %https://stackoverflow.com/questions/3915709/latex-lstlisting-automatically-recognizing-code-passage
+  rangeprefix=//-LaTeX:,
+  rangesuffix=;,
+  includerangemarker=false,
+  columns=spaceflexible,
+  %https://tex.stackexchange.com/questions/106770/how-to-add-line-numbers-to-a-program-listing-code
+  numbers=left,
+  stepnumber=1
 }
 
 \lstdefinelanguage{Ini}
@@ -146,15 +161,14 @@
 \begin{document}
 
 % paper title
-\title{Arduino Lab 1}
+\title{Arduino Lab 2}
 
 % author names 
-\author{Knut Ola Nøsen,
-    Kristian Hansen,
+\author{Knut Ola Nøsen
 }% <-this % stops a space
 
 % The report headers
-\markboth{IELET1002 DATATEKNIKK. LAB. REPORT 1, JANUARY 2022}%do not delete next lines
+\markboth{IELET1002 DATATEKNIKK. LAB. REPORT 2, FEBRUARY 2022}%do not delete next lines
 {Shell \MakeLowercase{\textit{et al.}}: Bare Demo of IEEEtran.cls for IEEE Journals}
 
 % make the title area
@@ -163,15 +177,13 @@
 % As a general rule, do not put math, special symbols or citations
 % in the abstract or keywords.
 \begin{abstract}
-    The project centers around an ultrasonic proximity sensor, and an OLED Display that shows a revolving set of sensor readings in real-time.
-    The purpose of this project is to demonstrate a situation where many isolated components can function in conjunction, while still not interfearing with each others operation.
-    Furthermore, the project explores the use of Software-Libraries to improve the quality of the final product, while reducing TTC (Time To Completion).
-    The contents of this paper reflects the aspects most in focus during the execution of the lab. That being my research into best-practices
-    in the IoT industry, rather than the project itself.
+    The project explores how to control DC motors and servos. For the DC motor we are using the L293D chip, and for the servos we use the builtin Servo.h library.
+    The reason for using the L293D chip is that motors not only require a lot more power than the Arduino can provide, but also more fine control than a relay.
+    In this lab we will implement several ways of controlling motor speed, motor acceleration and servo position.
 \end{abstract}
 
 \begin{IEEEkeywords}
-    Arduino, OLED, C++, PlatformIO, Code-Library, Header File, Test Driven Development, Unit Test, ASSERT, HE-SR04
+    Arduino, L293D, Servo, DC Motor, RAMP, PWM
 \end{IEEEkeywords}
 
 \section{Theory}
@@ -180,31 +192,50 @@
 % You must have at least 2 lines in the paragraph with the drop letter
 % (should never be an issue)
 
-\IEEEPARstart{T}{he} HE-SR04 ultrasonic sensor is a low-cost Arduino component for measuring short distances. It gives a relatively inaccurate reading, and out of the box is subject to signal noise. For this reason, a Median-Filter has been implemented through software, to remove the more extreme spikes in telemetry. The inner workings of the ultrasonic sensor are based on ultrasound, commonly found in animals like bats and whales. The following code shows a crude implementation of this sensor:
+\IEEEPARstart{W}{e}
+start with the motor.
+The L293D chip has two input pins (In1 and In2) for
+specifying directions, and one input pin (Enable) for
+setting speed with a PWM signal. The H-bridge derives its
+name from the H-shaped design, with the vertical lines representing
+a MOSFET, and the horizontal lines representing a motor.
+The mosfets are enabled/disabled in diagonal pairs, in order to switch
+the direction of the current. The directional MOSFETs are controlled by
+2 transistors each. The transistors are connected inseries, where one
+transistor enables/disables the mosfet, and the other forwars the PWM signal.
+The following code shows how the L293D chip is used:
 \begin{lstlisting}
-float getDistance(int trigger, int echo) {
-    // Disable speaker
-    digitalWrite(trigger, LOW);
-    // Wait until any existing sound waves have been dissipated
-    delayMicroseconds(2);
-    // Enable the speaker
-    digitalWrite(trigger, HIGH);
-    // Keep it on long enough for a proper signal to be transmitted
-    delayMicroseconds(10);
-    // Disabe the speaker
-    digitalWrite(trigger, LOW);
-    // Measure the time in microseconds for the audio pulse to return
-    long duration = pulseIn(echo, HIGH);
-    // Calculate the distance based on the speed of sound (343m/s), and divide it by two (because the total duration includes travel time in both directions)
-    float distance = duration * 0.0343 / 2;
-    return distance;
+   
+void updateMotor(
+    bool direction, 
+    int speed, 
+    int in1Pin, 
+    int in2Pin, 
+    int enablePin
+)
+{
+    digitalWrite(
+        in1Pin, 
+        direction ? HIGH : LOW
+    );
+    digitalWrite(
+        in2Pin, 
+        direction ? LOW : HIGH
+    );
+    analogWrite(enablePin, speed);
 }
+
 \end{lstlisting}
-There are many more aspects to consider when writing proper code for this sensor, such as temperature changing the speed of sound in the given medium. In order to maintain our sanity, as well as avoid unnecessary mistakes and debugging, it is considered a good practice to avoid writing your own code. For this project we used the HCSR04 Arduino library.
+
+While this code clearly displays how the L293D chip is used, it still lacks some safeguards that should be in
+place on a DC-Motor. For example, brushed DC-Motors have a minimum voltage, before which they do not have
+suficient power to start moving. We will implement this safeguard later.
+
+\vfill\null
+\pagebreak
 
 \section{Methods}
 \subsection{Hardware}
-
 
 \begin{figure}[H]%[!ht]
     \begin {center}
@@ -222,10 +253,10 @@ There are many more aspects to consider when writing proper code for this sensor
     \end {center}
 \end{figure}
 
-\begin{figure}[H]%[!ht]
+\begin{figure}[H]
     \begin {center}
-    \includegraphics[width=0.45\textwidth]{images/lab1-image.jpg}
-    \caption{Lab1 Circuit}
+    \includegraphics[width=0.25\textwidth, angle=90]{images/circuit-picture.jpg}
+    \caption{Lab2 Circuit}
     \label{fig:circuitPicture}
     \end {center}
 \end{figure}
@@ -234,94 +265,129 @@ There are many more aspects to consider when writing proper code for this sensor
 \pagebreak
 
 \subsection{Software}
-We start by defining our enums. To keep the code more readable, we split this code into multiple files
-\lstinputlisting[language=C++]{../src/AlarmState.h}
-For the OledState we also have a function for getting the next OledState value.
-This means we also need a header file. This is a language requirement in C++.
-\lstinputlisting[language=C++]{../lib/OledState/OledState.h}
-In the OledState.cpp file, we can now import the header file and give getNextOledState an implementation.
-\lstinputlisting[language=C++]{../lib/OledState/OledState.cpp}
-While splitting the code up like this makes for more files and more code to write over all,
-it does make for more scalable code. PlatformIO also provides us with a lib folder where we can put such files,
-to keep the code more portable,
-as well as providing a standardised system for code-splitting.
+Lets start by creating some configs to keep our code free of "magic constants".
+By keeping these configs in separate files, we avoid cluttering our logic in the main.cpp file.\\
+
+\lstinputlisting[language=C++, caption=Range.h]{../lib/Range/Range.h}
+\lstinputlisting[language=C++, caption=ServoConfig.h]{../lib/ServoConfig/ServoConfig.h}
+\lstinputlisting[language=C++, caption=MotorConfig.h]{../lib/MotorConfig/MotorConfig.h}
 
 \vfill\null
 \pagebreak
 
-Now that we have defined our external files,
-it is time to give the project a configuration.
-\lstinputlisting[language=ini]{../platformio.ini}
-Under env we specify lib\textunderscore deps which is a list of the Code Libraries this project
-uses. This is where PlatformIO shines compared to the ArduinoIDE, as anyone who opens
-this project with a PlatformIO compatible IDE (In our case VSCode) will have all dependencies
-automatically downloaded with the correct version.\\
 
-We have defined three environments: uno, native and CI. The uno environment
-is for compiling the project to the arduino uno. It defines the board and
-framework, which is used by PlatformIO behind the scenes to present us with
-proper compilation warnings, as well as automatically selecting the
-proper procedures for uploading the project.\\
+\lstinputlisting[language=C++, caption=ApplicationConfig.h]{../lib/ApplicationConfig/ApplicationConfig.h}
+This gives us a global const appConfig when we include the ApplicationConfig.h file
+in our main sketch.
 
-The native environment is intended for testing. Test driven development is a good practice,
-and PlatformIO presents us with a solid foundation to do this without needing the
-physical board.
+\vfill\null
+\pagebreak
 
 \onecolumn
 
-Finally we have the CI environment. CI stands for Continuous Integration,
-and refers to a automated build system in github. When code in this project is pushed,
-a linux server will automatically run the native tests, and tell the developer if the code
-is working and safe to merge into the master branch. This is useful for code developed
-in teams, so each team member does not need to run the tests manually to ensure nothing was
-broken by their changes. Here is the CI script:
-\lstinputlisting[language=yaml, firstline=2]{../../.github/workflows/native_tests.yml}
+We also define a class for the Photoresistor so we can get rid of those pesky globas.
+\lstinputlisting[language=C++, caption=Photoresistor.h]{../lib/Photoresistor/Photoresistor.h}
 
-Now that the CI is set up, lets take a look at our Unit Tests:
-\lstinputlisting[language=C++, firstline=2]{../test/test_desktop/OledState/test_OledState.cpp}
-The purpose of this code is to check/ASSERT that the code related to the OledState is working properly.
-We do this by writing test code that uses the production code, and then checks that
-the outputs are what we expect.
+\vfill\null
+\pagebreak
 
-Now, lets look at the main.cpp file:
-\lstinputlisting[language=C++, firstline=2]{../src/main.cpp}
+Now that all our external files are set up, we can start looking at the main.cpp file.
+%https://stackoverflow.com/questions/3915709/latex-lstlisting-automatically-recognizing-code-passage
+\lstinputlisting[language=C++, caption=main.cpp - imports, linerange=imports-End_Section]{../src/main.cpp}
 
-\begin{multicols}{2}
+\lstinputlisting[language=C++, caption=main.cpp - CLAMPING           , linerange=CLAMPING-End_Section]{../src/main.cpp}
+We add some clamping functions to restrict servo position and motor power to set ranges.
+This way, we can avoid pushing our hardware beyone what it can do, without risking
+human error while programming.
 
-    By using the median of the last 5 values, we are able to remove high spikes, that would
-    cause a large error in the distance measurement. We could use a running-average, however
-    such a filter would still have a short-term error. The median filter eliminates
-    this issue all together. It is worth noting however, that larger windows in the median filter
-    could cause the data to lag behind the real values. In a realtime application, this could
-    potentially be unacceptable, and other methods for filtering should be considered.\\
+\lstinputlisting[language=C++, caption=main.cpp - Servo Control      , linerange=Servo_Control-End_Section]{../src/main.cpp}
+Here we pipe our servo positioning through a guarded function that keeps us
+within the hardware limits, similar to how we will with our DC motor.
 
-    The code uses the AceButton library to detect button presses. Not only does this lib
-    handle debouncing for us, but it also gives us a event based architecture to handle
-    clicks. This makes for more readable code.
+\vfill\null
+\pagebreak
 
-    \section{Discussion}
-    Given my previous experience in the subject, my focus was directed away from
-    the circuit and code, and more towards researching best-practices in the IoT industry.
-    After many hours, i found PlatformIO, which has presented the most benefits compared
-    to the alternatives. With a builtin package manager, as well as its design with modern
-    code-practices such as Unit Testing in mind, it stands out as an exceptional tool.
-    Furthermore, i took the time to explore more advanced C++ features such as structs,
-    allowing me to create a more scalable design for global variables. Currently, all
-    configurations such as pins and constants are centralised in the PinConfig and ApplicationConfig.
-    This way, the tendency of arduino projects reaching houndreds of globals can be avoided.\\
+\lstinputlisting[language=C++, caption=main.cpp - Motor Control      , linerange=Motor_Control-End_Section]{../src/main.cpp}
+We create an enum for motor direction to be crystal clear about what is going on. We also add an overload
+to setMotorSpeed that automatically sets direction based on a range that can accept negative speed.
+This is useful for the centered potmeter controls, while it would pose problems during our ramp functions.
 
-    I think the way i spent my time on this project prooved productive, and the fruits of may
-    labour will likely be reflected in future projects.
+\vfill\null
+\pagebreak
 
-    % use section* for acknowledgment
-    \section*{Acknowledgment}
-    While Kristian Hansen is not a co-author on this paper,
-    he did create the circuit diagram in \autoref{fig:wiring},
-    while i was working on the code.
-    \autoref{fig:circuitPicture}
-    is a picture of the circuit used in this project.
-    It was created by me and photographed by Kristian.
-\end{multicols}
+\lstinputlisting[language=C++, caption=main.cpp - Emergency Stop     , linerange=Emergency_Stop-End_Section]{../src/main.cpp}
+For the emergency stop we continously keep killing the motors power by setting its direction to none.
+This way, we are absolutely sure that nothing moves until the Emergency Stop is released.
+
+\lstinputlisting[language=C++, caption=main.cpp - Setup              , linerange=setup-End_Section]{../src/main.cpp}
+
+\lstinputlisting[language=C++, caption=main.cpp - Center Potmeter    , linerange=Center_Potmeter-End_Section]{../src/main.cpp}
+In order to make our code more consise, we create a helper function for centering a potmeter reading.
+
+\vfill\null
+\pagebreak
+
+\lstinputlisting[language=C++, caption=main.cpp - Exercise 3         , linerange=Exercise_3-End_Section]{../src/main.cpp}
+Because the RAMP.h library can not (to my knowledge) handle negative ranges, we must handle this ourselves by explicitly
+setting the direction, moving from 0 to 255, back to 0 and then to -255 etc.
+
+\lstinputlisting[language=C++, caption=main.cpp - Exercise 4         , linerange=Exercise_4-End_Section]{../src/main.cpp}
+Because we created some robust reusable code earlier, exercise 4 is now a lot easier.
+
+\lstinputlisting[language=C++, caption=main.cpp - Exercise 6         , linerange=Exercise_6-End_Section]{../src/main.cpp}
+
+\vfill\null
+\pagebreak
+
+\lstinputlisting[language=C++, caption=main.cpp - Exercise 7         , linerange=Exercise_7-End_Section]{../src/main.cpp}
+
+\lstinputlisting[language=C++, caption=main.cpp - Exercise 8         , linerange=Exercise_8-End_Section]{../src/main.cpp}
+
+\lstinputlisting[language=C++, caption=main.cpp - Exercise 9         , linerange=Exercise_9-End_Section]{../src/main.cpp}
+
+\lstinputlisting[language=C++, caption=main.cpp - loop               , linerange=loop-End_Section]{../src/main.cpp}
+
+
+\section{Discussion}
+The current code works excellently, however it does have a weakness.
+While the nested nature of this code makes for very few instances of "state" and
+globals, it does prevent us from running continous updates on anything while
+a piece of code is executing. In a larger project, i believe it would be
+beneficial to avoid while and for-loops, in favour of a more flat architecture with
+state machines. That way, the project remains scalable, and we can easily add
+continous checks without risking spagheti code and human errors due to forgetting
+to call an updater during a special loop.
+
+
+\begin{landscape}
+
+    \section{Large Images}
+
+    \begin{figure}[h]
+        \begin {center}
+        \includegraphics[width=0.8\textwidth, angle=90]{images/circuit-picture.jpg}
+        \caption{Large Lab2 Circuit}
+        \label{fig:circuitPictureLarge}
+        \end {center}
+    \end{figure}
+
+    \begin{figure}[h]%[!ht]
+        \begin {center}
+        \includegraphics[width=1.5\textwidth, trim={0 2cm 0 2cm}]{images/wiring-diagram.pdf}
+        \caption{Large Wiring Diagram}
+        \label{fig:wiringLarge}
+        \end {center}
+    \end{figure}
+
+    \begin{figure}[h]%[!ht]
+        \begin {center}
+        \includegraphics[width=1.2\textwidth]{images/tinkercad.PNG}
+        \caption{Large Tinkercad}
+        \label{fig:tinkercadLarge}
+        \end {center}
+    \end{figure}
+
+\end{landscape}
 
 \end{document}
 
