@@ -40,7 +40,8 @@ int frequencyToHalfPeriodDelayTimeMs(const int frequency)
 // The function was arbitrarily choosen
 int fancySoundFunction(const int frequency)
 {
-    return 2 * cos(frequency * 1.5 * sin(frequency));
+    long x = millis() / 20;
+    return frequency + 500 * cos(x + sin(x));
 }
 
 void indicateWinner(Player winner)
@@ -108,6 +109,8 @@ void waitForButtonsToBeUnpressed()
 {
     while (state.player1.button.isPressed() || state.player2.button.isPressed())
     {
+        state.player1.button.loop();
+        state.player2.button.loop();
         delay(1);
     }
 }
@@ -158,12 +161,22 @@ void startGame()
     }
 }
 
+void setupRgbLed(const RgbLedConfig rgbLedConfig)
+{
+    pinMode(rgbLedConfig.redPin, OUTPUT);
+    pinMode(rgbLedConfig.greenPin, OUTPUT);
+    // Blue pin is not used
+    // pinMode(rgbLedConfig.bluePin, OUTPUT);
+}
+
 void setup()
 {
     Serial.begin(appConfig.baudRate);
     randomSeed(analogRead(appConfig.randomSeedPin));
     state.player1.setup();
     state.player2.setup();
+    setupRgbLed(appConfig.rgbLed);
+    pinMode(appConfig.buzzerPin, OUTPUT);
 }
 
 void loop()
