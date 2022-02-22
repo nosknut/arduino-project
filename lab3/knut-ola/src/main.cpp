@@ -12,10 +12,27 @@ class Player
 {
 public:
     const PlayerConfig playerConfig;
+    int points = 0;
     ezButton button;
     Player(const PlayerConfig playerConfig) : playerConfig(playerConfig), button(ezButton(playerConfig.buttonPin))
     {
     }
+
+    void changePoints(int points)
+    {
+        this->points += points;
+    }
+
+    void resetPoints()
+    {
+        this->points = 0;
+    }
+
+    int getPoints()
+    {
+        return this->points;
+    }
+
     void setup()
     {
         pinMode(playerConfig.ledPin, OUTPUT);
@@ -24,11 +41,180 @@ public:
     }
 };
 
+class RgbLed
+{
+    RgbLedConfig rgbLedConfig;
+
+public:
+    RgbLed(const RgbLedConfig rgbLedConfig) : rgbLedConfig(rgbLedConfig)
+    {
+    }
+
+    void red(bool state)
+    {
+        off();
+        digitalWrite(rgbLedConfig.redPin, state);
+    }
+
+    void green(bool state)
+    {
+        off();
+        digitalWrite(rgbLedConfig.greenPin, state);
+    }
+
+    void blue(bool state)
+    {
+        off();
+        digitalWrite(rgbLedConfig.bluePin, state);
+    }
+
+    void off()
+    {
+        digitalWrite(rgbLedConfig.redPin, LOW);
+        digitalWrite(rgbLedConfig.greenPin, LOW);
+        digitalWrite(rgbLedConfig.bluePin, LOW);
+    }
+
+    void setup()
+    {
+        pinMode(rgbLedConfig.redPin, OUTPUT);
+        pinMode(rgbLedConfig.greenPin, OUTPUT);
+        pinMode(rgbLedConfig.bluePin, OUTPUT);
+    }
+};
+
+enum class SerialCommand
+{
+    START = 's',
+    STOP = 'q',
+    RESET = 'r',
+    HELP = 'h',
+};
+
+enum class GameState
+{
+    IDLE,
+    RUNNING,
+};
+
 struct ApplicationState
 {
-    Player player1 = Player(appConfig.player1);
-    Player player2 = Player(appConfig.player2);
+    // NB! Update this with appConfig.numPlayers
+    Player players[2] = {
+        Player(appConfig.player1),
+        Player(appConfig.player2)};
+    RgbLed rgbLed = RgbLed(appConfig.rgbLed);
+    GameState gameState = GameState::IDLE;
 } state;
+
+void printHelp()
+{
+    Serial.println("------------------------------------------------------");
+    Serial.println("Available commands:");
+    Serial.println("");
+    Serial.println("s - Start the game");
+    Serial.println("q - Stop the game and show the winner");
+    Serial.println("r - Reset the game/score");
+    Serial.println("h - Show this message again");
+    Serial.println("------------------------------------------------------");
+}
+
+void printWinner(Player &winner, int playerIndex)
+{
+    Serial.println("------------------------------------------------------");
+    Serial.println("Player " + String(playerIndex + 1) + " wins!");
+    Serial.println("Score: " + String(winner.getPoints()));
+    Serial.println("------------------------------------------------------");
+    printHelp();
+}
+
+void resetIo()
+{
+    state.rgbLed.off();
+    noTone(appConfig.buzzerPin);
+    for (Player &player : state.players)
+    {
+        digitalWrite(player.playerConfig.ledPin, LOW);
+    }
+}
+
+int getBestPlayerIndex()
+{
+    int bestPlayerIndex = 0;
+    for (int i = 1; i < appConfig.numPlayers; i++)
+    {
+        Player &player = state.players[i];
+        Player &bestPlayer = state.players[bestPlayerIndex];
+        if (player.getPoints() > bestPlayer.getPoints())
+        {
+            bestPlayerIndex = i;
+        }
+    }
+    return bestPlayerIndex;
+}
+
+void resetGame()
+{
+    state.gameState = GameState::IDLE;
+    for (Player &player : state.players)
+    {
+        player.resetPoints();
+    }
+}
+
+/**
+ * @brief Checks for serial commands
+ * @return true if game should keep running
+ */
+bool updateGameState()
+{
+    while (Serial.available())
+    {
+        const char input = toLowerCase(Serial.read());
+        const auto command = static_cast<SerialCommand>(input);
+        switch (command)
+        {
+        case SerialCommand::START:
+            resetGame();
+            state.gameState = GameState::RUNNING;
+            Serial.println("Game started!");
+            break;
+        case SerialCommand::STOP:
+        {
+            Serial.println("Game stopped!");
+            int bestPlayerIndex = getBestPlayerIndex();
+            printWinner(state.players[bestPlayerIndex], bestPlayerIndex);
+            state.gameState = GameState::IDLE;
+        }
+        break;
+        case SerialCommand::RESET:
+            resetGame();
+            Serial.println("Everything has been reset!");
+            break;
+        case SerialCommand::HELP:
+            printHelp();
+            break;
+        default:
+            break;
+        }
+    }
+    if (state.gameState == GameState::RUNNING)
+    {
+        int bestPlayerIndex = getBestPlayerIndex();
+        Player &bestPlayer = state.players[bestPlayerIndex];
+        if (bestPlayer.getPoints() >= appConfig.winningPoints)
+        {
+            Serial.println("Player " + String(bestPlayerIndex + 1) + " has the highest score: " + String(bestPlayer.getPoints()));
+            printWinner(bestPlayer, bestPlayerIndex);
+            state.gameState = GameState::IDLE;
+        }
+    }
+    if (state.gameState == GameState::IDLE)
+    {
+        resetIo();
+    }
+    return state.gameState == GameState::RUNNING;
+}
 
 // Represents half of the period (a single on and off cycle) of a blink
 int frequencyToHalfPeriodDelayTimeMs(const int frequency)
@@ -44,7 +230,22 @@ int fancySoundFunction(const int frequency)
     return frequency + 500 * cos(x + sin(x));
 }
 
-void indicateWinner(Player winner)
+void printPoints()
+{
+    Serial.print("Score: ");
+    for (int i = 0; i < appConfig.numPlayers; i++)
+    {
+        Player &player = state.players[i];
+        if (i != 0)
+        {
+            Serial.print(", ");
+        }
+        Serial.print(player.getPoints());
+    }
+    Serial.println("");
+}
+
+void indicateWinner(Player &winner)
 {
     bool ledState = true;
     ramp buzzerRamp;
@@ -55,6 +256,10 @@ void indicateWinner(Player winner)
     buzzerRamp.go(rampTargetValue, appConfig.roundCompletionAnnouncementDuration);
     for (; buzzerRamp.isRunning();)
     {
+        if (!updateGameState())
+        {
+            return;
+        }
         buzzerRamp.update();
         const auto buzzerFrequency = buzzerRamp.getValue() + appConfig.winnerBuzzerPitch.minValue;
         tone(appConfig.buzzerPin, fancySoundFunction(buzzerFrequency));
@@ -63,16 +268,14 @@ void indicateWinner(Player winner)
         {
             ledState = !ledState;
             digitalWrite(winner.playerConfig.ledPin, ledState);
-            digitalWrite(appConfig.rgbLed.greenPin, !ledState);
+            state.rgbLed.green(!ledState);
         }
     }
 
-    digitalWrite(winner.playerConfig.ledPin, LOW);
-    digitalWrite(appConfig.rgbLed.redPin, LOW);
-    noTone(appConfig.buzzerPin);
+    resetIo();
 }
 
-void indicateLooser(Player looser)
+void indicateLooser(Player &looser)
 {
     Timer blinkTimer;
     bool ledState = true;
@@ -81,18 +284,20 @@ void indicateLooser(Player looser)
     announcementTimer.reset();
     while (!announcementTimer.loopWait(appConfig.roundCompletionAnnouncementDuration))
     {
+        if (!updateGameState())
+        {
+            return;
+        }
         tone(appConfig.buzzerPin, appConfig.looserBuzzerPitch);
 
         if (blinkTimer.loopWait(blinkDelayTimeMs))
         {
             ledState = !ledState;
             digitalWrite(looser.playerConfig.ledPin, ledState);
-            digitalWrite(appConfig.rgbLed.redPin, !ledState);
+            state.rgbLed.red(!ledState);
         }
     }
-    digitalWrite(looser.playerConfig.ledPin, LOW);
-    digitalWrite(appConfig.rgbLed.redPin, LOW);
-    noTone(appConfig.buzzerPin);
+    resetIo();
 }
 
 int randomInRange(const Range range)
@@ -107,10 +312,22 @@ int randomInRange(const Range range)
 // Adding a delay between games did not fix the issue.
 void waitForButtonsToBeUnpressed()
 {
-    while (state.player1.button.isPressed() || state.player2.button.isPressed())
+    while (true)
     {
-        state.player1.button.loop();
-        state.player2.button.loop();
+        bool anyButtonIsPressed = false;
+        for (Player &player : state.players)
+        {
+            player.button.loop();
+            if (player.button.isPressed())
+            {
+                anyButtonIsPressed = true;
+                break;
+            }
+        }
+        if (!anyButtonIsPressed)
+        {
+            break;
+        }
         delay(1);
     }
 }
@@ -118,68 +335,108 @@ void waitForButtonsToBeUnpressed()
 void startGame()
 {
     Timer roundTimer;
+    Timer trickRoundTimer;
     Timer blinkTimer;
     const int roundTimeMs = randomInRange(appConfig.roundTimeMs);
+    const int trickRoundTimeMs = appConfig.trickRoundDuration + roundTimeMs;
+    const bool trickRound = random(0, 100) <= (appConfig.trickRoundProbability * 100);
     waitForButtonsToBeUnpressed();
     while (true)
     {
-        state.player1.button.loop();
-        state.player2.button.loop();
-        const auto pressed1 = state.player1.button.isPressed();
-        const auto pressed2 = state.player2.button.isPressed();
-        if (!roundTimer.isFinished(roundTimeMs))
+        if (!updateGameState())
         {
-            digitalWrite(appConfig.rgbLed.redPin, HIGH);
-            digitalWrite(appConfig.rgbLed.greenPin, LOW);
-            if (pressed1)
+            return;
+        }
+
+        const bool roundFinished = roundTimer.isFinished(roundTimeMs);
+        const bool trickRoundFinished = trickRoundTimer.isFinished(trickRoundTimeMs);
+
+        if (roundFinished)
+        {
+            if (trickRound)
             {
-                indicateLooser(state.player1);
-                return;
+                state.rgbLed.blue(true);
             }
-            else if (pressed2)
+            else
             {
-                indicateLooser(state.player2);
-                return;
+                state.rgbLed.green(true);
             }
         }
         else
         {
+            state.rgbLed.red(true);
+        }
 
-            digitalWrite(appConfig.rgbLed.redPin, LOW);
-            digitalWrite(appConfig.rgbLed.greenPin, HIGH);
-            if (pressed1)
+        for (Player &player : state.players)
+        {
+            player.button.loop();
+            const bool buttonPressed = player.button.isPressed();
+            if (buttonPressed)
             {
-                indicateWinner(state.player1);
-                return;
+                if (roundFinished)
+                {
+                    // Triggerhappy
+                    if (trickRound)
+                    {
+
+                        player.changePoints(-2);
+                        printPoints();
+                        indicateLooser(player);
+                        return;
+                    }
+                    // Winner
+                    else
+                    {
+                        int reactionTimeMs = roundTimer.getElapsedTime() - roundTimeMs;
+                        float reactionTimeSec = reactionTimeMs / 1000.0;
+                        // Add a small amount of time to avoid dividing by zero
+                        int points = 1 / (reactionTimeSec + 0.000000001);
+                        Serial.println("Reaction time: " + String(reactionTimeSec) + " seconds");
+                        player.changePoints(points);
+                        printPoints();
+                        indicateWinner(player);
+                        return;
+                    }
+                }
+                else
+                // Tricked
+                {
+                    player.changePoints(-1);
+                    printPoints();
+                    indicateLooser(player);
+                    return;
+                }
             }
-            else if (pressed2)
+            if (trickRound && trickRoundFinished)
             {
-                indicateWinner(state.player2);
+                Serial.println("Time expired");
                 return;
             }
         }
     }
 }
 
-void setupRgbLed(const RgbLedConfig rgbLedConfig)
-{
-    pinMode(rgbLedConfig.redPin, OUTPUT);
-    pinMode(rgbLedConfig.greenPin, OUTPUT);
-    // Blue pin is not used
-    // pinMode(rgbLedConfig.bluePin, OUTPUT);
-}
-
 void setup()
 {
     Serial.begin(appConfig.baudRate);
     randomSeed(analogRead(appConfig.randomSeedPin));
-    state.player1.setup();
-    state.player2.setup();
-    setupRgbLed(appConfig.rgbLed);
+    for (Player &player : state.players)
+    {
+        player.setup();
+    }
+    state.rgbLed.setup();
     pinMode(appConfig.buzzerPin, OUTPUT);
+    printHelp();
 }
 
 void loop()
 {
-    startGame();
+    if (updateGameState())
+    {
+        startGame();
+    }
+    else
+    {
+        delay(1);
+    }
 }

@@ -16,6 +16,12 @@ public:
     {
         startTime = millis();
     }
+
+    unsigned long getElapsedTime()
+    {
+        return millis() - startTime;
+    }
+
     /*
         Will check if the time since last reset()
         call is greater than the given time
@@ -24,7 +30,7 @@ public:
       */
     bool isFinished(const unsigned long durationMs)
     {
-        return (startTime + durationMs) <= millis();
+        return getElapsedTime() >= durationMs;
     }
     /*
     Will return false until the given time has passed
