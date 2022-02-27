@@ -1,3 +1,11 @@
+// The "//-LaTeX:SectionName;" anchors
+// are for auto generated repors.
+// See: ../report/report.tex
+// NB!
+// There can not be a /* type comment on the
+// line directly below an anchor.
+
+//-LaTeX:imports;
 #include <Arduino.h>
 #include <ezButton.h>
 #include <Ramp.h>
@@ -7,7 +15,9 @@
 #include <PlayerConfig.h>
 #include <ApplicationConfig.h>
 #include <Timer.h>
+//-LaTeX:End_Section;
 
+//-LaTeX:Player;
 class Player
 {
 public:
@@ -40,7 +50,9 @@ public:
         button.setDebounceTime(appConfig.buttonDebounceTime);
     }
 };
+//-LaTeX:End_Section;
 
+//-LaTeX:RgbLed;
 class RgbLed
 {
     RgbLedConfig rgbLedConfig;
@@ -82,7 +94,9 @@ public:
         pinMode(rgbLedConfig.bluePin, OUTPUT);
     }
 };
+//-LaTeX:End_Section;
 
+//-LaTeX:SerialCommand;
 enum class SerialCommand
 {
     START = 's',
@@ -90,13 +104,17 @@ enum class SerialCommand
     RESET = 'r',
     HELP = 'h',
 };
+//-LaTeX:End_Section;
 
+//-LaTeX:GameState;
 enum class GameState
 {
     IDLE,
     RUNNING,
 };
+//-LaTeX:End_Section;
 
+//-LaTeX:ApplicationState;
 struct ApplicationState
 {
     // NB! Update this with appConfig.numPlayers
@@ -106,7 +124,9 @@ struct ApplicationState
     RgbLed rgbLed = RgbLed(appConfig.rgbLed);
     GameState gameState = GameState::IDLE;
 } state;
+//-LaTeX:End_Section;
 
+//-LaTeX:SerialMessages;
 void printHelp()
 {
     Serial.println("------------------------------------------------------");
@@ -127,7 +147,9 @@ void printWinner(Player &winner, int playerIndex)
     Serial.println("------------------------------------------------------");
     printHelp();
 }
+//-LaTeX:End_Section;
 
+//-LaTeX:Reset;
 void resetIo()
 {
     state.rgbLed.off();
@@ -138,6 +160,17 @@ void resetIo()
     }
 }
 
+void resetGame()
+{
+    state.gameState = GameState::IDLE;
+    for (Player &player : state.players)
+    {
+        player.resetPoints();
+    }
+}
+//-LaTeX:End_Section;
+
+//-LaTeX:getBestPlayerIndex;
 int getBestPlayerIndex()
 {
     int bestPlayerIndex = 0;
@@ -152,15 +185,9 @@ int getBestPlayerIndex()
     }
     return bestPlayerIndex;
 }
+//-LaTeX:End_Section;
 
-void resetGame()
-{
-    state.gameState = GameState::IDLE;
-    for (Player &player : state.players)
-    {
-        player.resetPoints();
-    }
-}
+//-LaTeX:updateGameState;
 
 /**
  * @brief Checks for serial commands
@@ -215,7 +242,9 @@ bool updateGameState()
     }
     return state.gameState == GameState::RUNNING;
 }
+//-LaTeX:End_Section;
 
+//-LaTeX:fancySoundFunction;
 // Represents half of the period (a single on and off cycle) of a blink
 int frequencyToHalfPeriodDelayTimeMs(const int frequency)
 {
@@ -229,7 +258,9 @@ int fancySoundFunction(const int frequency)
     long x = millis() / 20;
     return frequency + 500 * cos(x + sin(x));
 }
+//-LaTeX:End_Section;
 
+//-LaTeX:printPoints;
 void printPoints()
 {
     Serial.print("Score: ");
@@ -244,7 +275,9 @@ void printPoints()
     }
     Serial.println("");
 }
+//-LaTeX:End_Section;
 
+//-LaTeX:indicateWinner;
 void indicateWinner(Player &winner)
 {
     bool ledState = true;
@@ -274,7 +307,9 @@ void indicateWinner(Player &winner)
 
     resetIo();
 }
+//-LaTeX:End_Section;
 
+//-LaTeX:indicateLooser;
 void indicateLooser(Player &looser)
 {
     Timer blinkTimer;
@@ -299,11 +334,9 @@ void indicateLooser(Player &looser)
     }
     resetIo();
 }
+//-LaTeX:End_Section;
 
-int randomInRange(const Range range)
-{
-    return random(range.minValue, range.maxValue);
-}
+//-LaTeX:waitForButtonsToBeUnpressed;
 
 // Wait for both buttons to be released
 // This is needed because the ezButton lib would
@@ -330,6 +363,13 @@ void waitForButtonsToBeUnpressed()
         }
         delay(1);
     }
+}
+//-LaTeX:End_Section;
+
+//-LaTeX:startGame;
+int randomInRange(const Range range)
+{
+    return random(range.minValue, range.maxValue);
 }
 
 void startGame()
@@ -415,7 +455,9 @@ void startGame()
         }
     }
 }
+//-LaTeX:End_Section;
 
+//-LaTeX:setup;
 void setup()
 {
     Serial.begin(appConfig.baudRate);
@@ -428,7 +470,9 @@ void setup()
     pinMode(appConfig.buzzerPin, OUTPUT);
     printHelp();
 }
+//-LaTeX:End_Section;
 
+//-LaTeX:loop;
 void loop()
 {
     if (updateGameState())
@@ -440,3 +484,4 @@ void loop()
         delay(1);
     }
 }
+//-LaTeX:End_Section;
