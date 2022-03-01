@@ -5,11 +5,12 @@
 
 Zumo32U4ButtonA buttonA;
 Zumo32U4ButtonB buttonB;
-Zumo32U4ButtonC buttonC;
 Zumo32U4Motors motors;
 Zumo32U4LineSensors lineSensors;
 Zumo32U4LCD lcd;
 
+const int maxSpeed = 150;
+const int lcdWidth = 8;
 const int NUM_SENSORS = 5;
 unsigned int lineSensorValues[NUM_SENSORS];
 
@@ -54,24 +55,51 @@ void moveCircle(int speed, bool direction)
 
 void exercise2()
 {
-    int speed = 200;
-    moveEight(speed);
-    moveEight(speed);
-    moveCircle(speed, true);
-    moveCircle(speed, false);
+    moveEight(maxSpeed);
+    moveEight(maxSpeed);
+    moveCircle(maxSpeed, true);
+    moveCircle(maxSpeed, false);
 }
 
-void calibrate()
+void printMessage(const String message, const String message2)
 {
     lcd.clear();
     lcd.gotoXY(0, 0);
-    lcd.print("Press A");
+    lcd.print(message);
     lcd.gotoXY(0, 1);
-    lcd.print("to calibrate");
-    buttonA.waitForButton();
+    lcd.print(message2);
+}
+
+void printMessage(const String message)
+{
+    printMessage(message, "");
+}
+
+void flashAllLeds(const int numFlashes, const int flashDuration)
+{
+    bool ledState = true;
+    for (int i = 0; i < numFlashes; i++)
+    {
+        ledGreen(ledState);
+        ledRed(ledState);
+        ledYellow(ledState);
+        ledState = !ledState;
+        delay(flashDuration);
+    }
+}
+
+void calibrate(const int speed)
+{
+    printMessage("Starting in", "3");
+    delay(1000);
+    printMessage("Starting in", "2");
+    delay(1000);
+    printMessage("Starting in", "1");
+    delay(1000);
+    printMessage("Calibrating", "...");
+    flashAllLeds(5, 200);
 
     Timer timer;
-    const int speed = 200;
     for (int i = 0; i < 3; i++)
     {
         bool direction = i % 2 == 0;
@@ -91,12 +119,9 @@ void calibrate()
     }
 
     motors.setSpeeds(0, 0);
-    lcd.clear();
-    lcd.gotoXY(0, 0);
-    lcd.print("Calibration");
-    lcd.gotoXY(0, 1);
-    lcd.print("complete");
-    delay(2000);
+
+    printMessage("Done!");
+    delay(1000);
 }
 
 int getLineSensorValue()
@@ -104,18 +129,28 @@ int getLineSensorValue()
     return lineSensors.readLine(lineSensorValues);
 }
 
-void exercise3()
+void printValue(const String message, const String value)
 {
-    calibrate();
+    lcd.clear();
+    lcd.gotoXY(0, 0);
+    lcd.print(message);
+    lcd.gotoXY(0, 1);
+    lcd.print(value);
+}
 
+void printValue(const String message, const int value)
+{
+    printValue(message, String(value));
+}
+
+void printPosition()
+{
+    printMessage("Press A", "to cancel");
+    delay(1000);
     while (!buttonA.getSingleDebouncedPress())
     {
         const int position = lineSensors.readLine(lineSensorValues);
-        lcd.clear();
-        lcd.gotoXY(0, 0);
-        lcd.print("Position: ");
-        lcd.gotoXY(0, 1);
-        lcd.print(position);
+        printValue("Position: ", position);
         delay(10);
     }
 }
@@ -156,16 +191,33 @@ int pid(const int value, const int targetValue, const Range inputRange, const Ra
     return outputInOutputScale;
 }
 
-void exercise4()
+String getProgressBar(const int value, const Range range)
 {
-    calibrate();
-    while (true)
+    const int percentage = map(value, range.minValue, range.maxValue, 0, 100);
+    const int numDots = map(percentage, 0, 100, 0, lcdWidth);
+    String bar = "";
+    for (int i = 0; i < numDots; i++)
     {
-        const int maxSpeed = 200;
+        bar += "|";
+    }
+    return bar;
+}
+
+void followLine()
+{
+    printMessage("Press A", "to cancel");
+    flashAllLeds(10, 200);
+    delay(1000);
+    printMessage("Following", "line ...");
+    delay(1000);
+    while (!buttonA.getSingleDebouncedPress())
+    {
         const Range inputRange(0, 4000);
         const Range outputRange(0, 2 * maxSpeed);
 
         const int sensorValue = getLineSensorValue();
+
+        printValue("Position: ", getProgressBar(sensorValue, inputRange));
 
         const int output = pid(sensorValue, 2000, inputRange, outputRange);
         const int centeredOutput = output - maxSpeed;
@@ -177,7 +229,40 @@ void exercise4()
     }
 }
 
+void exercise3()
+{
+    printMessage("Press A to", "calibrate");
+    buttonA.waitForButton();
+    calibrate(maxSpeed);
+    printPosition();
+}
+
+void exercise4()
+{
+    printMessage("Press A to", "calibrate");
+    buttonA.waitForButton();
+    calibrate(maxSpeed);
+    printMessage("Press A to", "follow line");
+    buttonA.waitForButton();
+    followLine();
+}
+
 void loop()
 {
-    exercise3();
+    printMessage("A: Calibrate", "B: Follow Line");
+    while (true)
+    {
+        delay(400);
+        lcd.scrollDisplayLeft();
+        if (buttonA.getSingleDebouncedPress())
+        {
+            calibrate(maxSpeed);
+            break;
+        }
+        if (buttonB.getSingleDebouncedPress())
+        {
+            followLine();
+            break;
+        }
+    }
 }
