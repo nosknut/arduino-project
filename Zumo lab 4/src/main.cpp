@@ -17,6 +17,7 @@ unsigned int lineSensorValues[NUM_SENSORS];
 // lcd variabel
 Zumo32U4LCD lcd;
 
+// bruker enum til å velge hvilken oppgave som skal kjøres
 enum class OppgaveStatus
 {
   OPPGAVE1,
@@ -25,7 +26,7 @@ enum class OppgaveStatus
   OPPGAVE4
 };
 
-// bruker enum til å velge hvilken oppgave som skal kjøres
+//-----VELG HVILKEN OPPGVAVE SOM SKAL KJØRES------
 OppgaveStatus oppgave = OppgaveStatus::OPPGAVE4;
 
 void kalibrerSensor()
@@ -144,20 +145,26 @@ void task3(int time)
 
 void oppgave4(const int sensorData)
 {
-  int right;
-  int left;
-  if (sensorData >= 2100)
+  int right; // høyre motor fart
+  int left;  // venstre motor fart
+  // har en liten "feilmargin på 100"
+  if (sensorData >= 2050)
   {
-    right = map(sensorData, 2100, 4000, 100, 0);
+    // bruker map funksjon for å sette hastighet til motor
+    left = map(sensorData, 2050, 4000, 100, 150);
+    right = map(sensorData, 2050, 4000, 100, 0);
   }
-  if (sensorData <= 1900)
+  if (sensorData <= 1950)
   {
-    left = map(sensorData, 1900, 0, 100, 0);
+    left = map(sensorData, 1950, 0, 100, 0);
+    right = map(sensorData, 1950, 0, 100, 150);
   }
+  // hvis vi er innenfor "feilmargin" sett fart:
   else
   {
     right, left = 100;
   }
+  // oppdaterer motor fart
   motors.setSpeeds(left, right);
 }
 
