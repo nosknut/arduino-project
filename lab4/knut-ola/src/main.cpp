@@ -2,6 +2,20 @@
 #include <Zumo32U4.h>
 #include <Timer.h>
 #include <Range.h>
+#include <Sequence.h>
+
+// Sequences
+Sequence exercise1Sequence;
+Sequence moveEightSequence;
+Sequence exercise2Sequence;
+Sequence flashAllLedsSequence;
+Sequence calibrationSequence;
+Sequence printPositionSequence;
+Sequence followLineSequence;
+Sequence exercise3Sequence;
+Sequence exercise4Sequence;
+Sequence loopSequence;
+Sequence lcdScrollSequence;
 
 Zumo32U4ButtonA buttonA;
 Zumo32U4ButtonB buttonB;
@@ -21,23 +35,47 @@ void setup()
 
 void exercise1()
 {
-    if (buttonA.isPressed())
+    // By adding  || exercise1Sequence.hasFinished()
+    // we ensure that the sequence will execute in its entirety
+    // even after the button is released. This ensures that
+    // the led will have the same state as it appears
+    // at the end of the sequence.
+    if (buttonA.isPressed() || exercise1Sequence.hasFinished())
     {
-        ledGreen(true);
-        delay(100);
-        ledGreen(false);
-        delay(100);
+        exercise1Sequence
+            .then([&] { //
+                ledGreen(true);
+            })
+            .delay(100)
+            .then([&] { //
+                ledGreen(false);
+            })
+            .delay(100)
+            .loop()
+            .endOfSequence();
     }
 }
 
-void moveEight(int speed)
+/**
+ * @return true when sequence is finished
+ */
+bool moveEight(int speed)
 {
-    motors.setSpeeds(0, speed);
-    delay(2000);
-    motors.setSpeeds(speed, speed);
-    delay(1000);
-    motors.setSpeeds(speed, 0);
-    delay(2000);
+    return moveEightSequence
+        .then([&] { //
+            motors.setSpeeds(0, speed);
+        })
+        .delay(2000)
+        .then([&] { //
+            motors.setSpeeds(speed, speed);
+        })
+        .delay(1000)
+        .then([&] { //
+            motors.setSpeeds(speed, 0);
+        })
+        .delay(2000)
+        .loop()
+        .endOfSequence();
 }
 
 void moveCircle(int speed, bool direction)
@@ -55,10 +93,28 @@ void moveCircle(int speed, bool direction)
 
 void exercise2()
 {
-    moveEight(maxSpeed);
-    moveEight(maxSpeed);
-    moveCircle(maxSpeed, true);
-    moveCircle(maxSpeed, false);
+    exercise2Sequence
+        .thenWhenReturnsTrue([&] { //
+            // moveEight returns true when its sequence has finished
+            // this function will continue to the next step when
+            // its return value is true.
+            // That means that this sequence will continue
+            // after the moveEight sequence finishes.
+            return moveEight(maxSpeed);
+        })
+        .thenWhenReturnsTrue([&] { //
+            return moveEight(maxSpeed);
+        })
+        .then([&] { //
+            moveCircle(maxSpeed, true);
+        })
+        .delay(2000)
+        .then([&] { //
+            moveCircle(maxSpeed, false);
+        })
+        .delay(2000)
+        .loop()
+        .endOfSequence();
 }
 
 void printMessage(const String message, const String message2)
@@ -75,53 +131,71 @@ void printMessage(const String message)
     printMessage(message, "");
 }
 
-void flashAllLeds(const int numFlashes, const int flashDuration)
+/**
+ * @return true when sequence is finished
+ */
+bool flashAllLeds(const int numFlashes, const int flashDuration)
 {
-    bool ledState = true;
-    for (int i = 0; i < numFlashes; i++)
-    {
-        ledGreen(ledState);
-        ledRed(ledState);
-        ledYellow(ledState);
-        ledState = !ledState;
-        delay(flashDuration);
-    }
+    return flashAllLedsSequence
+        .then([&] { //
+            ledGreen(true);
+            ledRed(true);
+            ledYellow(true);
+        })
+        .delay(flashDuration)
+        .then([&] { //
+            ledGreen(false);
+            ledRed(false);
+            ledYellow(false);
+        })
+        .delay(flashDuration)
+        .loopTimes(numFlashes)
+        .endOfSequence();
 }
 
-void calibrate(const int speed)
+/**
+ * @return true when sequence is finished
+ */
+bool calibrate(const int speed)
 {
-    printMessage("Starting in", "3");
-    delay(1000);
-    printMessage("Starting in", "2");
-    delay(1000);
-    printMessage("Starting in", "1");
-    delay(1000);
-    printMessage("Calibrating", "...");
-    flashAllLeds(5, 200);
 
-    Timer timer;
-    for (int i = 0; i < 3; i++)
-    {
-        bool direction = i % 2 == 0;
-        timer.reset();
-        while (!timer.isFinished(2000))
-        {
-            if (direction)
-            {
-                motors.setSpeeds(-speed, speed);
-            }
-            else
-            {
-                motors.setSpeeds(speed, -speed);
-            }
+    return calibrationSequence
+        .then([&] { //
+            printMessage("Starting in", "3");
+        })
+        .delay(1000)
+        .then([&] { //
+            printMessage("Starting in", "2");
+        })
+        .delay(1000)
+        .then([&] { //
+            printMessage("Starting in", "1");
+        })
+        .delay(1000)
+        .then([&] { //
+            printMessage("Calibrating", "...");
+        })
+        .thenWhenReturnsTrue([&] { //
+            return flashAllLeds(5, 400);
+        })
+        .thenRunFor(2000, [&] { //
+            motors.setSpeeds(-speed, speed);
             lineSensors.calibrate();
-        }
-    }
-
-    motors.setSpeeds(0, 0);
-
-    printMessage("Done!");
-    delay(1000);
+        })
+        .thenRunFor(2000, [&] { //
+            motors.setSpeeds(speed, -speed);
+            lineSensors.calibrate();
+        })
+        .repeatPreviousStepsTimes(2, 2)
+        .then([&] { //
+            motors.setSpeeds(0, 0);
+            printMessage("Done!");
+        })
+        .delay(1000)
+        // By using loop this function can be used multiple times without
+        // having to reset the sequence.
+        .loop()
+        .endOfSequence();
 }
 
 int getLineSensorValue()
@@ -143,16 +217,23 @@ void printValue(const String message, const int value)
     printValue(message, String(value));
 }
 
-void printPosition()
+/**
+ * @return true if the sequence is finished
+ */
+bool printPosition()
 {
-    printMessage("Press A", "to cancel");
-    delay(1000);
-    while (!buttonA.getSingleDebouncedPress())
-    {
-        const int position = lineSensors.readLine(lineSensorValues);
-        printValue("Position: ", position);
-        delay(10);
-    }
+    return printPositionSequence
+        .then([&] { //
+            printMessage("Press A", "to cancel");
+        })
+        .delay(1000)
+        .thenWhenReturnsTrue([&] { //
+            const int position = lineSensors.readLine(lineSensorValues);
+            printValue("Position: ", position);
+            return buttonA.getSingleDebouncedPress();
+        })
+        .loop()
+        .endOfSequence();
 }
 
 int clamp(const int value, const Range range)
@@ -203,66 +284,124 @@ String getProgressBar(const int value, const Range range)
     return bar;
 }
 
-void followLine()
+/**
+ * @return true if the sequence is finished
+ */
+bool followLine()
 {
-    printMessage("Press A", "to cancel");
-    flashAllLeds(10, 200);
-    delay(1000);
-    printMessage("Following", "line ...");
-    delay(1000);
-    while (!buttonA.getSingleDebouncedPress())
-    {
-        const Range inputRange(0, 4000);
-        const Range outputRange(0, 2 * maxSpeed);
+    return followLineSequence
+        .then([&] { //
+            printMessage("Press A", "to cancel");
+        })
+        .delay(1000)
+        .thenWhenReturnsTrue([&] { //
+            printMessage("Following", "line ...");
+            return flashAllLeds(10, 200);
+        })
+        .delay(1000)
+        .thenWhenReturnsTrue([&] { //
+            const Range inputRange(0, 4000);
+            const Range outputRange(0, 2 * maxSpeed);
 
-        const int sensorValue = getLineSensorValue();
+            const int sensorValue = getLineSensorValue();
 
-        printValue("Position: ", getProgressBar(sensorValue, inputRange));
+            printValue("Position: ", getProgressBar(sensorValue, inputRange));
 
-        const int output = pid(sensorValue, 2000, inputRange, outputRange);
-        const int centeredOutput = output - maxSpeed;
+            const int output = pid(sensorValue, 2000, inputRange, outputRange);
+            const int centeredOutput = output - maxSpeed;
 
-        const int leftSpeed = maxSpeed + centeredOutput;
-        const int rightSpeed = maxSpeed - centeredOutput;
+            const int leftSpeed = maxSpeed + centeredOutput;
+            const int rightSpeed = maxSpeed - centeredOutput;
 
-        motors.setSpeeds(leftSpeed, rightSpeed);
-    }
+            motors.setSpeeds(leftSpeed, rightSpeed);
+
+            return buttonA.getSingleDebouncedPress();
+        })
+        .loop()
+        .endOfSequence();
 }
 
 void exercise3()
 {
-    printMessage("Press A to", "calibrate");
-    buttonA.waitForButton();
-    calibrate(maxSpeed);
-    printPosition();
+    exercise3Sequence
+        .then([&] { //
+            printMessage("Press A to", "calibrate");
+        })
+        .thenWhenReturnsTrue([&] { //
+            return buttonA.getSingleDebouncedRelease();
+        })
+        .thenWhenReturnsTrue([&] { //
+            return calibrate(maxSpeed);
+        })
+        .thenWhenReturnsTrue([&] { //
+            return printPosition();
+        })
+        .loop()
+        .endOfSequence();
 }
 
 void exercise4()
 {
-    printMessage("Press A to", "calibrate");
-    buttonA.waitForButton();
-    calibrate(maxSpeed);
-    printMessage("Press A to", "follow line");
-    buttonA.waitForButton();
-    followLine();
+    exercise4Sequence
+        .then([&] { //
+            printMessage("Press A to", "calibrate");
+        })
+        .thenWhenReturnsTrue([&] { //
+            return buttonA.getSingleDebouncedRelease();
+        })
+        .thenWhenReturnsTrue([&] { //
+            return calibrate(maxSpeed);
+        })
+        .then([&] { //
+            printMessage("Press A to", "follow line");
+        })
+        .thenWhenReturnsTrue([&] { //
+            return buttonA.getSingleDebouncedRelease();
+        })
+        .thenWhenReturnsTrue([&] { //
+            return followLine();
+        })
+        .loop()
+        .endOfSequence();
 }
 
 void loop()
 {
-    printMessage("A: Calibrate", "B: Follow Line");
-    while (true)
-    {
-        delay(400);
-        lcd.scrollDisplayLeft();
-        if (buttonA.getSingleDebouncedPress())
-        {
-            calibrate(maxSpeed);
-            break;
-        }
-        if (buttonB.getSingleDebouncedPress())
-        {
-            followLine();
-            break;
-        }
-    }
+    // Keeps the LCD scrolling constantly
+    // so that this does not have to be implemented
+    // elsewhere in the code.
+    lcdScrollSequence
+        .then([&] { //
+            lcd.scrollDisplayLeft();
+        })
+        .delay(500)
+        .loop()
+        .endOfSequence();
+
+    loopSequence
+        .then([&] { //
+            printMessage("A: Calibrate", "B: Follow Line");
+            calibrationSequence.pause();
+            followLineSequence.pause();
+        })
+        .thenWhenReturnsTrue([&] { //
+            if (buttonA.getSingleDebouncedPress())
+            {
+                calibrationSequence.start();
+                return true;
+            }
+            else if (buttonB.getSingleDebouncedPress())
+            {
+                followLineSequence.start();
+                return true;
+            }
+            return false;
+        })
+        .thenWhenReturnsTrue([&] { //
+            // Only one of these sequences should be running at a time.
+            // because we paused them earlier
+            return calibrate(maxSpeed) || followLine();
+        })
+        .loop()
+        .endOfSequence();
 }
