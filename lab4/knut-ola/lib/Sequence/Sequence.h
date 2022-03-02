@@ -104,6 +104,33 @@ public:
     }
 
     /**
+     * @brief Repeats n previous steps until callback returns true
+     *
+     * @param steps How many steps to go back each time
+     * @param callback Function to evaluate whether (true) or not (false) to go back
+     * @return Sequence& returns the sequence so chaining can continue
+     */
+    template <typename F>
+    Sequence &repeatPreviousStepsUntil(int steps, F callback)
+    {
+        if (paused)
+        {
+            return *this;
+        }
+
+        if (callback())
+        {
+            sequenceStep += 1;
+        }
+        else
+        {
+            timesPreviousStepLooped += 1;
+            sequenceStep -= steps;
+        }
+        return *this;
+    }
+
+    /**
      * @brief Repeats n previous steps n times
      *
      * @param steps How many steps to go back each time
@@ -117,16 +144,9 @@ public:
             return *this;
         }
 
-        if (timesPreviousStepLooped >= times)
-        {
-            sequenceStep += 1;
-        }
-        else
-        {
-            timesPreviousStepLooped += 1;
-            sequenceStep -= 1;
-        }
-        return *this;
+        return repeatPreviousStepsUntil(steps, [&]() { //
+            return timesPreviousStepLooped >= times;
+        });
     }
 
     // Will run the code provided for the specified number of milliseconds
