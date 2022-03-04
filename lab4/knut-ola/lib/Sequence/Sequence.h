@@ -29,6 +29,12 @@ private:
 
 public:
     Timer timer;
+    void moveSteps(int deltaSteps)
+    {
+        Serial.println("Moving steps");
+        sequenceStep += deltaSteps;
+        timer.reset();
+    }
     // Will run the code provided and go to next sequence step
     // if the function returns true
     template <typename F>
@@ -43,7 +49,7 @@ public:
         {
             if (callback())
             {
-                sequenceStep += 1;
+                moveSteps(1);
             }
         }
         checkedSteps += 1;
@@ -56,13 +62,16 @@ public:
     {
         if (paused)
         {
+            Serial.println("Paused");
             return *this;
         }
-
+        Serial.print(checkedSteps);
+        Serial.print(" ");
+        Serial.println(sequenceStep);
         if (checkedSteps == sequenceStep)
         {
             callback();
-            sequenceStep += 1;
+            moveSteps(1);
         }
         checkedSteps += 1;
         return *this;
@@ -120,12 +129,12 @@ public:
 
         if (callback())
         {
-            sequenceStep += 1;
+            moveSteps(1);
         }
         else
         {
             timesPreviousStepLooped += 1;
-            sequenceStep -= steps;
+            moveSteps(-steps);
         }
         return *this;
     }
@@ -161,9 +170,10 @@ public:
 
         if (checkedSteps == sequenceStep)
         {
+            delay(durationMs);
             if (timer.isFinished(durationMs))
             {
-                sequenceStep += 1;
+                moveSteps(1);
             }
             else
             {
@@ -181,7 +191,6 @@ public:
         {
             return *this;
         }
-
         return thenRunFor(delayMs, [&] {});
     }
 
@@ -239,7 +248,7 @@ public:
     {
         if (paused)
         {
-            return *this;
+            return false;
         }
 
         if (numSteps < checkedSteps)

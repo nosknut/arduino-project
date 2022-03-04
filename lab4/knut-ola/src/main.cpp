@@ -3,6 +3,7 @@
 #include <Timer.h>
 #include <Range.h>
 #include <Sequence.h>
+#include <PidController.h>
 
 // Sequences
 Sequence exercise1Sequence;
@@ -17,19 +18,24 @@ Sequence exercise4Sequence;
 Sequence loopSequence;
 Sequence lcdScrollSequence;
 
+const int maxSpeed = 150;
+const Range inputRange(0, 4000);
+const Range outputRange(0, 2 * maxSpeed);
+PidController linePidController(10.0, 0.0, 0.0, inputRange, outputRange);
+
 Zumo32U4ButtonA buttonA;
 Zumo32U4ButtonB buttonB;
 Zumo32U4Motors motors;
 Zumo32U4LineSensors lineSensors;
 Zumo32U4LCD lcd;
 
-const int maxSpeed = 150;
 const int lcdWidth = 8;
 const int NUM_SENSORS = 5;
 unsigned int lineSensorValues[NUM_SENSORS];
 
 void setup()
 {
+    Serial.begin(9600);
     lineSensors.initFiveSensors();
 }
 
@@ -236,42 +242,6 @@ bool printPosition()
         .endOfSequence();
 }
 
-int clamp(const int value, const Range range)
-{
-    if (value < range.minValue)
-    {
-        return range.minValue;
-    }
-    else if (value > range.maxValue)
-    {
-        return range.maxValue;
-    }
-    else
-    {
-        return value;
-    }
-}
-
-int pid(const int value, const int targetValue, const Range inputRange, const Range outputRange)
-{
-    const int errorInInputScale = value - targetValue;
-
-    const int kp = 10;
-
-    const int outputInInputScale = kp * errorInInputScale;
-
-    const int clampedOutputInInputScale = clamp(outputInInputScale, inputRange);
-
-    const int outputInOutputScale = map(
-        clampedOutputInInputScale,
-        inputRange.minValue,
-        inputRange.maxValue,
-        outputRange.minValue,
-        outputRange.maxValue);
-
-    return outputInOutputScale;
-}
-
 String getProgressBar(const int value, const Range range)
 {
     const int percentage = map(value, range.minValue, range.maxValue, 0, 100);
@@ -300,14 +270,11 @@ bool followLine()
         })
         .delay(1000)
         .thenWhenReturnsTrue([&] { //
-            const Range inputRange(0, 4000);
-            const Range outputRange(0, 2 * maxSpeed);
-
             const int sensorValue = getLineSensorValue();
 
             printValue("Position: ", getProgressBar(sensorValue, inputRange));
 
-            const int output = pid(sensorValue, 2000, inputRange, outputRange);
+            const int output = linePidController.update(sensorValue, 2000);
             const int centeredOutput = output - maxSpeed;
 
             const int leftSpeed = maxSpeed + centeredOutput;
@@ -365,7 +332,8 @@ void exercise4()
         .endOfSequence();
 }
 
-void loop()
+/*
+void loop1()
 {
     // Keeps the LCD scrolling constantly
     // so that this does not have to be implemented
@@ -374,7 +342,13 @@ void loop()
         .then([&] { //
             lcd.scrollDisplayLeft();
         })
-        .delay(500)
+        .delay(100)
+        .repeatPreviousStepsTimes(2, 20)
+        .then([&] { //
+            lcd.scrollDisplayRight();
+        })
+        .delay(100)
+        .repeatPreviousStepsTimes(2, 20)
         .loop()
         .endOfSequence();
 
@@ -402,6 +376,38 @@ void loop()
             // because we paused them earlier
             return calibrate(maxSpeed) || followLine();
         })
+        .loop()
+        .endOfSequence();
+}
+*/
+
+void loop()
+{
+    loopSequence
+        .then([&] { //
+            ledGreen(true);
+            Serial.println("Green on");
+        })
+        .delay(5000)
+        .then([&] { //
+            ledGreen(false);
+            Serial.println("Green off");
+        })
+        .delay(5000)
+        .loop()
+        .endOfSequence();
+
+    followLineSequence
+        .then([&] { //
+            ledRed(true);
+            Serial.println("Red on");
+        })
+        .delay(100)
+        .then([&] { //
+            ledGreen(false);
+            Serial.println("Red off");
+        })
+        .delay(100)
         .loop()
         .endOfSequence();
 }
