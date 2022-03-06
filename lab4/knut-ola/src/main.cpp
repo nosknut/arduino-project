@@ -32,11 +32,27 @@ Zumo32U4LCD lcd;
 const int lcdWidth = 8;
 const int NUM_SENSORS = 5;
 unsigned int lineSensorValues[NUM_SENSORS];
+bool scrollLcd = false;
+
+void blockingCountdown(const String message, const int durationMillis)
+{
+    for (int i = durationMillis; i > 0; i--)
+    {
+        lcd.clear();
+        lcd.gotoXY(0, 0);
+        lcd.print(message);
+        lcd.gotoXY(0, 1);
+        lcd.print(i);
+        delay(1000);
+    }
+    lcd.clear();
+}
 
 void setup()
 {
     Serial.begin(9600);
     lineSensors.initFiveSensors();
+    blockingCountdown("Starting ...", 3);
 }
 
 void exercise1()
@@ -130,11 +146,18 @@ void printMessage(const String message, const String message2)
     lcd.print(message);
     lcd.gotoXY(0, 1);
     lcd.print(message2);
+    scrollLcd = false;
 }
 
 void printMessage(const String message)
 {
     printMessage(message, "");
+}
+
+void printScrollMessage(const String message, const String message2)
+{
+    printMessage(message, message2);
+    scrollLcd = true;
 }
 
 /**
@@ -164,8 +187,17 @@ bool flashAllLeds(const int numFlashes, const int flashDuration)
  */
 bool calibrate(const int speed)
 {
-
+    // This if will run in parallell with the sequence
+    if (buttonA.getSingleDebouncedPress())
+    {
+        motors.setSpeeds(0, 0);
+        calibrationSequence.reset();
+        return true;
+    }
     return calibrationSequence
+        .then([&] { //
+            printMessage("Press A", "to cancel");
+        })
         .then([&] { //
             printMessage("Starting in", "3");
         })
@@ -232,7 +264,7 @@ bool printPosition()
         .then([&] { //
             printMessage("Press A", "to cancel");
         })
-        .delay(1000)
+        .delay(3000)
         .thenWhenReturnsTrue([&] { //
             const int position = lineSensors.readLine(lineSensorValues);
             printValue("Position: ", position);
@@ -259,16 +291,23 @@ String getProgressBar(const int value, const Range range)
  */
 bool followLine()
 {
+    // This if will run in parallell with the sequence
+    if (buttonA.getSingleDebouncedPress())
+    {
+        motors.setSpeeds(0, 0);
+        followLineSequence.reset();
+        return true;
+    }
     return followLineSequence
         .then([&] { //
             printMessage("Press A", "to cancel");
         })
-        .delay(1000)
+        .delay(3000)
         .thenWhenReturnsTrue([&] { //
             printMessage("Following", "line ...");
             return flashAllLeds(10, 200);
         })
-        .delay(1000)
+        .delay(3000)
         .thenWhenReturnsTrue([&] { //
             const int sensorValue = getLineSensorValue();
 
@@ -283,6 +322,10 @@ bool followLine()
             motors.setSpeeds(leftSpeed, rightSpeed);
 
             return buttonA.getSingleDebouncedPress();
+        })
+        .then([&] { //
+            // Kill the motors after the user stops the program
+            motors.setSpeeds(0, 0);
         })
         .loop()
         .endOfSequence();
@@ -332,29 +375,36 @@ void exercise4()
         .endOfSequence();
 }
 
-/*
-void loop1()
+// Keeps the LCD scrolling constantly
+// so that this does not have to be implemented
+// elsewhere in the code.
+void updateLcdScroll()
 {
-    // Keeps the LCD scrolling constantly
-    // so that this does not have to be implemented
-    // elsewhere in the code.
-    lcdScrollSequence
-        .then([&] { //
-            lcd.scrollDisplayLeft();
-        })
-        .delay(100)
-        .repeatPreviousStepsTimes(2, 20)
-        .then([&] { //
-            lcd.scrollDisplayRight();
-        })
-        .delay(100)
-        .repeatPreviousStepsTimes(2, 20)
-        .loop()
-        .endOfSequence();
+    if (scrollLcd)
+    {
+        lcdScrollSequence
+            .then([&] { //
+                lcd.scrollDisplayLeft();
+            })
+            .delay(300)
+            .repeatPreviousStepsTimes(2, 20)
+            .then([&] { //
+                lcd.scrollDisplayRight();
+            })
+            .repeatPreviousStepsTimes(1, 20)
+            .delay(1500)
+            .loop()
+            .endOfSequence();
+    }
+}
 
+void updateMenuControls()
+{
     loopSequence
         .then([&] { //
-            printMessage("A: Calibrate", "B: Follow Line");
+            printScrollMessage("A: Calibrate", "B: Follow Line");
+            calibrationSequence.reset();
+            followLineSequence.reset();
             calibrationSequence.pause();
             followLineSequence.pause();
         })
@@ -371,43 +421,22 @@ void loop1()
             }
             return false;
         })
+        // Only one of these two next sequences should be running at a time.
+        // because we reset them in the steps above
         .thenWhenReturnsTrue([&] { //
-            // Only one of these sequences should be running at a time.
-            // because we paused them earlier
-            return calibrate(maxSpeed) || followLine();
+            // Will continue if the sequence is not running
+            return calibrate(maxSpeed);
+        })
+        .thenWhenReturnsTrue([&] { //
+            // Will continue if the sequence is not running
+            return followLine();
         })
         .loop()
         .endOfSequence();
 }
-*/
 
 void loop()
 {
-    loopSequence
-        .then([&] { //
-            ledGreen(true);
-            Serial.println("Green on");
-        })
-        .delay(5000)
-        .then([&] { //
-            ledGreen(false);
-            Serial.println("Green off");
-        })
-        .delay(5000)
-        .loop()
-        .endOfSequence();
-
-    followLineSequence
-        .then([&] { //
-            ledRed(true);
-            Serial.println("Red on");
-        })
-        .delay(100)
-        .then([&] { //
-            ledGreen(false);
-            Serial.println("Red off");
-        })
-        .delay(100)
-        .loop()
-        .endOfSequence();
+    updateLcdScroll();
+    updateMenuControls();
 }

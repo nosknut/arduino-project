@@ -10,7 +10,6 @@ private:
 
     int timesLooped = 0;
     int timesToLoop = 0;
-    bool shouldLoopASetNumberTimes = false;
 
     // Keeps track of what step we should be executing
     int sequenceStep = 0;
@@ -31,7 +30,6 @@ public:
     Timer timer;
     void moveSteps(int deltaSteps)
     {
-        Serial.println("Moving steps");
         sequenceStep += deltaSteps;
         timer.reset();
     }
@@ -62,12 +60,8 @@ public:
     {
         if (paused)
         {
-            Serial.println("Paused");
             return *this;
         }
-        Serial.print(checkedSteps);
-        Serial.print(" ");
-        Serial.println(sequenceStep);
         if (checkedSteps == sequenceStep)
         {
             callback();
@@ -78,18 +72,19 @@ public:
     }
 
     // Will reset the sequence to the first step
-    void restart()
+    void reset()
     {
         checkedSteps = 0;
         sequenceStep = 0;
         timesLooped = 0;
         timesPreviousStepLooped = 0;
         paused = false;
+        sequenceHasFinished = false;
     }
 
     void start()
     {
-        restart();
+        reset();
     }
 
     void pause()
@@ -126,16 +121,21 @@ public:
         {
             return *this;
         }
-
-        if (callback())
+        if (checkedSteps == sequenceStep)
         {
-            moveSteps(1);
-        }
-        else
-        {
+            // SHould run before callback is checked
             timesPreviousStepLooped += 1;
-            moveSteps(-steps);
+            if (callback())
+            {
+                moveSteps(1);
+                timesPreviousStepLooped = 0;
+            }
+            else
+            {
+                moveSteps(-steps);
+            }
         }
+        checkedSteps += 1;
         return *this;
     }
 
@@ -170,7 +170,6 @@ public:
 
         if (checkedSteps == sequenceStep)
         {
-            delay(durationMs);
             if (timer.isFinished(durationMs))
             {
                 moveSteps(1);
@@ -202,11 +201,33 @@ public:
             return *this;
         }
 
-        shouldLoopASetNumberTimes = false;
         if (checkedSteps == sequenceStep)
         {
             shouldLoop = true;
+            sequenceStep += 1;
         }
+
+        checkedSteps += 1;
+        return *this;
+    }
+
+    // Restart sequence from beginning when sequence has finished executing
+    // until the callback returns true
+    template <typename F>
+    Sequence &loopUntil(F callback)
+    {
+        if (paused)
+        {
+            return *this;
+        }
+
+        if (checkedSteps == sequenceStep)
+        {
+            shouldLoop = !callback();
+            sequenceStep += 1;
+        }
+
+        checkedSteps += 1;
         return *this;
     }
 
@@ -222,17 +243,22 @@ public:
             return *this;
         }
 
-        shouldLoopASetNumberTimes = true;
-        timesToLoop = times;
-        if (timesLooped == timesToLoop)
+        if (checkedSteps == sequenceStep)
         {
-            timesLooped = 0;
-        }
-        else
-        {
+            shouldLoop = true;
+            sequenceStep += 1;
+            timesToLoop = times;
+            // timesLooped should b incremented before the check
             timesLooped += 1;
-            loop();
+            if (timesLooped == timesToLoop)
+            {
+                shouldLoop = false;
+                timesToLoop = 0;
+                timesLooped = 0;
+            }
         }
+
+        checkedSteps += 1;
         return *this;
     }
 
@@ -248,7 +274,7 @@ public:
     {
         if (paused)
         {
-            return false;
+            return true;
         }
 
         if (numSteps < checkedSteps)
@@ -257,18 +283,62 @@ public:
         }
         checkedSteps = 0;
 
-        sequenceHasFinished = (numSteps != 0) && (sequenceStep == numSteps);
+        sequenceHasFinished = sequenceStep == numSteps;
 
-        if (sequenceHasFinished && shouldLoop)
+        if (sequenceHasFinished)
         {
-            shouldLoop = false;
-            restart();
+            if (shouldLoop)
+            {
+                sequenceStep = 0;
+            }
+            else
+            {
+                // The sequence execution
+                // is complete and there is
+                // no looping. This block will
+                // run until the sequence is
+                // restarted manually by the user
+            }
+            return true;
         }
 
-        bool hasFinishedLooping = !shouldLoopASetNumberTimes || (timesLooped == timesToLoop);
-
-        return sequenceHasFinished && hasFinishedLooping;
+        return false;
     }
 };
+
+/*
+Example usage:
+
+// Sequences
+Sequence redSequence;
+Sequence yellowSequence;
+
+void loop()
+{
+    redSequence
+        .then([&] { //
+            ledRed(true);
+        })
+        .delay(2000)
+        .then([&] { //
+            ledRed(false);
+        })
+        .delay(2000)
+        .loop()
+        .endOfSequence();
+
+    yellowSequence
+        .then([&] { //
+            ledYellow(true);
+        })
+        .delay(200)
+        .then([&] { //
+            ledYellow(false);
+        })
+        .delay(200)
+        .loop()
+        .endOfSequence();
+}
+*/
 
 #endif
