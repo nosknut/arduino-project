@@ -1,6 +1,6 @@
 #ifndef Scaling_h
 #define Scaling_h
-
+#include <Arduino.h>
 namespace Scaling
 {
 
@@ -18,6 +18,16 @@ namespace Scaling
         {
             return value;
         }
+    }
+
+    int mapToRange(const int value, const Range inputRange, const Range outputRange)
+    {
+        return map(
+            value,
+            inputRange.minValue,
+            inputRange.maxValue,
+            outputRange.minValue,
+            outputRange.maxValue);
     }
 
 }

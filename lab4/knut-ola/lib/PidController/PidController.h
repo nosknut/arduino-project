@@ -1,26 +1,29 @@
 #ifndef PidController_h
 #define PidController_h
-#include <Arduino.h>
 #include <Scaling.h>
+#include <Arduino.h>
 
 class PidController
 {
+public:
+    float kp = 0;
+    float ki = 0;
+    float kd = 0;
+
 private:
     // Max amount of time between updates for the update to be valid
-    long updateTimeout = 2;
-    double kp = 0;
-    double ki = 0;
-    double kd = 0;
+    long updateTimeout = 20;
     const Range inputRange;
     const Range outputRange;
 
-    double area = 0;
-    double lastError = 0;
-    long lastTime = millis();
-    double lastOutput = 0;
+    float area = 0;
+    float lastError = 0;
+    long previousUpdateTime = millis();
+    float previousUpdateOutput = 0;
 
 public:
-    PidController(double kp, double ki, double kd, const Range inputRange, const Range outputRange)
+    // Set kp, ki and/or kd to 0.0 to disable the respective mode
+    PidController(float kp, float ki, float kd, const Range inputRange, const Range outputRange)
         : kp(kp),
           ki(ki),
           kd(kd),
@@ -29,31 +32,29 @@ public:
     {
     }
 
-    double update(double value, double target)
+    float update(float value, float target)
     {
-        double error = target - value;
-        double deltaTime = millis() - lastTime;
+        float error = value - target;
+        float deltaTime = millis() - previousUpdateTime;
         if (deltaTime > updateTimeout)
         {
             // Ignore this update if it is too old
-            lastTime = millis();
-            return lastOutput;
+            previousUpdateTime = millis();
+            return previousUpdateOutput;
         }
-        double deltaError = error - lastError;
-        double centerPointError = (error + lastError) / 2;
+        float deltaError = error - lastError;
+        float centerPointError = (error + lastError) / 2;
         area += centerPointError * deltaTime;
-        double output = kp * error + ki * area + kd * deltaError;
+        float output = kp * error + ki * area + kd * deltaError;
         lastError = error;
-        lastTime = millis();
+        previousUpdateTime = millis();
 
-        lastOutput = map(
+        previousUpdateOutput = Scaling::mapToRange(
             Scaling::clamp(output, inputRange),
-            inputRange.minValue,
-            inputRange.maxValue,
-            outputRange.minValue,
-            outputRange.maxValue);
+            inputRange,
+            outputRange);
 
-        return lastOutput;
+        return previousUpdateOutput;
     }
 };
 

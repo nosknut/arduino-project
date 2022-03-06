@@ -252,7 +252,7 @@ void printValue(const String message, const String value)
 
 void printValue(const String message, const int value)
 {
-    printValue(message, String(value));
+    printValue(message, String(value, 2));
 }
 
 /**
@@ -311,15 +311,20 @@ bool followLine()
         .thenWhenReturnsTrue([&] { //
             const int sensorValue = getLineSensorValue();
 
-            printValue("Position: ", getProgressBar(sensorValue, inputRange));
-
             const int output = linePidController.update(sensorValue, 2000);
+
             const int centeredOutput = output - maxSpeed;
+
+            lcd.clear();
+            lcd.setCursor(0, 0);
+            lcd.print(output);
+            lcd.setCursor(0, 1);
+            lcd.print(sensorValue);
 
             const int leftSpeed = maxSpeed + centeredOutput;
             const int rightSpeed = maxSpeed - centeredOutput;
 
-            motors.setSpeeds(leftSpeed, rightSpeed);
+            // motors.setSpeeds(leftSpeed, rightSpeed);
 
             return buttonA.getSingleDebouncedPress();
         })
@@ -380,7 +385,7 @@ void exercise4()
 // elsewhere in the code.
 void updateLcdScroll()
 {
-    if (scrollLcd)
+    if (false)
     {
         lcdScrollSequence
             .then([&] { //
@@ -439,4 +444,7 @@ void loop()
 {
     updateLcdScroll();
     updateMenuControls();
+    // Delay the entire loop for one millisecond
+    // since our code is now blazingly fast
+    delay(1);
 }
