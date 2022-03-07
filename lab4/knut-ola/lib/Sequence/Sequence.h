@@ -234,12 +234,22 @@ public:
         return *this;
     }
 
-    // Will prevent endSequence from returning true until the
-    // specified number of times has been looped
-    // When the specified number of times has been looped,
-    // the sequence will start executing from the first step
-    // just like with a normal loop
-    Sequence &loopTimes(int times)
+    /**
+     * Will prevent endSequence from returning true until the
+     * specified number of times has been looped
+     * When the specified number of times has been looped,
+     * the sequence will start executing from the first step
+     * just like with a normal loop
+     * @param restartAfterCompletion true
+     *  Will restart the sequence from the first step
+     *  after the specified number of times has been looped.
+     *  During the last update after the sequence has run the
+     *  specified number of times, endOfSequence will return true
+     *  before the sequence restarts and counts from zero.
+     *  Leave this as true if you do not intend to manually reset the
+     *  sequence between uses.
+     */
+    Sequence &loopTimes(int times, bool restartAfterCompletion)
     {
         if (paused)
         {
@@ -257,7 +267,12 @@ public:
             if (timesLooped == timesToLoop)
             {
                 endSequenceShouldReturnTrueBetweenLoops = true;
-                shouldLoop = false;
+                // This will allow the sequence to restart from the first step
+                // and simply return true after the specified number of times has been looped
+                // This way there is a queue for when the fixed number of loops has been completed
+                // and the sequence can be restarted from the first step just like with a normal
+                // loop. This results in reusable sequences that do not require a manual restart.
+                shouldLoop = restartAfterCompletion;
                 timesToLoop = 0;
                 timesLooped = 0;
             }

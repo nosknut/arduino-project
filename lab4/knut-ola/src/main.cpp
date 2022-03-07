@@ -178,7 +178,7 @@ bool flashAllLeds(const int numFlashes, const int flashDuration)
             ledYellow(false);
         })
         .delay(flashDuration)
-        .loopTimes(numFlashes)
+        .loopTimes(numFlashes, true)
         .endOfSequence();
 }
 
@@ -302,10 +302,23 @@ bool followLine()
         .then([&] { //
             printMessage("Press A", "to cancel");
         })
-        .delay(3000)
-        .thenWhenReturnsTrue([&] { //
+        .then([&] { //
+            printMessage("Starting in", "3");
+        })
+        .delay(1000)
+        .then([&] { //
+            printMessage("Starting in", "2");
+        })
+        .delay(1000)
+        .then([&] { //
+            printMessage("Starting in", "1");
+        })
+        .delay(1000)
+        .then([&] { //
             printMessage("Following", "line ...");
-            return flashAllLeds(10, 200);
+        })
+        .thenWhenReturnsTrue([&] { //
+            return flashAllLeds(5, 400);
         })
         .delay(3000)
         .thenWhenReturnsTrue([&] { //
