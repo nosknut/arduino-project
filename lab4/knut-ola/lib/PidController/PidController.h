@@ -32,7 +32,7 @@ public:
     {
     }
 
-    float update(float value, float target)
+    float update(float value, float target, bool clampOutput)
     {
         float error = value - target;
         float deltaTime = millis() - previousUpdateTime;
@@ -49,10 +49,15 @@ public:
         lastError = error;
         previousUpdateTime = millis();
 
-        previousUpdateOutput = Scaling::mapToRange(
-            Scaling::clamp(output, inputRange),
-            inputRange,
+        float scaledOutput = Scaling::mapToRange(
+            output,
+            Range(-inputRange.getWidth(), inputRange.getWidth()),
             outputRange);
+
+        previousUpdateOutput =
+            clampOutput
+                ? Scaling::clamp(scaledOutput, outputRange)
+                : scaledOutput;
 
         return previousUpdateOutput;
     }

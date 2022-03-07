@@ -4,6 +4,8 @@
 #include <Range.h>
 #include <Sequence.h>
 #include <PidController.h>
+#include <Scaling.h>
+// #include <EEPROM.h>
 
 // Sequences
 Sequence exercise1Sequence;
@@ -17,11 +19,13 @@ Sequence exercise3Sequence;
 Sequence exercise4Sequence;
 Sequence loopSequence;
 Sequence lcdScrollSequence;
+Sequence printSpeedSequence;
 
-const int maxSpeed = 150;
+const int targetSpeed = 150;
+const int maxSpeed = 200;
 const Range inputRange(0, 4000);
-const Range outputRange(0, 2 * maxSpeed);
-PidController linePidController(8.0, 0.0, 0.0, inputRange, outputRange);
+const Range outputRange(-maxSpeed, maxSpeed);
+PidController linePidController(2.0, 0.0, 0.0, inputRange, outputRange);
 
 Zumo32U4ButtonA buttonA;
 Zumo32U4ButtonB buttonB;
@@ -31,7 +35,10 @@ Zumo32U4LCD lcd;
 
 const int lcdWidth = 8;
 const int NUM_SENSORS = 5;
-unsigned int lineSensorValues[NUM_SENSORS];
+struct SensorData
+{
+    unsigned int lineSensorValues[NUM_SENSORS];
+} memorizedValues;
 bool scrollLcd = false;
 
 void blockingCountdown(const String message, const int durationMillis)
@@ -122,17 +129,17 @@ void exercise2()
             // its return value is true.
             // That means that this sequence will continue
             // after the moveEight sequence finishes.
-            return moveEight(maxSpeed);
+            return moveEight(targetSpeed);
         })
         .thenWhenReturnsTrue([&] { //
-            return moveEight(maxSpeed);
+            return moveEight(targetSpeed);
         })
         .then([&] { //
-            moveCircle(maxSpeed, true);
+            moveCircle(targetSpeed, true);
         })
         .delay(2000)
         .then([&] { //
-            moveCircle(maxSpeed, false);
+            moveCircle(targetSpeed, false);
         })
         .delay(2000)
         .loop()
@@ -228,6 +235,7 @@ bool calibrate(const int speed)
         .then([&] { //
             motors.setSpeeds(0, 0);
             printMessage("Done!");
+            // EEPROM.put(0, memorizedValues);
         })
         .delay(1000)
         // By using loop this function can be used multiple times without
@@ -238,7 +246,7 @@ bool calibrate(const int speed)
 
 int getLineSensorValue()
 {
-    return lineSensors.readLine(lineSensorValues);
+    return lineSensors.readLine(memorizedValues.lineSensorValues);
 }
 
 void printValue(const String message, const String value)
@@ -266,7 +274,7 @@ bool printPosition()
         })
         .delay(3000)
         .thenWhenReturnsTrue([&] { //
-            const int position = lineSensors.readLine(lineSensorValues);
+            const int position = lineSensors.readLine(memorizedValues.lineSensorValues);
             printValue("Position: ", position);
             return buttonA.getSingleDebouncedPress();
         })
@@ -300,6 +308,9 @@ bool followLine()
     }
     return followLineSequence
         .then([&] { //
+            // EEPROM.get(0, memorizedValues);
+        })
+        .then([&] { //
             printMessage("Press A", "to cancel");
         })
         .then([&] { //
@@ -320,20 +331,46 @@ bool followLine()
         .thenWhenReturnsTrue([&] { //
             return flashAllLeds(5, 400);
         })
-        .delay(3000)
         .thenWhenReturnsTrue([&] { //
             const int sensorValue = getLineSensorValue();
 
-            const int output = linePidController.update(sensorValue, 2000);
+            const int output = linePidController.update(sensorValue, 2000, true);
 
-            const int centeredOutput = output - maxSpeed;
+            // printMessage("Position", getProgressBar(sensorValue, inputRange));
 
-            printMessage("Position", getProgressBar(sensorValue, inputRange));
+            // const int leftSpeed = targetSpeed + output;
+            // const int unusedLeftSpeed = targetSpeed - maxSpeed;
+            // const int rightSpeed = targetSpeed - output - unusedLeftSpeed;
+            // const int unusedRightSpeed = rightSpeed - maxSpeed;
+            // const int rightCompensatedLeftSpeed = leftSpeed - unusedRightSpeed;
+            // const int clampedLeftSpeed = Scaling::clamp(rightCompensatedLeftSpeed, outputRange);
+            // const int clampedRightSpeed = Scaling::clamp(rightSpeed, outputRange);
 
-            const int leftSpeed = maxSpeed + centeredOutput;
-            const int rightSpeed = maxSpeed - centeredOutput;
+            // Assign the output to the left
+            const int leftSpeed = targetSpeed + output - maxSpeed;
+            // Take what ever is left over and assign it to the right along with the output
+            const int unusedLeftSpeed = Scaling::remainderFromClamp(leftSpeed, outputRange);
+            const int rightSpeed = targetSpeed - output - unusedLeftSpeed;
+            // Take what ever is left over and assign/re-assign it to the left
+            const int unusedRightSpeed = Scaling::remainderFromClamp(rightSpeed, outputRange);
+            const int rightCompensatedLeftSpeed = leftSpeed - unusedRightSpeed;
+            // Clamp the distributed speeds to the output range
+            const int clampedLeftSpeed = Scaling::clamp(rightCompensatedLeftSpeed, outputRange);
+            const int clampedRightSpeed = Scaling::clamp(rightSpeed, outputRange);
 
-            motors.setSpeeds(leftSpeed, rightSpeed);
+            printSpeedSequence
+                .thenWhenReturnsTrue([&] { //
+                    printMessage(String((float)sensorValue, 2), String((float)output, 2));
+                    return buttonB.getSingleDebouncedPress();
+                })
+                .thenWhenReturnsTrue([&] { //
+                    printMessage(String((float)clampedLeftSpeed, 2), String((float)clampedRightSpeed, 2));
+                    return buttonB.getSingleDebouncedPress();
+                })
+                .loop()
+                .endOfSequence();
+
+            motors.setSpeeds(clampedLeftSpeed, clampedRightSpeed);
 
             return buttonA.getSingleDebouncedPress();
         })
@@ -355,7 +392,7 @@ void exercise3()
             return buttonA.getSingleDebouncedRelease();
         })
         .thenWhenReturnsTrue([&] { //
-            return calibrate(maxSpeed);
+            return calibrate(targetSpeed);
         })
         .thenWhenReturnsTrue([&] { //
             return printPosition();
@@ -374,7 +411,7 @@ void exercise4()
             return buttonA.getSingleDebouncedRelease();
         })
         .thenWhenReturnsTrue([&] { //
-            return calibrate(maxSpeed);
+            return calibrate(targetSpeed);
         })
         .then([&] { //
             printMessage("Press A to", "follow line");
@@ -430,6 +467,7 @@ void updateMenuControls()
             }
             else if (buttonB.getSingleDebouncedPress())
             {
+                // calibrationSequence.start();
                 followLineSequence.start();
                 return true;
             }
@@ -437,9 +475,10 @@ void updateMenuControls()
         })
         // Only one of these two next sequences should be running at a time.
         // because we reset them in the steps above
+        //.thenWhenReturnsTrue([&] { //
         .thenWhenReturnsTrue([&] { //
             // Will continue if the sequence is not running
-            return calibrate(maxSpeed);
+            return calibrate(targetSpeed);
         })
         .thenWhenReturnsTrue([&] { //
             // Will continue if the sequence is not running
