@@ -21,7 +21,7 @@ Sequence lcdScrollSequence;
 const int maxSpeed = 150;
 const Range inputRange(0, 4000);
 const Range outputRange(0, 2 * maxSpeed);
-PidController linePidController(10.0, 0.0, 0.0, inputRange, outputRange);
+PidController linePidController(8.0, 0.0, 0.0, inputRange, outputRange);
 
 Zumo32U4ButtonA buttonA;
 Zumo32U4ButtonB buttonB;
@@ -315,16 +315,12 @@ bool followLine()
 
             const int centeredOutput = output - maxSpeed;
 
-            lcd.clear();
-            lcd.setCursor(0, 0);
-            lcd.print(output);
-            lcd.setCursor(0, 1);
-            lcd.print(sensorValue);
+            printMessage("Position", getProgressBar(sensorValue, inputRange));
 
             const int leftSpeed = maxSpeed + centeredOutput;
             const int rightSpeed = maxSpeed - centeredOutput;
 
-            // motors.setSpeeds(leftSpeed, rightSpeed);
+            motors.setSpeeds(leftSpeed, rightSpeed);
 
             return buttonA.getSingleDebouncedPress();
         })

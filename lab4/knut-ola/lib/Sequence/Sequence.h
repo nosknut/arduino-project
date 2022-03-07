@@ -24,6 +24,7 @@ private:
     // of the first step after a sequence restart.
     bool sequenceHasFinished = false;
     bool shouldLoop = false;
+    bool endSequenceShouldReturnTrueBetweenLoops = true;
     bool paused = false;
 
 public:
@@ -203,6 +204,7 @@ public:
 
         if (checkedSteps == sequenceStep)
         {
+            endSequenceShouldReturnTrueBetweenLoops = true;
             shouldLoop = true;
             sequenceStep += 1;
         }
@@ -223,6 +225,7 @@ public:
 
         if (checkedSteps == sequenceStep)
         {
+            endSequenceShouldReturnTrueBetweenLoops = false;
             shouldLoop = !callback();
             sequenceStep += 1;
         }
@@ -245,13 +248,15 @@ public:
 
         if (checkedSteps == sequenceStep)
         {
+            endSequenceShouldReturnTrueBetweenLoops = false;
             shouldLoop = true;
             sequenceStep += 1;
             timesToLoop = times;
-            // timesLooped should b incremented before the check
+            // timesLooped should be incremented before the check
             timesLooped += 1;
             if (timesLooped == timesToLoop)
             {
+                endSequenceShouldReturnTrueBetweenLoops = true;
                 shouldLoop = false;
                 timesToLoop = 0;
                 timesLooped = 0;
@@ -290,6 +295,7 @@ public:
             if (shouldLoop)
             {
                 sequenceStep = 0;
+                return endSequenceShouldReturnTrueBetweenLoops;
             }
             else
             {
@@ -298,8 +304,8 @@ public:
                 // no looping. This block will
                 // run until the sequence is
                 // restarted manually by the user
+                return true;
             }
-            return true;
         }
 
         return false;
