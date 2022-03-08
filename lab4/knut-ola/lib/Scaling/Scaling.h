@@ -1,9 +1,10 @@
 #ifndef Scaling_h
 #define Scaling_h
+#include <Range.h>
 namespace Scaling
 {
 
-    int clamp(const int value, const Range range)
+    int clamp(const int value, Range range)
     {
         if (value < range.minValue)
         {
@@ -27,7 +28,7 @@ namespace Scaling
     // remainderFromClamp(9, Range(0, 10)) == 0
     // remainderFromClamp(10, Range(0, 10)) == 0
     // remainderFromClamp(11, Range(0, 10)) == 1
-    int remainderFromClamp(const int value, const Range range)
+    int remainderFromClamp(const int value, Range range)
     {
         return value - clamp(value, range);
     }
@@ -38,7 +39,7 @@ namespace Scaling
         return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
     }
 
-    long mapToRange(const long value, const Range inputRange, const Range outputRange)
+    long mapToRange(const long value, Range inputRange, Range outputRange)
     {
         return map(
             value,

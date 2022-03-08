@@ -1,54 +1,60 @@
 #include <Arduino.h>
+#include <ApplicationConfig.h>
 #include <Zumo32U4.h>
 #include <Timer.h>
 #include <Range.h>
 #include <Sequence.h>
 #include <PidController.h>
 #include <Scaling.h>
-// #include <EEPROM.h>
-
-// Sequences
-Sequence exercise1Sequence;
-Sequence moveEightSequence;
-Sequence exercise2Sequence;
-Sequence flashAllLedsSequence;
-Sequence calibrationSequence;
-Sequence printPositionSequence;
-Sequence followLineSequence;
-Sequence exercise3Sequence;
-Sequence exercise4Sequence;
-Sequence loopSequence;
-Sequence lcdScrollSequence;
-Sequence printSpeedSequence;
-Sequence changePositionSequence;
-Sequence serialSequence;
-
-int currentPosition = 2000;
-const int targetSpeed = 200;
-const int calibrationSpeed = 200;
-const int maxSpeed = 200;
-const Range inputRange(0, 4000);
-const Range outputRange(-maxSpeed, maxSpeed);
-PidController linePidController(2.0, 0.0, 0.0, inputRange, outputRange);
 
 Zumo32U4ButtonA buttonA;
 Zumo32U4ButtonB buttonB;
-Zumo32U4ButtonC buttonC;
 Zumo32U4Motors motors;
 Zumo32U4LineSensors lineSensors;
 Zumo32U4LCD lcd;
 
-const int lcdWidth = 8;
-const int NUM_SENSORS = 5;
-
-// Changing the shape of this struct will change the way
-// the data is stored in EEPROM.
-// Any existing EEPROM will no longer be usable.
-struct SensorData
+struct Sequences
 {
-    unsigned int lineSensorValues[NUM_SENSORS];
-} memorizedValues;
-bool scrollLcd = false;
+    // Exercises
+    Sequence exercise1;
+    Sequence exercise2;
+    Sequence exercise3;
+    Sequence exercise4;
+
+    // Functions
+    Sequence moveEight;
+    Sequence flashAllLeds;
+    Sequence calibration;
+    Sequence printPosition;
+    Sequence lcdScroll;
+    Sequence loop;
+
+    // Groups
+    struct FollowLineSequences
+    {
+        Sequence followLine;
+        Sequence printSpeed;
+    } followLineGroup;
+} sequences;
+
+struct ApplicationState
+{
+    PidController linePidController = PidController(appConfig.linePidConfig);
+
+    // Set by printMessage functions
+    // to make the background lcd scroll
+    // sequence start/stop scrolling
+    bool scrollLcd = false;
+
+    // TODO: Implement EEPROM
+    // Changing the shape of this struct will change the way
+    // the data is stored in EEPROM.
+    // Any existing EEPROM will no longer be usable.
+    struct SensorData
+    {
+        unsigned int lineSensorValues[APP_CONFIG_NUM_LINE_SENSORS];
+    } memorizedValues;
+} state;
 
 void blockingCountdown(const String message, const int durationMillis)
 {
@@ -78,9 +84,9 @@ void exercise1()
     // even after the button is released. This ensures that
     // the led will have the same state as it appears
     // at the end of the sequence.
-    if (buttonA.isPressed() || exercise1Sequence.hasFinished())
+    if (buttonA.isPressed() || sequences.exercise1.hasFinished())
     {
-        exercise1Sequence
+        sequences.exercise1
             .then([&] { //
                 ledGreen(true);
             })
@@ -99,7 +105,7 @@ void exercise1()
  */
 bool moveEight(int speed)
 {
-    return moveEightSequence
+    return sequences.moveEight
         .then([&] { //
             motors.setSpeeds(0, speed);
         })
@@ -131,24 +137,24 @@ void moveCircle(int speed, bool direction)
 
 void exercise2()
 {
-    exercise2Sequence
+    sequences.exercise2
         .thenWhenReturnsTrue([&] { //
             // moveEight returns true when its sequence has finished
             // this function will continue to the next step when
             // its return value is true.
             // That means that this sequence will continue
             // after the moveEight sequence finishes.
-            return moveEight(targetSpeed);
+            return moveEight(appConfig.targetSpeed);
         })
         .thenWhenReturnsTrue([&] { //
-            return moveEight(targetSpeed);
+            return moveEight(appConfig.targetSpeed);
         })
         .then([&] { //
-            moveCircle(targetSpeed, true);
+            moveCircle(appConfig.targetSpeed, true);
         })
         .delay(2000)
         .then([&] { //
-            moveCircle(targetSpeed, false);
+            moveCircle(appConfig.targetSpeed, false);
         })
         .delay(2000)
         .loop()
@@ -162,7 +168,12 @@ void printMessage(const String message, const String message2)
     lcd.print(message);
     lcd.gotoXY(0, 1);
     lcd.print(message2);
-    scrollLcd = false;
+    state.scrollLcd = false;
+}
+
+void printValues(const float message, const float message2)
+{
+    printMessage(String(message, 2), String(message2, 2));
 }
 
 void printMessage(const String message)
@@ -173,7 +184,7 @@ void printMessage(const String message)
 void printScrollMessage(const String message, const String message2)
 {
     printMessage(message, message2);
-    scrollLcd = true;
+    state.scrollLcd = true;
 }
 
 /**
@@ -181,7 +192,7 @@ void printScrollMessage(const String message, const String message2)
  */
 bool flashAllLeds(const int numFlashes, const int flashDuration)
 {
-    return flashAllLedsSequence
+    return sequences.flashAllLeds
         .then([&] { //
             ledGreen(true);
             ledRed(true);
@@ -207,10 +218,10 @@ bool calibrate(const int speed)
     if (buttonA.getSingleDebouncedPress())
     {
         motors.setSpeeds(0, 0);
-        calibrationSequence.reset();
+        sequences.calibration.reset();
         return true;
     }
-    return calibrationSequence
+    return sequences.calibration
         .then([&] { //
             printMessage("Press A", "to cancel");
         })
@@ -230,7 +241,9 @@ bool calibrate(const int speed)
             printMessage("Calibrating", "...");
         })
         .thenWhenReturnsTrue([&] { //
-            return flashAllLeds(5, 400);
+            return flashAllLeds(
+                appConfig.numSafetyFlashesBeforeStart,
+                appConfig.safetyFlashDurationMs);
         })
         .thenRunFor(2000, [&] { //
             motors.setSpeeds(-speed, speed);
@@ -244,7 +257,6 @@ bool calibrate(const int speed)
         .then([&] { //
             motors.setSpeeds(0, 0);
             printMessage("Done!");
-            // EEPROM.put(0, memorizedValues);
         })
         .delay(1000)
         // By using loop this function can be used multiple times without
@@ -255,7 +267,13 @@ bool calibrate(const int speed)
 
 int getLineSensorValue()
 {
-    return lineSensors.readLine(memorizedValues.lineSensorValues);
+    // NB! The variable passed to readLine is a reference that will be
+    // updated by the function. Make sure you pass the ACTUAL
+    // variable that should receive the changes.
+    // In short, you can NOT make a variable to store the value of
+    // state.memorizedValues.lineSensorValues
+    // and then pass this to readLine.
+    return lineSensors.readLine(state.memorizedValues.lineSensorValues);
 }
 
 void printValue(const String message, const String value)
@@ -277,13 +295,13 @@ void printValue(const String message, const int value)
  */
 bool printPosition()
 {
-    return printPositionSequence
+    return sequences.printPosition
         .then([&] { //
             printMessage("Press A", "to cancel");
         })
         .delay(3000)
         .thenWhenReturnsTrue([&] { //
-            const int position = lineSensors.readLine(memorizedValues.lineSensorValues);
+            const int position = getLineSensorValue();
             printValue("Position: ", position);
             return buttonA.getSingleDebouncedPress();
         })
@@ -293,22 +311,15 @@ bool printPosition()
 
 String getProgressBar(const int value, const Range range)
 {
-    const int percentage = map(value, range.minValue, range.maxValue, 0, 100);
-    const int numDots = map(percentage, 0, 100, 0, lcdWidth);
+    const int numDots = Scaling::mapToRange(
+        value, range, Range(0, appConfig.lcdWidth));
+
     String bar = "";
     for (int i = 0; i < numDots; i++)
     {
         bar += "|";
     }
     return bar;
-}
-
-void serialPrintValue(const String message, const int value)
-{
-    Serial.print(message);
-    Serial.print(": ");
-    Serial.print(value);
-    Serial.print(", ");
 }
 
 /**
@@ -320,16 +331,18 @@ bool followLine()
     if (buttonA.getSingleDebouncedPress())
     {
         motors.setSpeeds(0, 0);
-        followLineSequence.reset();
+        sequences.followLineGroup.followLine.reset();
         return true;
     }
-    return followLineSequence
-        .then([&] { //
-            // EEPROM.get(0, memorizedValues);
-        })
+    return sequences.followLineGroup.followLine
         .then([&] { //
             printMessage("Press A", "to cancel");
         })
+        .delay(1000)
+        .then([&] { //
+            printMessage("Press B to", "show sp/pos");
+        })
+        .delay(1000)
         .then([&] { //
             printMessage("Starting in", "3");
         })
@@ -346,29 +359,23 @@ bool followLine()
             printMessage("Following", "line ...");
         })
         .thenWhenReturnsTrue([&] { //
-            return flashAllLeds(5, 400);
+            return flashAllLeds(
+                appConfig.numSafetyFlashesBeforeStart,
+                appConfig.safetyFlashDurationMs);
         })
         .thenWhenReturnsTrue([&] { //
+            Range outputRange = appConfig.linePidConfig.outputRange;
+            Range inputRange = appConfig.linePidConfig.inputRange;
             // const int sensorValue = currentPosition;
             const int sensorValue = getLineSensorValue();
 
-            const int output = linePidController.update(sensorValue, 2000, true);
-
-            // printMessage("Position", getProgressBar(sensorValue, inputRange));
-
-            // const int leftSpeed = targetSpeed + output;
-            // const int unusedLeftSpeed = targetSpeed - maxSpeed;
-            // const int rightSpeed = targetSpeed - output - unusedLeftSpeed;
-            // const int unusedRightSpeed = rightSpeed - maxSpeed;
-            // const int rightCompensatedLeftSpeed = leftSpeed - unusedRightSpeed;
-            // const int clampedLeftSpeed = Scaling::clamp(rightCompensatedLeftSpeed, outputRange);
-            // const int clampedRightSpeed = Scaling::clamp(rightSpeed, outputRange);
+            const int output = state.linePidController.update(sensorValue, 2000, true);
 
             // Assign the output to the left
-            const int leftSpeed = targetSpeed + output;
+            const int leftSpeed = appConfig.targetSpeed + output;
             // Take what ever is left over and assign it to the right along with the output
             const int unusedLeftSpeed = Scaling::remainderFromClamp(leftSpeed, outputRange);
-            const int rightSpeed = targetSpeed - output - unusedLeftSpeed;
+            const int rightSpeed = appConfig.targetSpeed - output - unusedLeftSpeed;
             // Take what ever is left over and assign/re-assign it to the left
             const int unusedRightSpeed = Scaling::remainderFromClamp(rightSpeed, outputRange);
             const int rightCompensatedLeftSpeed = leftSpeed - unusedRightSpeed;
@@ -376,47 +383,21 @@ bool followLine()
             const int clampedLeftSpeed = Scaling::clamp(rightCompensatedLeftSpeed, outputRange);
             const int clampedRightSpeed = Scaling::clamp(rightSpeed, outputRange);
 
-            // serialSequence
-            //     .then([&] { //
-            //         serialPrintValue("L", leftSpeed);
-            //         serialPrintValue("UL", unusedLeftSpeed);
-            //         serialPrintValue("R", rightSpeed);
-            //         serialPrintValue("UR", unusedRightSpeed);
-            //         serialPrintValue("RCLS", rightCompensatedLeftSpeed);
-            //         serialPrintValue("CLS", clampedLeftSpeed);
-            //         serialPrintValue("CRS", clampedRightSpeed);
-            //     })
-            //     .then([&] { //
-            //         Serial.println(";");
-            //     })
-            //     .delay(1000)
-            //     .loop()
-            //     .endOfSequence();
-
-            printSpeedSequence
+            sequences.followLineGroup.printSpeed
                 .thenWhenReturnsTrue([&] { //
-                    printMessage(String((float)sensorValue, 2), String((float)output, 2));
+                    printMessage(
+                        "Position",
+                        getProgressBar(sensorValue, inputRange));
+
                     return buttonB.getSingleDebouncedPress();
                 })
                 .thenWhenReturnsTrue([&] { //
-                    printMessage(String((float)clampedLeftSpeed, 2), String((float)clampedRightSpeed, 2));
+                    printValues(sensorValue, output);
                     return buttonB.getSingleDebouncedPress();
                 })
-                .loop()
-                .endOfSequence();
-
-            changePositionSequence
                 .thenWhenReturnsTrue([&] { //
-                    currentPosition = 2000;
-                    return buttonC.getSingleDebouncedPress();
-                })
-                .thenWhenReturnsTrue([&] { //
-                    currentPosition = 0;
-                    return buttonC.getSingleDebouncedPress();
-                })
-                .thenWhenReturnsTrue([&] { //
-                    currentPosition = 4000;
-                    return buttonC.getSingleDebouncedPress();
+                    printValues(clampedLeftSpeed, clampedRightSpeed);
+                    return buttonB.getSingleDebouncedPress();
                 })
                 .loop()
                 .endOfSequence();
@@ -434,7 +415,7 @@ bool followLine()
 
 void exercise3()
 {
-    exercise3Sequence
+    sequences.exercise3
         .then([&] { //
             printMessage("Press A to", "calibrate");
         })
@@ -442,7 +423,7 @@ void exercise3()
             return buttonA.getSingleDebouncedRelease();
         })
         .thenWhenReturnsTrue([&] { //
-            return calibrate(calibrationSpeed);
+            return calibrate(appConfig.calibrationSpeed);
         })
         .thenWhenReturnsTrue([&] { //
             return printPosition();
@@ -453,7 +434,7 @@ void exercise3()
 
 void exercise4()
 {
-    exercise4Sequence
+    sequences.exercise4
         .then([&] { //
             printMessage("Press A to", "calibrate");
         })
@@ -461,7 +442,7 @@ void exercise4()
             return buttonA.getSingleDebouncedRelease();
         })
         .thenWhenReturnsTrue([&] { //
-            return calibrate(calibrationSpeed);
+            return calibrate(appConfig.calibrationSpeed);
         })
         .then([&] { //
             printMessage("Press A to", "follow line");
@@ -483,7 +464,7 @@ void updateLcdScroll()
 {
     if (false)
     {
-        lcdScrollSequence
+        sequences.lcdScroll
             .then([&] { //
                 lcd.scrollDisplayLeft();
             })
@@ -501,24 +482,24 @@ void updateLcdScroll()
 
 void updateMenuControls()
 {
-    loopSequence
+    sequences.loop
         .then([&] { //
             printScrollMessage("A: Calibrate", "B: Follow Line");
-            calibrationSequence.reset();
-            followLineSequence.reset();
-            calibrationSequence.pause();
-            followLineSequence.pause();
+            sequences.calibration.reset();
+            sequences.followLineGroup.followLine.reset();
+            sequences.calibration.pause();
+            sequences.followLineGroup.followLine.pause();
         })
         .thenWhenReturnsTrue([&] { //
             if (buttonA.getSingleDebouncedPress())
             {
-                calibrationSequence.start();
+                sequences.calibration.start();
                 return true;
             }
             else if (buttonB.getSingleDebouncedPress())
             {
-                calibrationSequence.start();
-                followLineSequence.start();
+                sequences.calibration.start();
+                sequences.followLineGroup.followLine.start();
                 return true;
             }
             return false;
@@ -528,7 +509,7 @@ void updateMenuControls()
         //.thenWhenReturnsTrue([&] { //
         .thenWhenReturnsTrue([&] { //
             // Will continue if the sequence is not running
-            return calibrate(calibrationSpeed);
+            return calibrate(appConfig.calibrationSpeed);
         })
         .thenWhenReturnsTrue([&] { //
             // Will continue if the sequence is not running

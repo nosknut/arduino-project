@@ -1,7 +1,10 @@
+#ifndef Range_h
+#define Range_h
+
 struct Range
 {
-    const int minValue;
-    const int maxValue;
+    int minValue;
+    int maxValue;
     Range(int minValue, int maxValue) : minValue(minValue), maxValue(maxValue)
     {
     }
@@ -16,3 +19,5 @@ struct Range
         return maxValue - minValue;
     }
 };
+
+#endif

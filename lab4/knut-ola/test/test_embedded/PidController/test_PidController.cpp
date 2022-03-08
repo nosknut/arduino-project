@@ -18,11 +18,13 @@ void test_function_kp(void)
 {
     const Range inputRange = Range(0, 100);
     const Range outputRange = Range(0, 100);
-    PidController pid(1.0, 0.0, 0.0, inputRange, outputRange);
+    const PidControllerConfig pidConfig = PidControllerConfig(
+        1.0, 0.0, 0.0, inputRange, outputRange);
+    PidController pid(pidConfig);
     TEST_ASSERT_EQUAL(pid.update(50, 0), 50);
     TEST_ASSERT_EQUAL(pid.update(50, 100), 0);
 
-    pid.kp = 2.0;
+    pid.pidConfig.kp = 2.0;
     TEST_ASSERT_EQUAL(pid.update(50, 0), 100);
     TEST_ASSERT_EQUAL(pid.update(50, 100), 0);
 }
@@ -31,11 +33,13 @@ void test_function_clamps(void)
 {
     const Range inputRange = {0, 100};
     const Range outputRange = {0, 100};
-    PidController pid(0.5, 0.0, 0.0, inputRange, outputRange);
+    const PidControllerConfig pidConfig = PidControllerConfig(
+        0.5, 0.0, 0.0, inputRange, outputRange);
+    PidController pid(pidConfig);
     TEST_ASSERT_EQUAL(pid.update(50, 0), 25);
     TEST_ASSERT_EQUAL(pid.update(50, 100), 25);
 
-    pid.kp = 10.0;
+    pid.pidConfig.kp = 10.0;
     TEST_ASSERT_EQUAL(pid.update(50, 0), 100);
     TEST_ASSERT_EQUAL(pid.update(50, 100), 0);
 }

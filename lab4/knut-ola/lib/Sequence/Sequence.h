@@ -3,6 +3,57 @@
 #include <Arduino.h>
 #include <Timer.h>
 
+/*
+Warnings:
+The & symbol inside the capture-clause [&]
+of the lambda will cause all variables that
+are used in the given lambda to be referenced
+rather than copied. Not doing this could cause
+funky issues that are next to impossible to debug.
+
+In short:
+Always start your lambdas with [&] when using Sequence!
+
+About the empty comments in the example below:
+The // comments at the end of each .then({ //
+are there to make the formatter snap codelines
+to a new line. If you do not include this the
+code becomes ugly and hard to read.
+
+Example usage:
+
+struct Sequences {
+    Sequence red;
+    Sequence yellow;
+} sequences;
+
+void loop()
+{
+    sequences.red
+        .then([&] { //
+            ledRed(true);
+        })
+        .delay(2000)
+        .then([&] { //
+            ledRed(false);
+        })
+        .delay(2000)
+        .loop()
+        .endOfSequence();
+
+    sequences.yellow
+        .then([&] { //
+            ledYellow(true);
+        })
+        .delay(200)
+        .then([&] { //
+            ledYellow(false);
+        })
+        .delay(200)
+        .loop()
+        .endOfSequence();
+}
+*/
 class Sequence
 {
 private:
@@ -326,40 +377,5 @@ public:
         return false;
     }
 };
-
-/*
-Example usage:
-
-// Sequences
-Sequence redSequence;
-Sequence yellowSequence;
-
-void loop()
-{
-    redSequence
-        .then([&] { //
-            ledRed(true);
-        })
-        .delay(2000)
-        .then([&] { //
-            ledRed(false);
-        })
-        .delay(2000)
-        .loop()
-        .endOfSequence();
-
-    yellowSequence
-        .then([&] { //
-            ledYellow(true);
-        })
-        .delay(200)
-        .then([&] { //
-            ledYellow(false);
-        })
-        .delay(200)
-        .loop()
-        .endOfSequence();
-}
-*/
 
 #endif

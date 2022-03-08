@@ -1,24 +1,31 @@
+#include <PidControllerConfig.h>
+#include <Range.h>
+
+// NUM_LINE_SENSORS must be defined as a const separately
+// of appConfig because it is needed when declaring an array
+#define APP_CONFIG_NUM_LINE_SENSORS 5
 
 struct ApplicationConfig
 {
     const int baudRate = 9600;
-    const int buttonDebounceTime = 50;
-    const byte randomSeedPin = A0;
-    // NB! Update this with state.players
-    const int numPlayers = 2;
-    const PlayerConfig player1 = {.ledPin = 8, .buttonPin = 3};
-    const PlayerConfig player2 = {.ledPin = 7, .buttonPin = 2};
-    const RgbLedConfig rgbLed = {.redPin = 10, .greenPin = 9, .bluePin = 12};
-    const byte buzzerPin = 11;
-    const Range winnerBuzzerPitch = Range(750, 2000);
-    const int winningPoints = 10;
-    // 30% should be written as 0.3
-    const float trickRoundProbability = 3.0 / 10.0;
-    const int trickRoundDuration = 1000;
-    const int looserBuzzerPitch = 220;
-    const int roundCompletionAnnouncementDuration = 3000;
-    // The frequency the LED's should blink after a win/loss
-    const int fastBlinkFrequency = 5;
-    // How long it should take for a green light to appear
-    const Range roundTimeMs = Range(3000, 6000);
+    const int lcdWidth = 8;
+
+    // Speed
+    const int targetSpeed = 200;
+    const int calibrationSpeed = 200;
+    const int maxSpeed = 300;
+
+    // All LEDS will flash x times before the motors start
+    const int numSafetyFlashesBeforeStart = 5;
+    const int safetyFlashDurationMs = 400;
+
+    // Pid
+    PidControllerConfig linePidConfig =
+        PidControllerConfig(
+            2.0,                       // kp
+            0.0,                       // ki
+            0.0,                       // kd
+            Range(0, 4000),            // inputRange
+            Range(-maxSpeed, maxSpeed) // outputRange
+        );
 } const appConfig;

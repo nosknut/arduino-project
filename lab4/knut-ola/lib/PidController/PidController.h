@@ -1,62 +1,63 @@
 #ifndef PidController_h
 #define PidController_h
 #include <Scaling.h>
+#include <PidControllerConfig.h>
+#include <Range.h>
 #include <Arduino.h>
 
 class PidController
 {
+
 public:
-    float kp = 0;
-    float ki = 0;
-    float kd = 0;
+    PidControllerConfig pidConfig;
 
 private:
-    // Max amount of time between updates for the update to be valid
-    long updateTimeout = 20;
-    const Range inputRange;
-    const Range outputRange;
-
-    float area = 0;
-    float lastError = 0;
+    double area = 0;
+    double lastError = 0;
     long previousUpdateTime = millis();
-    float previousUpdateOutput = 0;
+    double previousUpdateOutput = 0;
 
 public:
     // Set kp, ki and/or kd to 0.0 to disable the respective mode
-    PidController(float kp, float ki, float kd, const Range inputRange, const Range outputRange)
-        : kp(kp),
-          ki(ki),
-          kd(kd),
-          inputRange(inputRange),
-          outputRange(outputRange)
+    PidController(PidControllerConfig pidConfig) : pidConfig(pidConfig)
     {
     }
 
-    float update(float value, float target, bool clampOutput)
+    double update(double value, double target, bool clampOutput)
     {
-        float error = value - target;
-        float deltaTime = millis() - previousUpdateTime;
-        if (deltaTime > updateTimeout)
+        double error = value - target;
+
+        long deltaTime = millis() - previousUpdateTime;
+        if (deltaTime > pidConfig.updateTimeout)
         {
             // Ignore this update if it is too old
             previousUpdateTime = millis();
             return previousUpdateOutput;
         }
-        float deltaError = error - lastError;
-        float centerPointError = (error + lastError) / 2;
+
+        double deltaError = error - lastError;
+
+        double centerPointError = (error + lastError) / 2;
         area += centerPointError * deltaTime;
-        float output = kp * error + ki * area + kd * deltaError;
+
+        float kp = pidConfig.kp;
+        float ki = pidConfig.ki;
+        float kd = pidConfig.kd;
+
+        double output = kp * error + ki * area + kd * deltaError;
+
         lastError = error;
         previousUpdateTime = millis();
 
-        float scaledOutput = Scaling::mapToRange(
+        int inputRangeWidth = pidConfig.inputRange.getWidth();
+        double scaledOutput = Scaling::mapToRange(
             output,
-            Range(-inputRange.getWidth(), inputRange.getWidth()),
-            outputRange);
+            Range(-inputRangeWidth, inputRangeWidth),
+            pidConfig.outputRange);
 
         previousUpdateOutput =
             clampOutput
-                ? Scaling::clamp(scaledOutput, outputRange)
+                ? Scaling::clamp(scaledOutput, pidConfig.outputRange)
                 : scaledOutput;
 
         return previousUpdateOutput;
