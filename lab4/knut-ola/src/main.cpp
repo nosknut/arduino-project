@@ -20,11 +20,12 @@ Sequence exercise4Sequence;
 Sequence loopSequence;
 Sequence lcdScrollSequence;
 Sequence printSpeedSequence;
-// Sequence changePositionSequence;
-// Sequence serialSequence;
+Sequence changePositionSequence;
+Sequence serialSequence;
 
 int currentPosition = 2000;
-const int targetSpeed = 150;
+const int targetSpeed = 200;
+const int calibrationSpeed = 200;
 const int maxSpeed = 200;
 const Range inputRange(0, 4000);
 const Range outputRange(-maxSpeed, maxSpeed);
@@ -32,7 +33,7 @@ PidController linePidController(2.0, 0.0, 0.0, inputRange, outputRange);
 
 Zumo32U4ButtonA buttonA;
 Zumo32U4ButtonB buttonB;
-// Zumo32U4ButtonC buttonC;
+Zumo32U4ButtonC buttonC;
 Zumo32U4Motors motors;
 Zumo32U4LineSensors lineSensors;
 Zumo32U4LCD lcd;
@@ -302,13 +303,13 @@ String getProgressBar(const int value, const Range range)
     return bar;
 }
 
-// void serialPrintValue(const String message, const int value)
-// {
-//     Serial.print(message);
-//     Serial.print(": ");
-//     Serial.print(value);
-//     Serial.print(", ");
-// }
+void serialPrintValue(const String message, const int value)
+{
+    Serial.print(message);
+    Serial.print(": ");
+    Serial.print(value);
+    Serial.print(", ");
+}
 
 /**
  * @return true if the sequence is finished
@@ -348,6 +349,7 @@ bool followLine()
             return flashAllLeds(5, 400);
         })
         .thenWhenReturnsTrue([&] { //
+            // const int sensorValue = currentPosition;
             const int sensorValue = getLineSensorValue();
 
             const int output = linePidController.update(sensorValue, 2000, true);
@@ -403,21 +405,21 @@ bool followLine()
                 .loop()
                 .endOfSequence();
 
-            // changePositionSequence
-            //     .thenWhenReturnsTrue([&] { //
-            //         currentPosition = 2000;
-            //         return buttonC.getSingleDebouncedPress();
-            //     })
-            //     .thenWhenReturnsTrue([&] { //
-            //         currentPosition = 0;
-            //         return buttonC.getSingleDebouncedPress();
-            //     })
-            //     .thenWhenReturnsTrue([&] { //
-            //         currentPosition = 4000;
-            //         return buttonC.getSingleDebouncedPress();
-            //     })
-            //     .loop()
-            //     .endOfSequence();
+            changePositionSequence
+                .thenWhenReturnsTrue([&] { //
+                    currentPosition = 2000;
+                    return buttonC.getSingleDebouncedPress();
+                })
+                .thenWhenReturnsTrue([&] { //
+                    currentPosition = 0;
+                    return buttonC.getSingleDebouncedPress();
+                })
+                .thenWhenReturnsTrue([&] { //
+                    currentPosition = 4000;
+                    return buttonC.getSingleDebouncedPress();
+                })
+                .loop()
+                .endOfSequence();
 
             motors.setSpeeds(clampedLeftSpeed, clampedRightSpeed);
             return buttonA.getSingleDebouncedPress();
@@ -440,7 +442,7 @@ void exercise3()
             return buttonA.getSingleDebouncedRelease();
         })
         .thenWhenReturnsTrue([&] { //
-            return calibrate(targetSpeed);
+            return calibrate(calibrationSpeed);
         })
         .thenWhenReturnsTrue([&] { //
             return printPosition();
@@ -459,7 +461,7 @@ void exercise4()
             return buttonA.getSingleDebouncedRelease();
         })
         .thenWhenReturnsTrue([&] { //
-            return calibrate(targetSpeed);
+            return calibrate(calibrationSpeed);
         })
         .then([&] { //
             printMessage("Press A to", "follow line");
@@ -526,7 +528,7 @@ void updateMenuControls()
         //.thenWhenReturnsTrue([&] { //
         .thenWhenReturnsTrue([&] { //
             // Will continue if the sequence is not running
-            return calibrate(targetSpeed);
+            return calibrate(calibrationSpeed);
         })
         .thenWhenReturnsTrue([&] { //
             // Will continue if the sequence is not running
