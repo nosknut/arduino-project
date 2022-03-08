@@ -225,6 +225,7 @@ bool calibrate(const int speed)
         .then([&] { //
             printMessage("Press A", "to cancel");
         })
+        .delay(1000)
         .then([&] { //
             printMessage("Starting in", "3");
         })
