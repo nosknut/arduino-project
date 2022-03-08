@@ -20,7 +20,10 @@ Sequence exercise4Sequence;
 Sequence loopSequence;
 Sequence lcdScrollSequence;
 Sequence printSpeedSequence;
+// Sequence changePositionSequence;
+// Sequence serialSequence;
 
+int currentPosition = 2000;
 const int targetSpeed = 150;
 const int maxSpeed = 200;
 const Range inputRange(0, 4000);
@@ -29,6 +32,7 @@ PidController linePidController(2.0, 0.0, 0.0, inputRange, outputRange);
 
 Zumo32U4ButtonA buttonA;
 Zumo32U4ButtonB buttonB;
+// Zumo32U4ButtonC buttonC;
 Zumo32U4Motors motors;
 Zumo32U4LineSensors lineSensors;
 Zumo32U4LCD lcd;
@@ -298,6 +302,14 @@ String getProgressBar(const int value, const Range range)
     return bar;
 }
 
+// void serialPrintValue(const String message, const int value)
+// {
+//     Serial.print(message);
+//     Serial.print(": ");
+//     Serial.print(value);
+//     Serial.print(", ");
+// }
+
 /**
  * @return true if the sequence is finished
  */
@@ -351,7 +363,7 @@ bool followLine()
             // const int clampedRightSpeed = Scaling::clamp(rightSpeed, outputRange);
 
             // Assign the output to the left
-            const int leftSpeed = targetSpeed + output - maxSpeed;
+            const int leftSpeed = targetSpeed + output;
             // Take what ever is left over and assign it to the right along with the output
             const int unusedLeftSpeed = Scaling::remainderFromClamp(leftSpeed, outputRange);
             const int rightSpeed = targetSpeed - output - unusedLeftSpeed;
@@ -361,6 +373,23 @@ bool followLine()
             // Clamp the distributed speeds to the output range
             const int clampedLeftSpeed = Scaling::clamp(rightCompensatedLeftSpeed, outputRange);
             const int clampedRightSpeed = Scaling::clamp(rightSpeed, outputRange);
+
+            // serialSequence
+            //     .then([&] { //
+            //         serialPrintValue("L", leftSpeed);
+            //         serialPrintValue("UL", unusedLeftSpeed);
+            //         serialPrintValue("R", rightSpeed);
+            //         serialPrintValue("UR", unusedRightSpeed);
+            //         serialPrintValue("RCLS", rightCompensatedLeftSpeed);
+            //         serialPrintValue("CLS", clampedLeftSpeed);
+            //         serialPrintValue("CRS", clampedRightSpeed);
+            //     })
+            //     .then([&] { //
+            //         Serial.println(";");
+            //     })
+            //     .delay(1000)
+            //     .loop()
+            //     .endOfSequence();
 
             printSpeedSequence
                 .thenWhenReturnsTrue([&] { //
@@ -374,8 +403,23 @@ bool followLine()
                 .loop()
                 .endOfSequence();
 
-            motors.setSpeeds(clampedLeftSpeed, clampedRightSpeed);
+            // changePositionSequence
+            //     .thenWhenReturnsTrue([&] { //
+            //         currentPosition = 2000;
+            //         return buttonC.getSingleDebouncedPress();
+            //     })
+            //     .thenWhenReturnsTrue([&] { //
+            //         currentPosition = 0;
+            //         return buttonC.getSingleDebouncedPress();
+            //     })
+            //     .thenWhenReturnsTrue([&] { //
+            //         currentPosition = 4000;
+            //         return buttonC.getSingleDebouncedPress();
+            //     })
+            //     .loop()
+            //     .endOfSequence();
 
+            motors.setSpeeds(clampedLeftSpeed, clampedRightSpeed);
             return buttonA.getSingleDebouncedPress();
         })
         .then([&] { //
@@ -471,7 +515,7 @@ void updateMenuControls()
             }
             else if (buttonB.getSingleDebouncedPress())
             {
-                // calibrationSequence.start();
+                calibrationSequence.start();
                 followLineSequence.start();
                 return true;
             }
