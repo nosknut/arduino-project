@@ -35,6 +35,10 @@ Zumo32U4LCD lcd;
 
 const int lcdWidth = 8;
 const int NUM_SENSORS = 5;
+
+// Changing the shape of this struct will change the way
+// the data is stored in EEPROM.
+// Any existing EEPROM will no longer be usable.
 struct SensorData
 {
     unsigned int lineSensorValues[NUM_SENSORS];
