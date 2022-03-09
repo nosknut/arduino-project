@@ -16,6 +16,8 @@ const int NUM_SENSORS = 5;
 unsigned int lineSensorValues[NUM_SENSORS];
 // lcd variabel
 Zumo32U4LCD lcd;
+// last error variabel
+int last_error = 0;
 
 // bruker enum til å velge hvilken oppgave som skal kjøres
 enum class OppgaveStatus
@@ -64,81 +66,23 @@ void setup()
   }
 }
 
-void oppgave1()
-{
-  if (ButtonA.isPressed()) // hvis knapp er trykt
-  {
-    // blinker alle led 4 ganger med delay:
-    for (int i = 0; i < 4; i++)
-    {
-      ledRed(HIGH);
-      ledGreen(HIGH);
-      ledYellow(HIGH);
-      delay(100);
-      ledRed(LOW);
-      ledGreen(LOW);
-      ledYellow(LOW);
-      delay(100);
-    }
-    // Starter med frekvens 440 Hz og volum 15
-    buzzer.playFrequency(440, 200, 15);
-    delay(1000); // litt delay så den blir ferdig
+// venstre: 4000, høyre: 0
 
-    // Spiller note A med volum 15
-    buzzer.playNote(NOTE_A(4), 2000, 15);
-    delay(200);           // venter til noten er ferdig
-    buzzer.stopPlaying(); // stopper buzzer
-  }
-}
+void pd_regulator()
+{
+  int wanted_value = 2000;
+  int topSpeed = 400;
+  const int posisjon = linesensor.readLine(lineSensorValues);
 
-// tar inn hvilken side (false = left, true = right)
-// speed from -> to og time (til delay)
-// ser nå at dette kan gjøres med funksjon "setSpeeds()"
-void motorRun(bool side, int from, int to, int time)
-{
-  // høyre side
-  if (side)
-  {
-    for (int speed = from; speed <= to; speed++)
-    {
-      motors.setRightSpeed(speed);
-      delay(time);
-    }
-  }
-  // venstre side
-  else
-  {
-    for (int speed = from; speed <= to; speed++)
-    {
-      motors.setLeftSpeed(speed);
-      delay(time);
-    }
-  }
-}
-
-// mønster 1
-void task1(int time)
-{
-  for (int i = 0; i < 2; i++)
-  {
-    motors.setSpeeds(200, 50);
-    delay(time);
-
-    motors.setSpeeds(50, 200);
-    delay(time);
-  }
-}
-// mønster 2
-void task2(int time)
-{
-  motors.setSpeeds(0, 200);
-  delay(time);
-}
-// mønster 3
-void task3(int time)
-{
-  motors.setSpeeds(200, 0);
-  delay(time);
+  int kp = 1;
+  int error = posisjon - wanted_value;
+  int d_ledd = 2 * (error - last_error);
+  int speedDifference = error * kp + d_ledd;
+  int leftSpeed = 400 - speedDifference;
+  int rightSpeed = 400 + speedDifference;
+  // bruker constrain så verdiene holder seg mellom 0 og 400
+  leftSpeed = constrain(leftSpeed, 0, topSpeed);
+  rightSpeed = constrain(rightSpeed, 0, topSpeed);
 }
 
 // venstre: 4000, høyre: 0
@@ -170,17 +114,7 @@ void oppgave4(const int sensorData)
 
 void loop()
 {
-  //hvis oppgavestatus er OPPGAVE1 -> kjør oppgave1()
-  if (oppgave == OppgaveStatus::OPPGAVE1)
-  {
-    oppgave1();
-  }
-  if (oppgave == OppgaveStatus::OPPGAVE2)
-  {
-    task1(3000);
-    task2(4000);
-    task3(4000);
-  }
+  // hvis oppgavestatus er OPPGAVE3 -> kjør oppgave3()
   if (oppgave == OppgaveStatus::OPPGAVE3)
   {
     const int posisjon = linesensor.readLine(lineSensorValues);
