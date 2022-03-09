@@ -1,0 +1,28 @@
+{
+    "folders": [
+        {
+            "path": "."
+        },
+        {
+            "name": "arduino-project/lab1/knut-ola",
+            "path": "./lab1\\knut-ola"
+        },
+        {
+            "name": "arduino-project/lab2/knut-ola",
+            "path": "./lab2\\knut-ola"
+        },
+        {
+            "name": "arduino-project/lab3/knut-ola",
+            "path": "./lab3\\knut-ola"
+        },
+        {
+            "name": "arduino-project/lab4/knut-ola",
+            "path": "./lab4\\knut-ola"
+        },
+        {
+            "name": "arduino-project/oving-3/knut-ola",
+            "path": "./oving-3\\knut-ola"
+        }
+    ],
+    "settings": {}
+}
