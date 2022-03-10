@@ -55,10 +55,11 @@ void loop()
         .endOfSequence();
 }
 */
+// template <typename A, typename B, typename C, typename D>
 class Sequence
 {
 private:
-    Optional<Sequence> subSequence = Optional<Sequence>::empty();
+    IOptional<Sequence, void, void, void, void> subSequence = Optional<Sequence, void, void, void, void>::empty();
     int timesPreviousStepLooped = 0;
 
     int timesLooped = 0;
@@ -135,11 +136,11 @@ public:
         {
             if (subSequence.isPresent())
             {
-                subSequence.get(); //.reset();
+                subSequence.get().reset();
             }
             else
             {
-                subSequence = Optional<Sequence>();
+                subSequence = Optional<Sequence, void, void, void, void>::of(Sequence());
             }
         }
         checkedSteps += 1;

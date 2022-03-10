@@ -11,6 +11,8 @@ public:
 
     virtual IOptional<T, P, F, C, V> filter(P predicate) const;
 
+    T get() const;
+
     virtual void ifPresent(C callback) const;
 
     virtual void ifAbsent(C callback) const;
@@ -19,7 +21,7 @@ public:
 
     virtual T getDefault(T defaultValue) const;
 
-    virtual IOptional<T, P, F, C, V> orElse(T defaultValue) const;
+    // virtual IOptional<T, P, F, C, V> orElse(T defaultValue) const;
 
     virtual bool equals(T other) const;
 
@@ -36,11 +38,6 @@ public:
 };
 
 template <typename T, typename P, typename F, typename C, typename V>
-class Optional : public IOptional<T, P, F, C, V>
-{
-};
-
-template <typename T, typename P, typename F, typename C, typename V>
 class EmptyOptional : public IOptional<T, P, F, C, V>
 {
 public:
@@ -52,6 +49,11 @@ public:
     virtual bool isEmpty() const
     {
         return true;
+    }
+
+    virtual T get() const
+    {
+        throw "No value present";
     }
 
     virtual IOptional<T, P, F, C, V> filter(P predicate) const
@@ -77,11 +79,6 @@ public:
     virtual T getDefault(T defaultValue) const
     {
         return defaultValue;
-    }
-
-    virtual IOptional<T, P, F, C, V> orElse(T defaultValue) const
-    {
-        return Optional<T, P, F, C, V>(defaultValue);
     }
 
     virtual bool equals(T other) const
@@ -113,7 +110,7 @@ class Optional : public IOptional<T, P, F, C, V>
 private:
     T value;
     bool hasValue;
-    Optional(T value) : value(value) : hasValue(true)
+    Optional(T value) : value(value), hasValue(true)
     {
     }
 
@@ -239,5 +236,11 @@ public:
         return empty();
     }
 };
-
+/*
+template <typename T, typename P, typename F, typename C, typename V>
+IOptional<T, P, F, C, V> IOptional<T, P, F, C, V>::orElse(T defaultValue) const
+{
+    return Optional<T, P, F, C, V>(defaultValue);
+}
+*/
 #endif

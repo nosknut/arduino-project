@@ -15,6 +15,24 @@ Zumo32U4LCD lcd;
 
 struct Sequences
 {
+    /*
+
+    // Exercises
+    Sequence<void, void, void, void> exercise1;
+    Sequence<void, void, void, void> exercise2;
+    Sequence<void, void, void, void> exercise3;
+    Sequence<void, void, void, void> exercise4;
+
+    // Functions
+    Sequence<void, void, void, void> moveEight;
+    Sequence<void, void, void, void> flashAllLeds;
+    Sequence<void, void, void, void> calibration;
+    Sequence<void, void, void, void> printPosition;
+    Sequence<void, void, void, void> lcdScroll;
+    Sequence<void, void, void, void> loop;
+    Sequence<void, void, void, void> followLine;
+    */
+
     // Exercises
     Sequence exercise1;
     Sequence exercise2;
