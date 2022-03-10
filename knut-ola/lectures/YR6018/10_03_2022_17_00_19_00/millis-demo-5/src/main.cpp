@@ -37,6 +37,7 @@ bool hondterKnappetrykk()
         if (!viHarReagertPaAtKnappenBleHoldtNede)
         {
             viHarReagertPaAtKnappenBleHoldtNede = true;
+            knappVarTryktNedForigeGang = knappErTryktNed;
             return true;
         }
     }
