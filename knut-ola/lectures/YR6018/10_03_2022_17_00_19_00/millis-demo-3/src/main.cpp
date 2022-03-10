@@ -29,7 +29,7 @@ void loop()
     {
         if (!viHarReagertPaAtKnappenBleHoldtNede)
         {
-            print("Knapp ble holdt nede i 3 sekunder");
+            print("Knapp ble trykt ned");
             viHarReagertPaAtKnappenBleHoldtNede = true;
         }
     }
