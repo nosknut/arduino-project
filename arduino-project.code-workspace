@@ -4,6 +4,10 @@
             "path": "."
         },
         {
+            "name": "arduino-project/knut-ola\\lectures\\YR6018\\10_03_2022_17_00_19_00/millis-demo",
+            "path": "./knut-ola\\lectures\\YR6018\\10_03_2022_17_00_19_00\\millis-demo"
+        },
+        {
             "name": "arduino-project/lab1/knut-ola",
             "path": "./lab1\\knut-ola"
         },
