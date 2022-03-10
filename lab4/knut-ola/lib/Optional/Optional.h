@@ -1,36 +1,141 @@
 #ifndef Optional_h
 #define Optional_h
 
-template <typename T>
-class Optional
+template <typename T, typename P, typename F, typename C, typename V>
+class IOptional
+{
+public:
+    virtual bool isPresent() const;
+
+    virtual bool isEmpty() const;
+
+    virtual IOptional<T, P, F, C, V> filter(P predicate) const;
+
+    virtual void ifPresent(C callback) const;
+
+    virtual void ifAbsent(C callback) const;
+
+    virtual void ifPresentOrElse(C callback, C elseCallback) const;
+
+    virtual T getDefault(T defaultValue) const;
+
+    virtual IOptional<T, P, F, C, V> orElse(T defaultValue) const;
+
+    virtual bool equals(T other) const;
+
+    virtual bool equals(IOptional<T, P, F, C, V> other) const;
+
+    /**
+     * @brief Will let you convert from one value to another without checking if the existing value exists
+     *
+     * @tparam F the return type of the map function
+     * @param callback a function that takes the current value and returns a new value. If the current value is empty, the new value will be empty.
+     * @return Optional<F> an optional containing an empty value or a value returned from the map function
+     */
+    virtual IOptional<T, P, F, C, V> map(F callback) const;
+};
+
+template <typename T, typename P, typename F, typename C, typename V>
+class Optional : public IOptional<T, P, F, C, V>
+{
+};
+
+template <typename T, typename P, typename F, typename C, typename V>
+class EmptyOptional : public IOptional<T, P, F, C, V>
+{
+public:
+    virtual bool isPresent() const
+    {
+        return false;
+    }
+
+    virtual bool isEmpty() const
+    {
+        return true;
+    }
+
+    virtual IOptional<T, P, F, C, V> filter(P predicate) const
+    {
+        return EmptyOptional<T, P, F, C, V>();
+    }
+
+    virtual void ifPresent(C callback) const
+    {
+        return;
+    }
+
+    virtual void ifAbsent(C callback) const
+    {
+        callback();
+    }
+
+    virtual void ifPresentOrElse(C callback, C elseCallback) const
+    {
+        elseCallback();
+    }
+
+    virtual T getDefault(T defaultValue) const
+    {
+        return defaultValue;
+    }
+
+    virtual IOptional<T, P, F, C, V> orElse(T defaultValue) const
+    {
+        return Optional<T, P, F, C, V>(defaultValue);
+    }
+
+    virtual bool equals(T other) const
+    {
+        return false;
+    }
+
+    virtual bool equals(IOptional<T, P, F, C, V> other) const
+    {
+        return other.isEmpty();
+    }
+
+    /**
+     * @brief Will let you convert from one value to another without checking if the existing value exists
+     *
+     * @tparam F the return type of the map function
+     * @param callback a function that takes the current value and returns a new value. If the current value is empty, the new value will be empty.
+     * @return Optional<F> an optional containing an empty value or a value returned from the map function
+     */
+    virtual IOptional<T, P, F, C, V> map(F callback) const
+    {
+        return EmptyOptional<T, P, F, C, V>();
+    }
+};
+
+template <typename T, typename P, typename F, typename C, typename V>
+class Optional : public IOptional<T, P, F, C, V>
 {
 private:
     T value;
     bool hasValue;
+    Optional(T value) : value(value) : hasValue(true)
+    {
+    }
 
 public:
-    Optional() : hasValue(false)
-    {
-    }
-
-    Optional(T value) : hasValue(value != nullptr), value(value)
-    {
-    }
-
-    static Optional<T>
+    static IOptional<T, P, F, C, V>
     of(T value)
     {
-        return Optional<T>(value);
+        if (value == nullptr)
+        {
+            return EmptyOptional<T, P, F, C, V>();
+        }
+        return Optional<T, P, F, C, V>(value);
     }
 
-    static Optional<T> ofNullable(T value)
+    static IOptional<T, P, F, C, V> ofNullable(T value)
     {
         return of(value);
     }
 
-    static Optional<T> empty()
+    static EmptyOptional<T, P, F, C, V> empty()
     {
-        return Optional<T>();
+        return EmptyOptional<T, P, F, C, V>();
     }
 
     bool isPresent() const
@@ -43,8 +148,7 @@ public:
         return !hasValue;
     }
 
-    template <typename F>
-    Optional<T> filter(F predicate) const
+    IOptional<T, P, F, C, V> filter(P predicate) const
     {
         if (hasValue)
         {
@@ -63,8 +167,7 @@ public:
         }
     }
 
-    template <typename F>
-    void ifPresent(F callback) const
+    void ifPresent(C callback) const
     {
         if (hasValue)
         {
@@ -72,8 +175,7 @@ public:
         }
     }
 
-    template <typename F>
-    void ifAbsent(F callback) const
+    void ifAbsent(C callback) const
     {
         if (!hasValue)
         {
@@ -81,8 +183,7 @@ public:
         }
     }
 
-    template <typename F>
-    void ifPresentOrElse(F callback, F elseCallback) const
+    void ifPresentOrElse(C callback, C elseCallback) const
     {
         if (hasValue)
         {
@@ -108,7 +209,7 @@ public:
         return defaultValue;
     }
 
-    Optional<T> orElse(T defaultValue) const
+    Optional<T, P, F, C, V> orElse(T defaultValue) const
     {
         return of(getDefault(defaultValue));
     }
@@ -122,28 +223,20 @@ public:
         return false;
     }
 
-    bool equals(Optional<T> other) const
+    bool equals(IOptional<T, P, F, C, V> other) const
     {
         return other
             .map(this->equals)
             .orElse(false);
     }
 
-    /**
-     * @brief Will let you convert from one value to another without checking if the existing value exists
-     *
-     * @tparam F the return type of the map function
-     * @param callback a function that takes the current value and returns a new value. If the current value is empty, the new value will be empty.
-     * @return Optional<F> an optional containing an empty value or a value returned from the map function
-     */
-    template <typename F>
-    Optional<F> map(F callback) const
+    IOptional<T, P, F, C, V> map(V callback) const
     {
         if (hasValue)
         {
-            return Optional<F>(callback(value));
+            return of(callback(value));
         }
-        return Optional<F>();
+        return empty();
     }
 };
 
