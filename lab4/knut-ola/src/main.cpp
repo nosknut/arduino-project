@@ -28,13 +28,7 @@ struct Sequences
     Sequence printPosition;
     Sequence lcdScroll;
     Sequence loop;
-
-    // Groups
-    struct FollowLineSequences
-    {
-        Sequence followLine;
-        Sequence printSpeed;
-    } followLineGroup;
+    Sequence followLine;
 } sequences;
 
 struct ApplicationState
@@ -332,10 +326,10 @@ bool followLine()
     if (buttonA.getSingleDebouncedPress())
     {
         motors.setSpeeds(0, 0);
-        sequences.followLineGroup.followLine.reset();
+        sequences.followLine.reset();
         return true;
     }
-    return sequences.followLineGroup.followLine
+    return sequences.followLine
         .then([&] { //
             printMessage("Press A", "to cancel");
         })
@@ -364,7 +358,7 @@ bool followLine()
                 appConfig.numSafetyFlashesBeforeStart,
                 appConfig.safetyFlashDurationMs);
         })
-        .thenWhenReturnsTrue([&] { //
+        .thenWhenReturnsTrue([&](/*Optional<Sequence> optionalSubSequence*/) { //
             Range outputRange = appConfig.linePidConfig.outputRange;
             Range inputRange = appConfig.linePidConfig.inputRange;
             // const int sensorValue = currentPosition;
@@ -383,25 +377,27 @@ bool followLine()
             // Clamp the distributed speeds to the output range
             const int clampedLeftSpeed = Scaling::clamp(rightCompensatedLeftSpeed, outputRange);
             const int clampedRightSpeed = Scaling::clamp(rightSpeed, outputRange);
+            /*
+                        optionalSubSequence.ifPresent([&](Sequence subSequence) { //
+                            subSequence
+                                .thenWhenReturnsTrue([&] { //
+                                    printMessage(
+                                        "Position",
+                                        getProgressBar(sensorValue, inputRange));
 
-            sequences.followLineGroup.printSpeed
-                .thenWhenReturnsTrue([&] { //
-                    printMessage(
-                        "Position",
-                        getProgressBar(sensorValue, inputRange));
-
-                    return buttonB.getSingleDebouncedPress();
-                })
-                .thenWhenReturnsTrue([&] { //
-                    printValues(sensorValue, output);
-                    return buttonB.getSingleDebouncedPress();
-                })
-                .thenWhenReturnsTrue([&] { //
-                    printValues(clampedLeftSpeed, clampedRightSpeed);
-                    return buttonB.getSingleDebouncedPress();
-                })
-                .loop()
-                .endOfSequence();
+                                    return buttonB.getSingleDebouncedPress();
+                                })
+                                .thenWhenReturnsTrue([&] { //
+                                    printValues(sensorValue, output);
+                                    return buttonB.getSingleDebouncedPress();
+                                })
+                                .thenWhenReturnsTrue([&] { //
+                                    printValues(clampedLeftSpeed, clampedRightSpeed);
+                                    return buttonB.getSingleDebouncedPress();
+                                })
+                                .loop()
+                                .endOfSequence();
+                        });*/
 
             motors.setSpeeds(clampedLeftSpeed, clampedRightSpeed);
             return buttonA.getSingleDebouncedPress();
@@ -487,9 +483,9 @@ void updateMenuControls()
         .then([&] { //
             printScrollMessage("A: Calibrate", "B: Follow Line");
             sequences.calibration.reset();
-            sequences.followLineGroup.followLine.reset();
+            sequences.followLine.reset();
             sequences.calibration.pause();
-            sequences.followLineGroup.followLine.pause();
+            sequences.followLine.pause();
         })
         .thenWhenReturnsTrue([&] { //
             if (buttonA.getSingleDebouncedPress())
@@ -500,7 +496,7 @@ void updateMenuControls()
             else if (buttonB.getSingleDebouncedPress())
             {
                 sequences.calibration.start();
-                sequences.followLineGroup.followLine.start();
+                sequences.followLine.start();
                 return true;
             }
             return false;

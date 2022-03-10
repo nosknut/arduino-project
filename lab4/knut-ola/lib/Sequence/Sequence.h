@@ -2,6 +2,7 @@
 #define Sequence_h
 #include <Arduino.h>
 #include <Timer.h>
+#include <Optional.h>
 
 /*
 Warnings:
@@ -57,6 +58,7 @@ void loop()
 class Sequence
 {
 private:
+    Optional<Sequence> subSequence = Optional<Sequence>::empty();
     int timesPreviousStepLooped = 0;
 
     int timesLooped = 0;
@@ -97,7 +99,7 @@ public:
 
         if (checkedSteps == sequenceStep)
         {
-            if (callback())
+            if (callback()) // subSequence))
             {
                 moveSteps(1);
             }
@@ -118,6 +120,27 @@ public:
         {
             callback();
             moveSteps(1);
+        }
+        checkedSteps += 1;
+        return *this;
+    }
+
+    Sequence &addOrResetSubSequence()
+    {
+        if (paused)
+        {
+            return *this;
+        }
+        if (checkedSteps == sequenceStep)
+        {
+            if (subSequence.isPresent())
+            {
+                subSequence.get(); //.reset();
+            }
+            else
+            {
+                subSequence = Optional<Sequence>();
+            }
         }
         checkedSteps += 1;
         return *this;
@@ -177,7 +200,7 @@ public:
         {
             // SHould run before callback is checked
             timesPreviousStepLooped += 1;
-            if (callback())
+            if (callback()) // subSequence))
             {
                 moveSteps(1);
                 timesPreviousStepLooped = 0;
@@ -228,7 +251,7 @@ public:
             }
             else
             {
-                callback();
+                callback(); // subSequence);
             }
         }
         checkedSteps += 1;
@@ -277,7 +300,7 @@ public:
         if (checkedSteps == sequenceStep)
         {
             endSequenceShouldReturnTrueBetweenLoops = false;
-            shouldLoop = !callback();
+            shouldLoop = !callback(subSequence);
             sequenceStep += 1;
         }
 
