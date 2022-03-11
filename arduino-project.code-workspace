@@ -4,10 +4,6 @@
             "path": "."
         },
         {
-            "name": "arduino-project/knut-ola\\lectures\\YR6018\\10_03_2022_17_00_19_00/millis-demo",
-            "path": "./knut-ola\\lectures\\YR6018\\10_03_2022_17_00_19_00\\millis-demo"
-        },
-        {
             "name": "arduino-project/knut-ola\\lectures\\YR6018\\10_03_2022_17_00_19_00/millis-demo-2",
             "path": "./knut-ola\\lectures\\YR6018\\10_03_2022_17_00_19_00\\millis-demo-2"
         },
@@ -26,18 +22,6 @@
         {
             "name": "arduino-project/knut-ola\\lectures\\YR6018\\10_03_2022_17_00_19_00/millis-demo-6",
             "path": "./knut-ola\\lectures\\YR6018\\10_03_2022_17_00_19_00\\millis-demo-6"
-        },
-        {
-            "name": "arduino-project/knut-ola\\lectures\\YR6018\\10_03_2022_17_00_19_00/millis-demo-7",
-            "path": "./knut-ola\\lectures\\YR6018\\10_03_2022_17_00_19_00\\millis-demo-7"
-        },
-        {
-            "name": "arduino-project/knut-ola\\lectures\\YR6018\\10_03_2022_17_00_19_00/millis-demo-8",
-            "path": "./knut-ola\\lectures\\YR6018\\10_03_2022_17_00_19_00\\millis-demo-8"
-        },
-        {
-            "name": "arduino-project/knut-ola\\lectures\\YR6018\\10_03_2022_17_00_19_00/millis-demo-9",
-            "path": "./knut-ola\\lectures\\YR6018\\10_03_2022_17_00_19_00\\millis-demo-9"
         },
         {
             "name": "arduino-project/lab1/knut-ola",
