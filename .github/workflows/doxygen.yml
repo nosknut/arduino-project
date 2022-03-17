@@ -1,0 +1,17 @@
+# Source: https://piolabs.com/blog/insights/unit-testing-part-3.html
+name: Builds and deploys the doxygen page
+on: [push]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: Doxygen Action
+        uses: mattnotmitt/doxygen-action@1.9.3
+
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./docs/html

@@ -1,0 +1,10 @@
+# Doxygen configuration file for generating documentation.
+PROJECT_NAME = "Sequence"
+OUTPUT_DIRECTORY = docs
+INLINE_INHERITED_MEMB = YES
+INPUT = lab4/knut-ola/lib/
+RECURSIVE = YES
+SOURCE_BROWSER = YES
+USE_MATHJAX = YES
+GENERATE_LATEX = YES
+EXTRACT_STATIC = YES
