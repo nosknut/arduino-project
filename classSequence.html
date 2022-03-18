@@ -141,12 +141,45 @@ Public Attributes</h2></td></tr>
 <div class="textblock"><p >Warnings: The &amp; symbol inside the capture-clause [&amp;] of the lambda will cause all variables that are used in the given lambda to be referenced rather than copied. Not doing this could cause funky issues that are next to impossible to debug.</p>
 <p >In short: Always start your lambdas with [&amp;] when using Sequence!</p>
 <p >About the empty comments in the example below: The // comments at the end of each .then({ // are there to make the formatter snap codelines to a new line. If you do not include this the code becomes ugly and hard to read.</p>
-<p >Example usage:</p>
-<p >struct Sequences { <a class="el" href="classSequence.html">Sequence</a> red; <a class="el" href="classSequence.html">Sequence</a> yellow; } sequences;</p>
-<p >void <a class="el" href="classSequence.html#a87f67de03373a3bb224bf21bfb7cabc7" title="Restart sequence from beginning when sequence has finished executing.">loop()</a> { sequences.red .then([&amp;] { // ledRed(true); }) .delay(2000) .then([&amp;] { // ledRed(false); }) .delay(2000) .<a class="el" href="classSequence.html#a87f67de03373a3bb224bf21bfb7cabc7" title="Restart sequence from beginning when sequence has finished executing.">loop()</a> .<a class="el" href="classSequence.html#afc1e5684aff638ec7f3c361906eafacf" title="Mark end of sequence and return true if sequence has finished executing.">endOfSequence()</a>;</p>
-<p >sequences.yellow .then([&amp;] { // ledYellow(true); }) .delay(200) .then([&amp;] { // ledYellow(false); }) .delay(200) .<a class="el" href="classSequence.html#a87f67de03373a3bb224bf21bfb7cabc7" title="Restart sequence from beginning when sequence has finished executing.">loop()</a> .<a class="el" href="classSequence.html#afc1e5684aff638ec7f3c361906eafacf" title="Mark end of sequence and return true if sequence has finished executing.">endOfSequence()</a>; } </p>
-
-<p class="definition">Definition at line <a class="el" href="Sequence_8h_source.html#l00059">59</a> of file <a class="el" href="Sequence_8h_source.html">Sequence.h</a>.</p>
+<div class="fragment"><div class="line"><span class="comment">// Example</span></div>
+<div class="line"><span class="keyword">struct </span>Sequences {</div>
+<div class="line">    <a class="code hl_class" href="classSequence.html">Sequence</a> red;</div>
+<div class="line">    <a class="code hl_class" href="classSequence.html">Sequence</a> yellow;</div>
+<div class="line">} sequences;</div>
+<div class="line"> </div>
+<div class="line"><span class="keywordtype">void</span> <a class="code hl_function" href="classSequence.html#a87f67de03373a3bb224bf21bfb7cabc7">loop</a>()</div>
+<div class="line">{</div>
+<div class="line">    sequences.red</div>
+<div class="line">        .<a class="code hl_function" href="classSequence.html#a3c07ef22748c098b0a5d93142dc52289">then</a>([&amp;] { <span class="comment">//</span></div>
+<div class="line">            ledRed(<span class="keyword">true</span>);</div>
+<div class="line">        })</div>
+<div class="line">        .<a class="code hl_function" href="classSequence.html#a9773b3c5eb200448e06af9c2379e363b">delay</a>(2000)</div>
+<div class="line">        .<a class="code hl_function" href="classSequence.html#a3c07ef22748c098b0a5d93142dc52289">then</a>([&amp;] { <span class="comment">//</span></div>
+<div class="line">            ledRed(<span class="keyword">false</span>);</div>
+<div class="line">        })</div>
+<div class="line">        .<a class="code hl_function" href="classSequence.html#a9773b3c5eb200448e06af9c2379e363b">delay</a>(2000)</div>
+<div class="line">        .<a class="code hl_function" href="classSequence.html#a87f67de03373a3bb224bf21bfb7cabc7">loop</a>()</div>
+<div class="line">        .<a class="code hl_function" href="classSequence.html#afc1e5684aff638ec7f3c361906eafacf">endOfSequence</a>();</div>
+<div class="line"> </div>
+<div class="line">    sequences.yellow</div>
+<div class="line">        .then([&amp;] { <span class="comment">//</span></div>
+<div class="line">            ledYellow(<span class="keyword">true</span>);</div>
+<div class="line">        })</div>
+<div class="line">        .<a class="code hl_function" href="classSequence.html#a9773b3c5eb200448e06af9c2379e363b">delay</a>(200)</div>
+<div class="line">        .<a class="code hl_function" href="classSequence.html#a3c07ef22748c098b0a5d93142dc52289">then</a>([&amp;] { <span class="comment">//</span></div>
+<div class="line">            ledYellow(<span class="keyword">false</span>);</div>
+<div class="line">        })</div>
+<div class="line">        .<a class="code hl_function" href="classSequence.html#a9773b3c5eb200448e06af9c2379e363b">delay</a>(200)</div>
+<div class="line">        .<a class="code hl_function" href="classSequence.html#a87f67de03373a3bb224bf21bfb7cabc7">loop</a>()</div>
+<div class="line">        .<a class="code hl_function" href="classSequence.html#afc1e5684aff638ec7f3c361906eafacf">endOfSequence</a>();</div>
+<div class="line">}</div>
+<div class="ttc" id="aclassSequence_html"><div class="ttname"><a href="classSequence.html">Sequence</a></div><div class="ttdef"><b>Definition:</b> <a href="Sequence_8h_source.html#l00060">Sequence.h:61</a></div></div>
+<div class="ttc" id="aclassSequence_html_a3c07ef22748c098b0a5d93142dc52289"><div class="ttname"><a href="classSequence.html#a3c07ef22748c098b0a5d93142dc52289">Sequence::then</a></div><div class="ttdeci">Sequence &amp; then(F callback)</div><div class="ttdoc">Will run the code provided and go to next sequence step.</div><div class="ttdef"><b>Definition:</b> <a href="Sequence_8h_source.html#l00144">Sequence.h:144</a></div></div>
+<div class="ttc" id="aclassSequence_html_a87f67de03373a3bb224bf21bfb7cabc7"><div class="ttname"><a href="classSequence.html#a87f67de03373a3bb224bf21bfb7cabc7">Sequence::loop</a></div><div class="ttdeci">Sequence &amp; loop()</div><div class="ttdoc">Restart sequence from beginning when sequence has finished executing.</div><div class="ttdef"><b>Definition:</b> <a href="Sequence_8h_source.html#l00326">Sequence.h:326</a></div></div>
+<div class="ttc" id="aclassSequence_html_a9773b3c5eb200448e06af9c2379e363b"><div class="ttname"><a href="classSequence.html#a9773b3c5eb200448e06af9c2379e363b">Sequence::delay</a></div><div class="ttdeci">Sequence &amp; delay(long delayMs)</div><div class="ttdef"><b>Definition:</b> <a href="Sequence_8h_source.html#l00312">Sequence.h:312</a></div></div>
+<div class="ttc" id="aclassSequence_html_afc1e5684aff638ec7f3c361906eafacf"><div class="ttname"><a href="classSequence.html#afc1e5684aff638ec7f3c361906eafacf">Sequence::endOfSequence</a></div><div class="ttdeci">bool endOfSequence()</div><div class="ttdoc">Mark end of sequence and return true if sequence has finished executing.</div><div class="ttdef"><b>Definition:</b> <a href="Sequence_8h_source.html#l00437">Sequence.h:437</a></div></div>
+</div><!-- fragment --> 
+<p class="definition">Definition at line <a class="el" href="Sequence_8h_source.html#l00060">60</a> of file <a class="el" href="Sequence_8h_source.html">Sequence.h</a>.</p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
 <a id="a9773b3c5eb200448e06af9c2379e363b" name="a9773b3c5eb200448e06af9c2379e363b"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a9773b3c5eb200448e06af9c2379e363b">&#9670;&nbsp;</a></span>delay()</h2>
@@ -180,7 +213,7 @@ Public Attributes</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd><a class="el" href="classSequence.html">Sequence</a>&amp; </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="Sequence_8h_source.html#l00311">311</a> of file <a class="el" href="Sequence_8h_source.html">Sequence.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Sequence_8h_source.html#l00312">312</a> of file <a class="el" href="Sequence_8h_source.html">Sequence.h</a>.</p>
 
 </div>
 </div>
@@ -210,7 +243,7 @@ Public Attributes</h2></td></tr>
 <p>Mark end of sequence and return true if sequence has finished executing. </p>
 <dl class="section return"><dt>Returns</dt><dd>true if the sequence is finished executing all the step or false if the sequence is not finished executing all the steps or if conditions in <a class="el" href="classSequence.html#a788358f0132d4c8b9ebddcd3a63531cd">loopTimes()</a> or <a class="el" href="classSequence.html#ad62957ff73c2acbed6143a2728b701e6">loopUntil()</a> have not been met </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="Sequence_8h_source.html#l00436">436</a> of file <a class="el" href="Sequence_8h_source.html">Sequence.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Sequence_8h_source.html#l00437">437</a> of file <a class="el" href="Sequence_8h_source.html">Sequence.h</a>.</p>
 
 </div>
 </div>
@@ -238,7 +271,7 @@ Public Attributes</h2></td></tr>
 </div><div class="memdoc">
 <dl class="section return"><dt>Returns</dt><dd>int the number of times the <a class="el" href="classSequence.html#a29c30e4429bd42390d754d3f00061b52" title="Repeats n previous steps until callback returns true.">repeatPreviousStepsUntil()</a> or <a class="el" href="classSequence.html#ad79f6e8b208a89797d0bfa320f88ea33" title="Repeats n previous steps n times.">repeatPreviousStepsTimes()</a> functions have run. This will reset when the sequence continues past those steps. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="Sequence_8h_source.html#l00214">214</a> of file <a class="el" href="Sequence_8h_source.html">Sequence.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Sequence_8h_source.html#l00215">215</a> of file <a class="el" href="Sequence_8h_source.html">Sequence.h</a>.</p>
 
 </div>
 </div>
@@ -266,7 +299,7 @@ Public Attributes</h2></td></tr>
 </div><div class="memdoc">
 <dl class="section return"><dt>Returns</dt><dd>int the number of times the sequence has looped. This only incremens when using the <a class="el" href="classSequence.html#a788358f0132d4c8b9ebddcd3a63531cd">loopTimes()</a> function. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="Sequence_8h_source.html#l00204">204</a> of file <a class="el" href="Sequence_8h_source.html">Sequence.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Sequence_8h_source.html#l00205">205</a> of file <a class="el" href="Sequence_8h_source.html">Sequence.h</a>.</p>
 
 </div>
 </div>
@@ -295,7 +328,7 @@ Public Attributes</h2></td></tr>
 <p >Returns true if the sequence has finished executing and should be restarted to continue from the first step</p>
 <dl class="section return"><dt>Returns</dt><dd>true if the sequence has finished executing </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="Sequence_8h_source.html#l00424">424</a> of file <a class="el" href="Sequence_8h_source.html">Sequence.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Sequence_8h_source.html#l00425">425</a> of file <a class="el" href="Sequence_8h_source.html">Sequence.h</a>.</p>
 
 </div>
 </div>
@@ -325,7 +358,7 @@ Public Attributes</h2></td></tr>
 <p>Restart sequence from beginning when sequence has finished executing. </p>
 <dl class="section return"><dt>Returns</dt><dd><a class="el" href="classSequence.html">Sequence</a>&amp; </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="Sequence_8h_source.html#l00325">325</a> of file <a class="el" href="Sequence_8h_source.html">Sequence.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Sequence_8h_source.html#l00326">326</a> of file <a class="el" href="Sequence_8h_source.html">Sequence.h</a>.</p>
 
 </div>
 </div>
@@ -370,7 +403,7 @@ Public Attributes</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="Sequence_8h_source.html#l00385">385</a> of file <a class="el" href="Sequence_8h_source.html">Sequence.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Sequence_8h_source.html#l00386">386</a> of file <a class="el" href="Sequence_8h_source.html">Sequence.h</a>.</p>
 
 </div>
 </div>
@@ -408,7 +441,7 @@ template&lt;typename F &gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>template &lt;typename F&gt;&amp; </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="Sequence_8h_source.html#l00351">351</a> of file <a class="el" href="Sequence_8h_source.html">Sequence.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Sequence_8h_source.html#l00352">352</a> of file <a class="el" href="Sequence_8h_source.html">Sequence.h</a>.</p>
 
 </div>
 </div>
@@ -444,7 +477,7 @@ template&lt;typename F &gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="Sequence_8h_source.html#l00106">106</a> of file <a class="el" href="Sequence_8h_source.html">Sequence.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Sequence_8h_source.html#l00107">107</a> of file <a class="el" href="Sequence_8h_source.html">Sequence.h</a>.</p>
 
 </div>
 </div>
@@ -472,7 +505,7 @@ template&lt;typename F &gt; </div>
 </div><div class="memdoc">
 <p >Will pause execution the sequence, while remembering the current step. If you want to start the sequence again, call <a class="el" href="classSequence.html#a3eb07e08e59b731d6d950fac7140697e" title="Will resume execution of the sequence if it is paused.">resume()</a> </p>
 
-<p class="definition">Definition at line <a class="el" href="Sequence_8h_source.html#l00186">186</a> of file <a class="el" href="Sequence_8h_source.html">Sequence.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Sequence_8h_source.html#l00187">187</a> of file <a class="el" href="Sequence_8h_source.html">Sequence.h</a>.</p>
 
 </div>
 </div>
@@ -520,7 +553,7 @@ template&lt;typename F &gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd><a class="el" href="classSequence.html">Sequence</a>&amp; returns the sequence so chaining can continue </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="Sequence_8h_source.html#l00258">258</a> of file <a class="el" href="Sequence_8h_source.html">Sequence.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Sequence_8h_source.html#l00259">259</a> of file <a class="el" href="Sequence_8h_source.html">Sequence.h</a>.</p>
 
 </div>
 </div>
@@ -570,7 +603,7 @@ template&lt;typename F &gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd><a class="el" href="classSequence.html">Sequence</a>&amp; returns the sequence so chaining can continue </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="Sequence_8h_source.html#l00227">227</a> of file <a class="el" href="Sequence_8h_source.html">Sequence.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Sequence_8h_source.html#l00228">228</a> of file <a class="el" href="Sequence_8h_source.html">Sequence.h</a>.</p>
 
 </div>
 </div>
@@ -599,7 +632,7 @@ template&lt;typename F &gt; </div>
 
 <p>Will reset everything and move the sequence to the first step. </p>
 
-<p class="definition">Definition at line <a class="el" href="Sequence_8h_source.html#l00162">162</a> of file <a class="el" href="Sequence_8h_source.html">Sequence.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Sequence_8h_source.html#l00163">163</a> of file <a class="el" href="Sequence_8h_source.html">Sequence.h</a>.</p>
 
 </div>
 </div>
@@ -628,7 +661,7 @@ template&lt;typename F &gt; </div>
 
 <p>Will resume execution of the sequence if it is paused. </p>
 
-<p class="definition">Definition at line <a class="el" href="Sequence_8h_source.html#l00195">195</a> of file <a class="el" href="Sequence_8h_source.html">Sequence.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Sequence_8h_source.html#l00196">196</a> of file <a class="el" href="Sequence_8h_source.html">Sequence.h</a>.</p>
 
 </div>
 </div>
@@ -657,7 +690,7 @@ template&lt;typename F &gt; </div>
 
 <p>Will reset the sequence. If you want to resume after a pause, call <a class="el" href="classSequence.html#a3eb07e08e59b731d6d950fac7140697e" title="Will resume execution of the sequence if it is paused.">resume()</a> instead. </p>
 
-<p class="definition">Definition at line <a class="el" href="Sequence_8h_source.html#l00176">176</a> of file <a class="el" href="Sequence_8h_source.html">Sequence.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Sequence_8h_source.html#l00177">177</a> of file <a class="el" href="Sequence_8h_source.html">Sequence.h</a>.</p>
 
 </div>
 </div>
@@ -696,7 +729,7 @@ template&lt;typename F &gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd><a class="el" href="classSequence.html">Sequence</a>&amp; </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="Sequence_8h_source.html#l00143">143</a> of file <a class="el" href="Sequence_8h_source.html">Sequence.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Sequence_8h_source.html#l00144">144</a> of file <a class="el" href="Sequence_8h_source.html">Sequence.h</a>.</p>
 
 </div>
 </div>
@@ -751,7 +784,7 @@ template&lt;typename F &gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd><a class="el" href="classSequence.html">Sequence</a>&amp; </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="Sequence_8h_source.html#l00280">280</a> of file <a class="el" href="Sequence_8h_source.html">Sequence.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Sequence_8h_source.html#l00281">281</a> of file <a class="el" href="Sequence_8h_source.html">Sequence.h</a>.</p>
 
 </div>
 </div>
@@ -787,7 +820,7 @@ template&lt;typename F &gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="Sequence_8h_source.html#l00118">118</a> of file <a class="el" href="Sequence_8h_source.html">Sequence.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Sequence_8h_source.html#l00119">119</a> of file <a class="el" href="Sequence_8h_source.html">Sequence.h</a>.</p>
 
 </div>
 </div>
@@ -805,7 +838,7 @@ template&lt;typename F &gt; </div>
 </div><div class="memdoc">
 <p >Used to keep track of time in the <a class="el" href="classSequence.html#a9773b3c5eb200448e06af9c2379e363b">delay()</a> function. You may use it yourself, but beware this could cause weird issues. </p>
 
-<p class="definition">Definition at line <a class="el" href="Sequence_8h_source.html#l00100">100</a> of file <a class="el" href="Sequence_8h_source.html">Sequence.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Sequence_8h_source.html#l00101">101</a> of file <a class="el" href="Sequence_8h_source.html">Sequence.h</a>.</p>
 
 </div>
 </div>

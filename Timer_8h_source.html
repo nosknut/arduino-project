@@ -106,21 +106,21 @@ $(function() {
 <div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>        <span class="keywordflow">return</span> <a class="code hl_function" href="classTimer.html#ab95ab895bd12d77493515bdbd7cb1f1c">getElapsedTime</a>() &gt;= durationMs;</div>
 <div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>    }</div>
 <div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span> </div>
-<div class="line"><a id="l00056" name="l00056"></a><span class="lineno"><a class="line" href="classTimer.html#a926ff3ad8b00389815d2c2fcc5a80e7f">   56</a></span>    <span class="keywordtype">bool</span> <a class="code hl_function" href="classTimer.html#a926ff3ad8b00389815d2c2fcc5a80e7f">loopWait</a>(<span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> durationMs)</div>
-<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span>    {</div>
-<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>        <span class="keywordflow">if</span> (<a class="code hl_function" href="classTimer.html#ae1047e14c655cb046b999f6e414e1ece">isFinished</a>(durationMs))</div>
-<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span>        {</div>
-<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span>            <a class="code hl_function" href="classTimer.html#a9020542d73357a4eef512eefaf57524b">reset</a>();</div>
-<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span>            <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
-<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span>        }</div>
-<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span>        <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
-<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span>    }</div>
-<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span>};</div>
-<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span> </div>
-<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l00058" name="l00058"></a><span class="lineno"><a class="line" href="classTimer.html#a926ff3ad8b00389815d2c2fcc5a80e7f">   58</a></span>    <span class="keywordtype">bool</span> <a class="code hl_function" href="classTimer.html#a926ff3ad8b00389815d2c2fcc5a80e7f">loopWait</a>(<span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> durationMs)</div>
+<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span>    {</div>
+<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span>        <span class="keywordflow">if</span> (<a class="code hl_function" href="classTimer.html#ae1047e14c655cb046b999f6e414e1ece">isFinished</a>(durationMs))</div>
+<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span>        {</div>
+<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span>            <a class="code hl_function" href="classTimer.html#a9020542d73357a4eef512eefaf57524b">reset</a>();</div>
+<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span>            <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
+<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span>        }</div>
+<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span>        <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span>    }</div>
+<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span>};</div>
+<div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span> </div>
+<div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span><span class="preprocessor">#endif</span></div>
 <div class="ttc" id="aclassTimer_html"><div class="ttname"><a href="classTimer.html">Timer</a></div><div class="ttdef"><b>Definition:</b> <a href="Timer_8h_source.html#l00005">Timer.h:6</a></div></div>
 <div class="ttc" id="aclassTimer_html_a9020542d73357a4eef512eefaf57524b"><div class="ttname"><a href="classTimer.html#a9020542d73357a4eef512eefaf57524b">Timer::reset</a></div><div class="ttdeci">void reset()</div><div class="ttdoc">Will reset the timer.</div><div class="ttdef"><b>Definition:</b> <a href="Timer_8h_source.html#l00020">Timer.h:20</a></div></div>
-<div class="ttc" id="aclassTimer_html_a926ff3ad8b00389815d2c2fcc5a80e7f"><div class="ttname"><a href="classTimer.html#a926ff3ad8b00389815d2c2fcc5a80e7f">Timer::loopWait</a></div><div class="ttdeci">bool loopWait(const unsigned long durationMs)</div><div class="ttdef"><b>Definition:</b> <a href="Timer_8h_source.html#l00056">Timer.h:56</a></div></div>
+<div class="ttc" id="aclassTimer_html_a926ff3ad8b00389815d2c2fcc5a80e7f"><div class="ttname"><a href="classTimer.html#a926ff3ad8b00389815d2c2fcc5a80e7f">Timer::loopWait</a></div><div class="ttdeci">bool loopWait(const unsigned long durationMs)</div><div class="ttdef"><b>Definition:</b> <a href="Timer_8h_source.html#l00058">Timer.h:58</a></div></div>
 <div class="ttc" id="aclassTimer_html_ab95ab895bd12d77493515bdbd7cb1f1c"><div class="ttname"><a href="classTimer.html#ab95ab895bd12d77493515bdbd7cb1f1c">Timer::getElapsedTime</a></div><div class="ttdeci">unsigned long getElapsedTime()</div><div class="ttdoc">Get the time in milliseconds since the timer was started or reset.</div><div class="ttdef"><b>Definition:</b> <a href="Timer_8h_source.html#l00029">Timer.h:29</a></div></div>
 <div class="ttc" id="aclassTimer_html_ae1047e14c655cb046b999f6e414e1ece"><div class="ttname"><a href="classTimer.html#ae1047e14c655cb046b999f6e414e1ece">Timer::isFinished</a></div><div class="ttdeci">bool isFinished(const unsigned long durationMs)</div><div class="ttdef"><b>Definition:</b> <a href="Timer_8h_source.html#l00040">Timer.h:40</a></div></div>
 </div><!-- fragment --></div><!-- contents -->

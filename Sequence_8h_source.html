@@ -81,302 +81,302 @@ $(function() {
 <div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span><span class="preprocessor">#include &lt;Arduino.h&gt;</span></div>
 <div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span><span class="preprocessor">#include &lt;Timer.h&gt;</span></div>
 <div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span> </div>
-<div class="line"><a id="l00059" name="l00059"></a><span class="lineno"><a class="line" href="classSequence.html">   59</a></span><span class="keyword">class </span><a class="code hl_class" href="classSequence.html">Sequence</a></div>
-<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span>{</div>
-<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span><span class="keyword">private</span>:</div>
-<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span>    <span class="keywordtype">int</span> timesPreviousStepLooped = 0;</div>
-<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span> </div>
-<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span>    <span class="keywordtype">int</span> timesLooped = 0;</div>
-<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span>    <span class="keywordtype">int</span> timesToLoop = 0;</div>
-<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span> </div>
-<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span>    <span class="keywordtype">int</span> sequenceStep = 0;</div>
-<div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span>    <span class="keywordtype">int</span> checkedSteps = 0;</div>
-<div class="line"><a id="l00084" name="l00084"></a><span class="lineno">   84</span>    <span class="keywordtype">int</span> numSteps = 0;</div>
-<div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span>    <span class="keywordtype">bool</span> sequenceHasFinished = <span class="keyword">false</span>;</div>
-<div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span>    <span class="keywordtype">bool</span> shouldLoop = <span class="keyword">false</span>;</div>
-<div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span>    <span class="keywordtype">bool</span> endSequenceShouldReturnTrueBetweenLoops = <span class="keyword">true</span>;</div>
-<div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span>    <span class="keywordtype">bool</span> paused = <span class="keyword">false</span>;</div>
-<div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span> </div>
-<div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span><span class="keyword">public</span>:</div>
-<div class="line"><a id="l00100" name="l00100"></a><span class="lineno"><a class="line" href="classSequence.html#aa76242a414c01a9a5890816d6f6589e7">  100</a></span>    <a class="code hl_class" href="classTimer.html">Timer</a> <a class="code hl_variable" href="classSequence.html#aa76242a414c01a9a5890816d6f6589e7">timer</a>;</div>
-<div class="line"><a id="l00106" name="l00106"></a><span class="lineno"><a class="line" href="classSequence.html#a89e0bd686b057dea2c85b24b00ea6ba6">  106</a></span>    <span class="keywordtype">void</span> <a class="code hl_function" href="classSequence.html#a89e0bd686b057dea2c85b24b00ea6ba6">moveSteps</a>(<span class="keywordtype">int</span> deltaSteps)</div>
-<div class="line"><a id="l00107" name="l00107"></a><span class="lineno">  107</span>    {</div>
-<div class="line"><a id="l00108" name="l00108"></a><span class="lineno">  108</span>        sequenceStep += deltaSteps;</div>
-<div class="line"><a id="l00109" name="l00109"></a><span class="lineno">  109</span>        <a class="code hl_variable" href="classSequence.html#aa76242a414c01a9a5890816d6f6589e7">timer</a>.<a class="code hl_function" href="classTimer.html#a9020542d73357a4eef512eefaf57524b">reset</a>();</div>
-<div class="line"><a id="l00110" name="l00110"></a><span class="lineno">  110</span>    }</div>
-<div class="line"><a id="l00111" name="l00111"></a><span class="lineno">  111</span> </div>
-<div class="line"><a id="l00117" name="l00117"></a><span class="lineno">  117</span>    <span class="keyword">template</span> &lt;<span class="keyword">typename</span> F&gt;</div>
-<div class="line"><a id="l00118" name="l00118"></a><span class="lineno"><a class="line" href="classSequence.html#af1df81fd04771d39fe8c59f98201097f">  118</a></span>    <a class="code hl_class" href="classSequence.html">Sequence</a> &amp;<a class="code hl_function" href="classSequence.html#af1df81fd04771d39fe8c59f98201097f">thenWhenReturnsTrue</a>(F callback)</div>
-<div class="line"><a id="l00119" name="l00119"></a><span class="lineno">  119</span>    {</div>
-<div class="line"><a id="l00120" name="l00120"></a><span class="lineno">  120</span>        <span class="keywordflow">if</span> (paused)</div>
-<div class="line"><a id="l00121" name="l00121"></a><span class="lineno">  121</span>        {</div>
-<div class="line"><a id="l00122" name="l00122"></a><span class="lineno">  122</span>            <span class="keywordflow">return</span> *<span class="keyword">this</span>;</div>
-<div class="line"><a id="l00123" name="l00123"></a><span class="lineno">  123</span>        }</div>
-<div class="line"><a id="l00124" name="l00124"></a><span class="lineno">  124</span> </div>
-<div class="line"><a id="l00125" name="l00125"></a><span class="lineno">  125</span>        <span class="keywordflow">if</span> (checkedSteps == sequenceStep)</div>
-<div class="line"><a id="l00126" name="l00126"></a><span class="lineno">  126</span>        {</div>
-<div class="line"><a id="l00127" name="l00127"></a><span class="lineno">  127</span>            <span class="keywordflow">if</span> (callback())</div>
-<div class="line"><a id="l00128" name="l00128"></a><span class="lineno">  128</span>            {</div>
-<div class="line"><a id="l00129" name="l00129"></a><span class="lineno">  129</span>                <a class="code hl_function" href="classSequence.html#a89e0bd686b057dea2c85b24b00ea6ba6">moveSteps</a>(1);</div>
-<div class="line"><a id="l00130" name="l00130"></a><span class="lineno">  130</span>            }</div>
-<div class="line"><a id="l00131" name="l00131"></a><span class="lineno">  131</span>        }</div>
-<div class="line"><a id="l00132" name="l00132"></a><span class="lineno">  132</span>        checkedSteps += 1;</div>
-<div class="line"><a id="l00133" name="l00133"></a><span class="lineno">  133</span>        <span class="keywordflow">return</span> *<span class="keyword">this</span>;</div>
-<div class="line"><a id="l00134" name="l00134"></a><span class="lineno">  134</span>    }</div>
-<div class="line"><a id="l00135" name="l00135"></a><span class="lineno">  135</span> </div>
-<div class="line"><a id="l00142" name="l00142"></a><span class="lineno">  142</span>    <span class="keyword">template</span> &lt;<span class="keyword">typename</span> F&gt;</div>
-<div class="line"><a id="l00143" name="l00143"></a><span class="lineno"><a class="line" href="classSequence.html#a3c07ef22748c098b0a5d93142dc52289">  143</a></span>    <a class="code hl_class" href="classSequence.html">Sequence</a> &amp;<a class="code hl_function" href="classSequence.html#a3c07ef22748c098b0a5d93142dc52289">then</a>(F callback)</div>
-<div class="line"><a id="l00144" name="l00144"></a><span class="lineno">  144</span>    {</div>
-<div class="line"><a id="l00145" name="l00145"></a><span class="lineno">  145</span>        <span class="keywordflow">if</span> (paused)</div>
-<div class="line"><a id="l00146" name="l00146"></a><span class="lineno">  146</span>        {</div>
-<div class="line"><a id="l00147" name="l00147"></a><span class="lineno">  147</span>            <span class="keywordflow">return</span> *<span class="keyword">this</span>;</div>
-<div class="line"><a id="l00148" name="l00148"></a><span class="lineno">  148</span>        }</div>
-<div class="line"><a id="l00149" name="l00149"></a><span class="lineno">  149</span>        <span class="keywordflow">if</span> (checkedSteps == sequenceStep)</div>
-<div class="line"><a id="l00150" name="l00150"></a><span class="lineno">  150</span>        {</div>
-<div class="line"><a id="l00151" name="l00151"></a><span class="lineno">  151</span>            callback();</div>
-<div class="line"><a id="l00152" name="l00152"></a><span class="lineno">  152</span>            <a class="code hl_function" href="classSequence.html#a89e0bd686b057dea2c85b24b00ea6ba6">moveSteps</a>(1);</div>
-<div class="line"><a id="l00153" name="l00153"></a><span class="lineno">  153</span>        }</div>
-<div class="line"><a id="l00154" name="l00154"></a><span class="lineno">  154</span>        checkedSteps += 1;</div>
-<div class="line"><a id="l00155" name="l00155"></a><span class="lineno">  155</span>        <span class="keywordflow">return</span> *<span class="keyword">this</span>;</div>
-<div class="line"><a id="l00156" name="l00156"></a><span class="lineno">  156</span>    }</div>
-<div class="line"><a id="l00157" name="l00157"></a><span class="lineno">  157</span> </div>
-<div class="line"><a id="l00162" name="l00162"></a><span class="lineno"><a class="line" href="classSequence.html#af1dbfa6630d8224407b489658f3cae13">  162</a></span>    <span class="keywordtype">void</span> <a class="code hl_function" href="classSequence.html#af1dbfa6630d8224407b489658f3cae13">reset</a>()</div>
-<div class="line"><a id="l00163" name="l00163"></a><span class="lineno">  163</span>    {</div>
-<div class="line"><a id="l00164" name="l00164"></a><span class="lineno">  164</span>        checkedSteps = 0;</div>
-<div class="line"><a id="l00165" name="l00165"></a><span class="lineno">  165</span>        sequenceStep = 0;</div>
-<div class="line"><a id="l00166" name="l00166"></a><span class="lineno">  166</span>        timesLooped = 0;</div>
-<div class="line"><a id="l00167" name="l00167"></a><span class="lineno">  167</span>        timesPreviousStepLooped = 0;</div>
-<div class="line"><a id="l00168" name="l00168"></a><span class="lineno">  168</span>        paused = <span class="keyword">false</span>;</div>
-<div class="line"><a id="l00169" name="l00169"></a><span class="lineno">  169</span>        sequenceHasFinished = <span class="keyword">false</span>;</div>
-<div class="line"><a id="l00170" name="l00170"></a><span class="lineno">  170</span>    }</div>
-<div class="line"><a id="l00171" name="l00171"></a><span class="lineno">  171</span> </div>
-<div class="line"><a id="l00176" name="l00176"></a><span class="lineno"><a class="line" href="classSequence.html#a324ee507087628879e9a2e5c7f8f5119">  176</a></span>    <span class="keywordtype">void</span> <a class="code hl_function" href="classSequence.html#a324ee507087628879e9a2e5c7f8f5119">start</a>()</div>
-<div class="line"><a id="l00177" name="l00177"></a><span class="lineno">  177</span>    {</div>
-<div class="line"><a id="l00178" name="l00178"></a><span class="lineno">  178</span>        <a class="code hl_function" href="classSequence.html#af1dbfa6630d8224407b489658f3cae13">reset</a>();</div>
-<div class="line"><a id="l00179" name="l00179"></a><span class="lineno">  179</span>    }</div>
-<div class="line"><a id="l00180" name="l00180"></a><span class="lineno">  180</span> </div>
-<div class="line"><a id="l00186" name="l00186"></a><span class="lineno"><a class="line" href="classSequence.html#a5a6fb2f1a1999b024cc14e89231247a6">  186</a></span>    <span class="keywordtype">void</span> <a class="code hl_function" href="classSequence.html#a5a6fb2f1a1999b024cc14e89231247a6">pause</a>()</div>
-<div class="line"><a id="l00187" name="l00187"></a><span class="lineno">  187</span>    {</div>
-<div class="line"><a id="l00188" name="l00188"></a><span class="lineno">  188</span>        paused = <span class="keyword">true</span>;</div>
-<div class="line"><a id="l00189" name="l00189"></a><span class="lineno">  189</span>    }</div>
-<div class="line"><a id="l00190" name="l00190"></a><span class="lineno">  190</span> </div>
-<div class="line"><a id="l00195" name="l00195"></a><span class="lineno"><a class="line" href="classSequence.html#a3eb07e08e59b731d6d950fac7140697e">  195</a></span>    <span class="keywordtype">void</span> <a class="code hl_function" href="classSequence.html#a3eb07e08e59b731d6d950fac7140697e">resume</a>()</div>
-<div class="line"><a id="l00196" name="l00196"></a><span class="lineno">  196</span>    {</div>
-<div class="line"><a id="l00197" name="l00197"></a><span class="lineno">  197</span>        paused = <span class="keyword">false</span>;</div>
-<div class="line"><a id="l00198" name="l00198"></a><span class="lineno">  198</span>    }</div>
-<div class="line"><a id="l00199" name="l00199"></a><span class="lineno">  199</span> </div>
-<div class="line"><a id="l00204" name="l00204"></a><span class="lineno"><a class="line" href="classSequence.html#a1391ca79fa87ccb9fe227db872d91277">  204</a></span>    <span class="keywordtype">int</span> <a class="code hl_function" href="classSequence.html#a1391ca79fa87ccb9fe227db872d91277">getTimesSequenceLooped</a>()</div>
-<div class="line"><a id="l00205" name="l00205"></a><span class="lineno">  205</span>    {</div>
-<div class="line"><a id="l00206" name="l00206"></a><span class="lineno">  206</span>        <span class="keywordflow">return</span> timesLooped;</div>
-<div class="line"><a id="l00207" name="l00207"></a><span class="lineno">  207</span>    }</div>
-<div class="line"><a id="l00208" name="l00208"></a><span class="lineno">  208</span> </div>
-<div class="line"><a id="l00214" name="l00214"></a><span class="lineno"><a class="line" href="classSequence.html#ad0788db9a4fc736a388e5ed95a2a4de3">  214</a></span>    <span class="keywordtype">int</span> <a class="code hl_function" href="classSequence.html#ad0788db9a4fc736a388e5ed95a2a4de3">getTimesPreviousStepLooped</a>()</div>
-<div class="line"><a id="l00215" name="l00215"></a><span class="lineno">  215</span>    {</div>
-<div class="line"><a id="l00216" name="l00216"></a><span class="lineno">  216</span>        <span class="keywordflow">return</span> timesPreviousStepLooped;</div>
-<div class="line"><a id="l00217" name="l00217"></a><span class="lineno">  217</span>    }</div>
-<div class="line"><a id="l00218" name="l00218"></a><span class="lineno">  218</span> </div>
-<div class="line"><a id="l00226" name="l00226"></a><span class="lineno">  226</span>    <span class="keyword">template</span> &lt;<span class="keyword">typename</span> F&gt;</div>
-<div class="line"><a id="l00227" name="l00227"></a><span class="lineno"><a class="line" href="classSequence.html#a29c30e4429bd42390d754d3f00061b52">  227</a></span>    <a class="code hl_class" href="classSequence.html">Sequence</a> &amp;<a class="code hl_function" href="classSequence.html#a29c30e4429bd42390d754d3f00061b52">repeatPreviousStepsUntil</a>(<span class="keywordtype">int</span> steps, F callback)</div>
-<div class="line"><a id="l00228" name="l00228"></a><span class="lineno">  228</span>    {</div>
-<div class="line"><a id="l00229" name="l00229"></a><span class="lineno">  229</span>        <span class="keywordflow">if</span> (paused)</div>
-<div class="line"><a id="l00230" name="l00230"></a><span class="lineno">  230</span>        {</div>
-<div class="line"><a id="l00231" name="l00231"></a><span class="lineno">  231</span>            <span class="keywordflow">return</span> *<span class="keyword">this</span>;</div>
-<div class="line"><a id="l00232" name="l00232"></a><span class="lineno">  232</span>        }</div>
-<div class="line"><a id="l00233" name="l00233"></a><span class="lineno">  233</span>        <span class="keywordflow">if</span> (checkedSteps == sequenceStep)</div>
-<div class="line"><a id="l00234" name="l00234"></a><span class="lineno">  234</span>        {</div>
-<div class="line"><a id="l00235" name="l00235"></a><span class="lineno">  235</span>            <span class="comment">// Should run before callback is checked</span></div>
-<div class="line"><a id="l00236" name="l00236"></a><span class="lineno">  236</span>            timesPreviousStepLooped += 1;</div>
-<div class="line"><a id="l00237" name="l00237"></a><span class="lineno">  237</span>            <span class="keywordflow">if</span> (callback())</div>
-<div class="line"><a id="l00238" name="l00238"></a><span class="lineno">  238</span>            {</div>
-<div class="line"><a id="l00239" name="l00239"></a><span class="lineno">  239</span>                <a class="code hl_function" href="classSequence.html#a89e0bd686b057dea2c85b24b00ea6ba6">moveSteps</a>(1);</div>
-<div class="line"><a id="l00240" name="l00240"></a><span class="lineno">  240</span>                timesPreviousStepLooped = 0;</div>
-<div class="line"><a id="l00241" name="l00241"></a><span class="lineno">  241</span>            }</div>
-<div class="line"><a id="l00242" name="l00242"></a><span class="lineno">  242</span>            <span class="keywordflow">else</span></div>
-<div class="line"><a id="l00243" name="l00243"></a><span class="lineno">  243</span>            {</div>
-<div class="line"><a id="l00244" name="l00244"></a><span class="lineno">  244</span>                <a class="code hl_function" href="classSequence.html#a89e0bd686b057dea2c85b24b00ea6ba6">moveSteps</a>(-steps);</div>
-<div class="line"><a id="l00245" name="l00245"></a><span class="lineno">  245</span>            }</div>
-<div class="line"><a id="l00246" name="l00246"></a><span class="lineno">  246</span>        }</div>
-<div class="line"><a id="l00247" name="l00247"></a><span class="lineno">  247</span>        checkedSteps += 1;</div>
-<div class="line"><a id="l00248" name="l00248"></a><span class="lineno">  248</span>        <span class="keywordflow">return</span> *<span class="keyword">this</span>;</div>
-<div class="line"><a id="l00249" name="l00249"></a><span class="lineno">  249</span>    }</div>
-<div class="line"><a id="l00250" name="l00250"></a><span class="lineno">  250</span> </div>
-<div class="line"><a id="l00258" name="l00258"></a><span class="lineno"><a class="line" href="classSequence.html#ad79f6e8b208a89797d0bfa320f88ea33">  258</a></span>    <a class="code hl_class" href="classSequence.html">Sequence</a> &amp;<a class="code hl_function" href="classSequence.html#ad79f6e8b208a89797d0bfa320f88ea33">repeatPreviousStepsTimes</a>(<span class="keywordtype">int</span> steps, <span class="keywordtype">int</span> times)</div>
-<div class="line"><a id="l00259" name="l00259"></a><span class="lineno">  259</span>    {</div>
-<div class="line"><a id="l00260" name="l00260"></a><span class="lineno">  260</span>        <span class="keywordflow">if</span> (paused)</div>
-<div class="line"><a id="l00261" name="l00261"></a><span class="lineno">  261</span>        {</div>
-<div class="line"><a id="l00262" name="l00262"></a><span class="lineno">  262</span>            <span class="keywordflow">return</span> *<span class="keyword">this</span>;</div>
-<div class="line"><a id="l00263" name="l00263"></a><span class="lineno">  263</span>        }</div>
-<div class="line"><a id="l00264" name="l00264"></a><span class="lineno">  264</span> </div>
-<div class="line"><a id="l00265" name="l00265"></a><span class="lineno">  265</span>        <span class="keywordflow">return</span> <a class="code hl_function" href="classSequence.html#a29c30e4429bd42390d754d3f00061b52">repeatPreviousStepsUntil</a>(steps, [&amp;]() { <span class="comment">//</span></div>
-<div class="line"><a id="l00266" name="l00266"></a><span class="lineno">  266</span>            <span class="keywordflow">return</span> timesPreviousStepLooped &gt;= times;</div>
-<div class="line"><a id="l00267" name="l00267"></a><span class="lineno">  267</span>        });</div>
-<div class="line"><a id="l00268" name="l00268"></a><span class="lineno">  268</span>    }</div>
-<div class="line"><a id="l00269" name="l00269"></a><span class="lineno">  269</span> </div>
-<div class="line"><a id="l00279" name="l00279"></a><span class="lineno">  279</span>    <span class="keyword">template</span> &lt;<span class="keyword">typename</span> F&gt;</div>
-<div class="line"><a id="l00280" name="l00280"></a><span class="lineno"><a class="line" href="classSequence.html#ac02925aa0a2ead8ff080eb46d20fc0aa">  280</a></span>    <a class="code hl_class" href="classSequence.html">Sequence</a> &amp;<a class="code hl_function" href="classSequence.html#ac02925aa0a2ead8ff080eb46d20fc0aa">thenRunFor</a>(<span class="keywordtype">long</span> durationMs, F callback)</div>
-<div class="line"><a id="l00281" name="l00281"></a><span class="lineno">  281</span>    {</div>
-<div class="line"><a id="l00282" name="l00282"></a><span class="lineno">  282</span>        <span class="keywordflow">if</span> (paused)</div>
-<div class="line"><a id="l00283" name="l00283"></a><span class="lineno">  283</span>        {</div>
-<div class="line"><a id="l00284" name="l00284"></a><span class="lineno">  284</span>            <span class="keywordflow">return</span> *<span class="keyword">this</span>;</div>
-<div class="line"><a id="l00285" name="l00285"></a><span class="lineno">  285</span>        }</div>
-<div class="line"><a id="l00286" name="l00286"></a><span class="lineno">  286</span> </div>
-<div class="line"><a id="l00287" name="l00287"></a><span class="lineno">  287</span>        <span class="keywordflow">if</span> (checkedSteps == sequenceStep)</div>
-<div class="line"><a id="l00288" name="l00288"></a><span class="lineno">  288</span>        {</div>
-<div class="line"><a id="l00289" name="l00289"></a><span class="lineno">  289</span>            <span class="keywordflow">if</span> (<a class="code hl_variable" href="classSequence.html#aa76242a414c01a9a5890816d6f6589e7">timer</a>.<a class="code hl_function" href="classTimer.html#ae1047e14c655cb046b999f6e414e1ece">isFinished</a>(durationMs))</div>
-<div class="line"><a id="l00290" name="l00290"></a><span class="lineno">  290</span>            {</div>
-<div class="line"><a id="l00291" name="l00291"></a><span class="lineno">  291</span>                <a class="code hl_function" href="classSequence.html#a89e0bd686b057dea2c85b24b00ea6ba6">moveSteps</a>(1);</div>
-<div class="line"><a id="l00292" name="l00292"></a><span class="lineno">  292</span>            }</div>
-<div class="line"><a id="l00293" name="l00293"></a><span class="lineno">  293</span>            <span class="keywordflow">else</span></div>
-<div class="line"><a id="l00294" name="l00294"></a><span class="lineno">  294</span>            {</div>
-<div class="line"><a id="l00295" name="l00295"></a><span class="lineno">  295</span>                callback();</div>
-<div class="line"><a id="l00296" name="l00296"></a><span class="lineno">  296</span>            }</div>
-<div class="line"><a id="l00297" name="l00297"></a><span class="lineno">  297</span>        }</div>
-<div class="line"><a id="l00298" name="l00298"></a><span class="lineno">  298</span>        checkedSteps += 1;</div>
-<div class="line"><a id="l00299" name="l00299"></a><span class="lineno">  299</span>        <span class="keywordflow">return</span> *<span class="keyword">this</span>;</div>
-<div class="line"><a id="l00300" name="l00300"></a><span class="lineno">  300</span>    }</div>
-<div class="line"><a id="l00301" name="l00301"></a><span class="lineno">  301</span> </div>
-<div class="line"><a id="l00311" name="l00311"></a><span class="lineno"><a class="line" href="classSequence.html#a9773b3c5eb200448e06af9c2379e363b">  311</a></span>    <a class="code hl_class" href="classSequence.html">Sequence</a> &amp;<a class="code hl_function" href="classSequence.html#a9773b3c5eb200448e06af9c2379e363b">delay</a>(<span class="keywordtype">long</span> delayMs)</div>
-<div class="line"><a id="l00312" name="l00312"></a><span class="lineno">  312</span>    {</div>
-<div class="line"><a id="l00313" name="l00313"></a><span class="lineno">  313</span>        <span class="keywordflow">if</span> (paused)</div>
-<div class="line"><a id="l00314" name="l00314"></a><span class="lineno">  314</span>        {</div>
-<div class="line"><a id="l00315" name="l00315"></a><span class="lineno">  315</span>            <span class="keywordflow">return</span> *<span class="keyword">this</span>;</div>
-<div class="line"><a id="l00316" name="l00316"></a><span class="lineno">  316</span>        }</div>
-<div class="line"><a id="l00317" name="l00317"></a><span class="lineno">  317</span>        <span class="keywordflow">return</span> <a class="code hl_function" href="classSequence.html#ac02925aa0a2ead8ff080eb46d20fc0aa">thenRunFor</a>(delayMs, [&amp;] {});</div>
-<div class="line"><a id="l00318" name="l00318"></a><span class="lineno">  318</span>    }</div>
-<div class="line"><a id="l00319" name="l00319"></a><span class="lineno">  319</span> </div>
-<div class="line"><a id="l00325" name="l00325"></a><span class="lineno"><a class="line" href="classSequence.html#a87f67de03373a3bb224bf21bfb7cabc7">  325</a></span>    <a class="code hl_class" href="classSequence.html">Sequence</a> &amp;<a class="code hl_function" href="classSequence.html#a87f67de03373a3bb224bf21bfb7cabc7">loop</a>()</div>
-<div class="line"><a id="l00326" name="l00326"></a><span class="lineno">  326</span>    {</div>
-<div class="line"><a id="l00327" name="l00327"></a><span class="lineno">  327</span>        <span class="keywordflow">if</span> (paused)</div>
-<div class="line"><a id="l00328" name="l00328"></a><span class="lineno">  328</span>        {</div>
-<div class="line"><a id="l00329" name="l00329"></a><span class="lineno">  329</span>            <span class="keywordflow">return</span> *<span class="keyword">this</span>;</div>
-<div class="line"><a id="l00330" name="l00330"></a><span class="lineno">  330</span>        }</div>
-<div class="line"><a id="l00331" name="l00331"></a><span class="lineno">  331</span> </div>
-<div class="line"><a id="l00332" name="l00332"></a><span class="lineno">  332</span>        <span class="keywordflow">if</span> (checkedSteps == sequenceStep)</div>
-<div class="line"><a id="l00333" name="l00333"></a><span class="lineno">  333</span>        {</div>
-<div class="line"><a id="l00334" name="l00334"></a><span class="lineno">  334</span>            endSequenceShouldReturnTrueBetweenLoops = <span class="keyword">true</span>;</div>
-<div class="line"><a id="l00335" name="l00335"></a><span class="lineno">  335</span>            shouldLoop = <span class="keyword">true</span>;</div>
-<div class="line"><a id="l00336" name="l00336"></a><span class="lineno">  336</span>            sequenceStep += 1;</div>
-<div class="line"><a id="l00337" name="l00337"></a><span class="lineno">  337</span>        }</div>
-<div class="line"><a id="l00338" name="l00338"></a><span class="lineno">  338</span> </div>
-<div class="line"><a id="l00339" name="l00339"></a><span class="lineno">  339</span>        checkedSteps += 1;</div>
-<div class="line"><a id="l00340" name="l00340"></a><span class="lineno">  340</span>        <span class="keywordflow">return</span> *<span class="keyword">this</span>;</div>
-<div class="line"><a id="l00341" name="l00341"></a><span class="lineno">  341</span>    }</div>
-<div class="line"><a id="l00342" name="l00342"></a><span class="lineno">  342</span> </div>
-<div class="line"><a id="l00350" name="l00350"></a><span class="lineno">  350</span>    <span class="keyword">template</span> &lt;<span class="keyword">typename</span> F&gt;</div>
-<div class="line"><a id="l00351" name="l00351"></a><span class="lineno"><a class="line" href="classSequence.html#ad62957ff73c2acbed6143a2728b701e6">  351</a></span>    <a class="code hl_class" href="classSequence.html">Sequence</a> &amp;<a class="code hl_function" href="classSequence.html#ad62957ff73c2acbed6143a2728b701e6">loopUntil</a>(F callback)</div>
-<div class="line"><a id="l00352" name="l00352"></a><span class="lineno">  352</span>    {</div>
-<div class="line"><a id="l00353" name="l00353"></a><span class="lineno">  353</span>        <span class="keywordflow">if</span> (paused)</div>
-<div class="line"><a id="l00354" name="l00354"></a><span class="lineno">  354</span>        {</div>
-<div class="line"><a id="l00355" name="l00355"></a><span class="lineno">  355</span>            <span class="keywordflow">return</span> *<span class="keyword">this</span>;</div>
-<div class="line"><a id="l00356" name="l00356"></a><span class="lineno">  356</span>        }</div>
-<div class="line"><a id="l00357" name="l00357"></a><span class="lineno">  357</span> </div>
-<div class="line"><a id="l00358" name="l00358"></a><span class="lineno">  358</span>        <span class="keywordflow">if</span> (checkedSteps == sequenceStep)</div>
-<div class="line"><a id="l00359" name="l00359"></a><span class="lineno">  359</span>        {</div>
-<div class="line"><a id="l00360" name="l00360"></a><span class="lineno">  360</span>            endSequenceShouldReturnTrueBetweenLoops = <span class="keyword">false</span>;</div>
-<div class="line"><a id="l00361" name="l00361"></a><span class="lineno">  361</span>            shouldLoop = !callback();</div>
-<div class="line"><a id="l00362" name="l00362"></a><span class="lineno">  362</span>            sequenceStep += 1;</div>
-<div class="line"><a id="l00363" name="l00363"></a><span class="lineno">  363</span>        }</div>
-<div class="line"><a id="l00364" name="l00364"></a><span class="lineno">  364</span> </div>
-<div class="line"><a id="l00365" name="l00365"></a><span class="lineno">  365</span>        checkedSteps += 1;</div>
-<div class="line"><a id="l00366" name="l00366"></a><span class="lineno">  366</span>        <span class="keywordflow">return</span> *<span class="keyword">this</span>;</div>
-<div class="line"><a id="l00367" name="l00367"></a><span class="lineno">  367</span>    }</div>
-<div class="line"><a id="l00368" name="l00368"></a><span class="lineno">  368</span> </div>
-<div class="line"><a id="l00385" name="l00385"></a><span class="lineno"><a class="line" href="classSequence.html#a788358f0132d4c8b9ebddcd3a63531cd">  385</a></span>    <a class="code hl_class" href="classSequence.html">Sequence</a> &amp;<a class="code hl_function" href="classSequence.html#a788358f0132d4c8b9ebddcd3a63531cd">loopTimes</a>(<span class="keywordtype">int</span> times, <span class="keywordtype">bool</span> restartAfterCompletion)</div>
-<div class="line"><a id="l00386" name="l00386"></a><span class="lineno">  386</span>    {</div>
-<div class="line"><a id="l00387" name="l00387"></a><span class="lineno">  387</span>        <span class="keywordflow">if</span> (paused)</div>
-<div class="line"><a id="l00388" name="l00388"></a><span class="lineno">  388</span>        {</div>
-<div class="line"><a id="l00389" name="l00389"></a><span class="lineno">  389</span>            <span class="keywordflow">return</span> *<span class="keyword">this</span>;</div>
-<div class="line"><a id="l00390" name="l00390"></a><span class="lineno">  390</span>        }</div>
-<div class="line"><a id="l00391" name="l00391"></a><span class="lineno">  391</span> </div>
-<div class="line"><a id="l00392" name="l00392"></a><span class="lineno">  392</span>        <span class="keywordflow">if</span> (checkedSteps == sequenceStep)</div>
-<div class="line"><a id="l00393" name="l00393"></a><span class="lineno">  393</span>        {</div>
-<div class="line"><a id="l00394" name="l00394"></a><span class="lineno">  394</span>            endSequenceShouldReturnTrueBetweenLoops = <span class="keyword">false</span>;</div>
-<div class="line"><a id="l00395" name="l00395"></a><span class="lineno">  395</span>            shouldLoop = <span class="keyword">true</span>;</div>
-<div class="line"><a id="l00396" name="l00396"></a><span class="lineno">  396</span>            sequenceStep += 1;</div>
-<div class="line"><a id="l00397" name="l00397"></a><span class="lineno">  397</span>            timesToLoop = times;</div>
-<div class="line"><a id="l00398" name="l00398"></a><span class="lineno">  398</span>            <span class="comment">// timesLooped should be incremented before the check</span></div>
-<div class="line"><a id="l00399" name="l00399"></a><span class="lineno">  399</span>            timesLooped += 1;</div>
-<div class="line"><a id="l00400" name="l00400"></a><span class="lineno">  400</span>            <span class="keywordflow">if</span> (timesLooped == timesToLoop)</div>
-<div class="line"><a id="l00401" name="l00401"></a><span class="lineno">  401</span>            {</div>
-<div class="line"><a id="l00402" name="l00402"></a><span class="lineno">  402</span>                endSequenceShouldReturnTrueBetweenLoops = <span class="keyword">true</span>;</div>
-<div class="line"><a id="l00403" name="l00403"></a><span class="lineno">  403</span>                <span class="comment">// This will allow the sequence to restart from the first step</span></div>
-<div class="line"><a id="l00404" name="l00404"></a><span class="lineno">  404</span>                <span class="comment">// and simply return true after the specified number of times has been looped</span></div>
-<div class="line"><a id="l00405" name="l00405"></a><span class="lineno">  405</span>                <span class="comment">// This way there is a queue for when the fixed number of loops has been completed</span></div>
-<div class="line"><a id="l00406" name="l00406"></a><span class="lineno">  406</span>                <span class="comment">// and the sequence can be restarted from the first step just like with a normal</span></div>
-<div class="line"><a id="l00407" name="l00407"></a><span class="lineno">  407</span>                <span class="comment">// loop. This results in reusable sequences that do not require a manual restart.</span></div>
-<div class="line"><a id="l00408" name="l00408"></a><span class="lineno">  408</span>                shouldLoop = restartAfterCompletion;</div>
-<div class="line"><a id="l00409" name="l00409"></a><span class="lineno">  409</span>                timesToLoop = 0;</div>
-<div class="line"><a id="l00410" name="l00410"></a><span class="lineno">  410</span>                timesLooped = 0;</div>
-<div class="line"><a id="l00411" name="l00411"></a><span class="lineno">  411</span>            }</div>
-<div class="line"><a id="l00412" name="l00412"></a><span class="lineno">  412</span>        }</div>
-<div class="line"><a id="l00413" name="l00413"></a><span class="lineno">  413</span> </div>
-<div class="line"><a id="l00414" name="l00414"></a><span class="lineno">  414</span>        checkedSteps += 1;</div>
-<div class="line"><a id="l00415" name="l00415"></a><span class="lineno">  415</span>        <span class="keywordflow">return</span> *<span class="keyword">this</span>;</div>
-<div class="line"><a id="l00416" name="l00416"></a><span class="lineno">  416</span>    }</div>
-<div class="line"><a id="l00417" name="l00417"></a><span class="lineno">  417</span> </div>
-<div class="line"><a id="l00424" name="l00424"></a><span class="lineno"><a class="line" href="classSequence.html#a075dec14774973136c4a3c7035d615ee">  424</a></span>    <span class="keywordtype">bool</span> <a class="code hl_function" href="classSequence.html#a075dec14774973136c4a3c7035d615ee">hasFinished</a>()</div>
-<div class="line"><a id="l00425" name="l00425"></a><span class="lineno">  425</span>    {</div>
-<div class="line"><a id="l00426" name="l00426"></a><span class="lineno">  426</span>        <span class="keywordflow">return</span> sequenceHasFinished;</div>
-<div class="line"><a id="l00427" name="l00427"></a><span class="lineno">  427</span>    }</div>
-<div class="line"><a id="l00428" name="l00428"></a><span class="lineno">  428</span> </div>
-<div class="line"><a id="l00436" name="l00436"></a><span class="lineno"><a class="line" href="classSequence.html#afc1e5684aff638ec7f3c361906eafacf">  436</a></span>    <span class="keywordtype">bool</span> <a class="code hl_function" href="classSequence.html#afc1e5684aff638ec7f3c361906eafacf">endOfSequence</a>()</div>
-<div class="line"><a id="l00437" name="l00437"></a><span class="lineno">  437</span>    {</div>
-<div class="line"><a id="l00438" name="l00438"></a><span class="lineno">  438</span>        <span class="keywordflow">if</span> (paused)</div>
-<div class="line"><a id="l00439" name="l00439"></a><span class="lineno">  439</span>        {</div>
-<div class="line"><a id="l00440" name="l00440"></a><span class="lineno">  440</span>            <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
-<div class="line"><a id="l00441" name="l00441"></a><span class="lineno">  441</span>        }</div>
-<div class="line"><a id="l00442" name="l00442"></a><span class="lineno">  442</span> </div>
-<div class="line"><a id="l00443" name="l00443"></a><span class="lineno">  443</span>        <span class="keywordflow">if</span> (numSteps &lt; checkedSteps)</div>
-<div class="line"><a id="l00444" name="l00444"></a><span class="lineno">  444</span>        {</div>
-<div class="line"><a id="l00445" name="l00445"></a><span class="lineno">  445</span>            numSteps = checkedSteps;</div>
-<div class="line"><a id="l00446" name="l00446"></a><span class="lineno">  446</span>        }</div>
-<div class="line"><a id="l00447" name="l00447"></a><span class="lineno">  447</span>        checkedSteps = 0;</div>
-<div class="line"><a id="l00448" name="l00448"></a><span class="lineno">  448</span> </div>
-<div class="line"><a id="l00449" name="l00449"></a><span class="lineno">  449</span>        sequenceHasFinished = sequenceStep == numSteps;</div>
-<div class="line"><a id="l00450" name="l00450"></a><span class="lineno">  450</span> </div>
-<div class="line"><a id="l00451" name="l00451"></a><span class="lineno">  451</span>        <span class="keywordflow">if</span> (sequenceHasFinished)</div>
-<div class="line"><a id="l00452" name="l00452"></a><span class="lineno">  452</span>        {</div>
-<div class="line"><a id="l00453" name="l00453"></a><span class="lineno">  453</span>            <span class="keywordflow">if</span> (shouldLoop)</div>
-<div class="line"><a id="l00454" name="l00454"></a><span class="lineno">  454</span>            {</div>
-<div class="line"><a id="l00455" name="l00455"></a><span class="lineno">  455</span>                sequenceStep = 0;</div>
-<div class="line"><a id="l00456" name="l00456"></a><span class="lineno">  456</span>                <span class="keywordflow">return</span> endSequenceShouldReturnTrueBetweenLoops;</div>
-<div class="line"><a id="l00457" name="l00457"></a><span class="lineno">  457</span>            }</div>
-<div class="line"><a id="l00458" name="l00458"></a><span class="lineno">  458</span>            <span class="keywordflow">else</span></div>
-<div class="line"><a id="l00459" name="l00459"></a><span class="lineno">  459</span>            {</div>
-<div class="line"><a id="l00460" name="l00460"></a><span class="lineno">  460</span>                <span class="comment">// The sequence execution</span></div>
-<div class="line"><a id="l00461" name="l00461"></a><span class="lineno">  461</span>                <span class="comment">// is complete and there is</span></div>
-<div class="line"><a id="l00462" name="l00462"></a><span class="lineno">  462</span>                <span class="comment">// no looping. This block will</span></div>
-<div class="line"><a id="l00463" name="l00463"></a><span class="lineno">  463</span>                <span class="comment">// run until the sequence is</span></div>
-<div class="line"><a id="l00464" name="l00464"></a><span class="lineno">  464</span>                <span class="comment">// restarted manually by the user</span></div>
-<div class="line"><a id="l00465" name="l00465"></a><span class="lineno">  465</span>                <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
-<div class="line"><a id="l00466" name="l00466"></a><span class="lineno">  466</span>            }</div>
-<div class="line"><a id="l00467" name="l00467"></a><span class="lineno">  467</span>        }</div>
-<div class="line"><a id="l00468" name="l00468"></a><span class="lineno">  468</span> </div>
-<div class="line"><a id="l00469" name="l00469"></a><span class="lineno">  469</span>        <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
-<div class="line"><a id="l00470" name="l00470"></a><span class="lineno">  470</span>    }</div>
-<div class="line"><a id="l00471" name="l00471"></a><span class="lineno">  471</span>};</div>
-<div class="line"><a id="l00472" name="l00472"></a><span class="lineno">  472</span> </div>
-<div class="line"><a id="l00473" name="l00473"></a><span class="lineno">  473</span><span class="preprocessor">#endif</span></div>
-<div class="ttc" id="aclassSequence_html"><div class="ttname"><a href="classSequence.html">Sequence</a></div><div class="ttdef"><b>Definition:</b> <a href="Sequence_8h_source.html#l00059">Sequence.h:60</a></div></div>
-<div class="ttc" id="aclassSequence_html_a075dec14774973136c4a3c7035d615ee"><div class="ttname"><a href="classSequence.html#a075dec14774973136c4a3c7035d615ee">Sequence::hasFinished</a></div><div class="ttdeci">bool hasFinished()</div><div class="ttdef"><b>Definition:</b> <a href="Sequence_8h_source.html#l00424">Sequence.h:424</a></div></div>
-<div class="ttc" id="aclassSequence_html_a1391ca79fa87ccb9fe227db872d91277"><div class="ttname"><a href="classSequence.html#a1391ca79fa87ccb9fe227db872d91277">Sequence::getTimesSequenceLooped</a></div><div class="ttdeci">int getTimesSequenceLooped()</div><div class="ttdef"><b>Definition:</b> <a href="Sequence_8h_source.html#l00204">Sequence.h:204</a></div></div>
-<div class="ttc" id="aclassSequence_html_a29c30e4429bd42390d754d3f00061b52"><div class="ttname"><a href="classSequence.html#a29c30e4429bd42390d754d3f00061b52">Sequence::repeatPreviousStepsUntil</a></div><div class="ttdeci">Sequence &amp; repeatPreviousStepsUntil(int steps, F callback)</div><div class="ttdoc">Repeats n previous steps until callback returns true.</div><div class="ttdef"><b>Definition:</b> <a href="Sequence_8h_source.html#l00227">Sequence.h:227</a></div></div>
-<div class="ttc" id="aclassSequence_html_a324ee507087628879e9a2e5c7f8f5119"><div class="ttname"><a href="classSequence.html#a324ee507087628879e9a2e5c7f8f5119">Sequence::start</a></div><div class="ttdeci">void start()</div><div class="ttdoc">Will reset the sequence. If you want to resume after a pause, call resume() instead.</div><div class="ttdef"><b>Definition:</b> <a href="Sequence_8h_source.html#l00176">Sequence.h:176</a></div></div>
-<div class="ttc" id="aclassSequence_html_a3c07ef22748c098b0a5d93142dc52289"><div class="ttname"><a href="classSequence.html#a3c07ef22748c098b0a5d93142dc52289">Sequence::then</a></div><div class="ttdeci">Sequence &amp; then(F callback)</div><div class="ttdoc">Will run the code provided and go to next sequence step.</div><div class="ttdef"><b>Definition:</b> <a href="Sequence_8h_source.html#l00143">Sequence.h:143</a></div></div>
-<div class="ttc" id="aclassSequence_html_a3eb07e08e59b731d6d950fac7140697e"><div class="ttname"><a href="classSequence.html#a3eb07e08e59b731d6d950fac7140697e">Sequence::resume</a></div><div class="ttdeci">void resume()</div><div class="ttdoc">Will resume execution of the sequence if it is paused.</div><div class="ttdef"><b>Definition:</b> <a href="Sequence_8h_source.html#l00195">Sequence.h:195</a></div></div>
-<div class="ttc" id="aclassSequence_html_a5a6fb2f1a1999b024cc14e89231247a6"><div class="ttname"><a href="classSequence.html#a5a6fb2f1a1999b024cc14e89231247a6">Sequence::pause</a></div><div class="ttdeci">void pause()</div><div class="ttdef"><b>Definition:</b> <a href="Sequence_8h_source.html#l00186">Sequence.h:186</a></div></div>
-<div class="ttc" id="aclassSequence_html_a788358f0132d4c8b9ebddcd3a63531cd"><div class="ttname"><a href="classSequence.html#a788358f0132d4c8b9ebddcd3a63531cd">Sequence::loopTimes</a></div><div class="ttdeci">Sequence &amp; loopTimes(int times, bool restartAfterCompletion)</div><div class="ttdef"><b>Definition:</b> <a href="Sequence_8h_source.html#l00385">Sequence.h:385</a></div></div>
-<div class="ttc" id="aclassSequence_html_a87f67de03373a3bb224bf21bfb7cabc7"><div class="ttname"><a href="classSequence.html#a87f67de03373a3bb224bf21bfb7cabc7">Sequence::loop</a></div><div class="ttdeci">Sequence &amp; loop()</div><div class="ttdoc">Restart sequence from beginning when sequence has finished executing.</div><div class="ttdef"><b>Definition:</b> <a href="Sequence_8h_source.html#l00325">Sequence.h:325</a></div></div>
-<div class="ttc" id="aclassSequence_html_a89e0bd686b057dea2c85b24b00ea6ba6"><div class="ttname"><a href="classSequence.html#a89e0bd686b057dea2c85b24b00ea6ba6">Sequence::moveSteps</a></div><div class="ttdeci">void moveSteps(int deltaSteps)</div><div class="ttdoc">Will move n steps back or forth in the sequence. You should usually not use this directly.</div><div class="ttdef"><b>Definition:</b> <a href="Sequence_8h_source.html#l00106">Sequence.h:106</a></div></div>
-<div class="ttc" id="aclassSequence_html_a9773b3c5eb200448e06af9c2379e363b"><div class="ttname"><a href="classSequence.html#a9773b3c5eb200448e06af9c2379e363b">Sequence::delay</a></div><div class="ttdeci">Sequence &amp; delay(long delayMs)</div><div class="ttdef"><b>Definition:</b> <a href="Sequence_8h_source.html#l00311">Sequence.h:311</a></div></div>
-<div class="ttc" id="aclassSequence_html_aa76242a414c01a9a5890816d6f6589e7"><div class="ttname"><a href="classSequence.html#aa76242a414c01a9a5890816d6f6589e7">Sequence::timer</a></div><div class="ttdeci">Timer timer</div><div class="ttdef"><b>Definition:</b> <a href="Sequence_8h_source.html#l00100">Sequence.h:100</a></div></div>
-<div class="ttc" id="aclassSequence_html_ac02925aa0a2ead8ff080eb46d20fc0aa"><div class="ttname"><a href="classSequence.html#ac02925aa0a2ead8ff080eb46d20fc0aa">Sequence::thenRunFor</a></div><div class="ttdeci">Sequence &amp; thenRunFor(long durationMs, F callback)</div><div class="ttdef"><b>Definition:</b> <a href="Sequence_8h_source.html#l00280">Sequence.h:280</a></div></div>
-<div class="ttc" id="aclassSequence_html_ad0788db9a4fc736a388e5ed95a2a4de3"><div class="ttname"><a href="classSequence.html#ad0788db9a4fc736a388e5ed95a2a4de3">Sequence::getTimesPreviousStepLooped</a></div><div class="ttdeci">int getTimesPreviousStepLooped()</div><div class="ttdef"><b>Definition:</b> <a href="Sequence_8h_source.html#l00214">Sequence.h:214</a></div></div>
-<div class="ttc" id="aclassSequence_html_ad62957ff73c2acbed6143a2728b701e6"><div class="ttname"><a href="classSequence.html#ad62957ff73c2acbed6143a2728b701e6">Sequence::loopUntil</a></div><div class="ttdeci">Sequence &amp; loopUntil(F callback)</div><div class="ttdef"><b>Definition:</b> <a href="Sequence_8h_source.html#l00351">Sequence.h:351</a></div></div>
-<div class="ttc" id="aclassSequence_html_ad79f6e8b208a89797d0bfa320f88ea33"><div class="ttname"><a href="classSequence.html#ad79f6e8b208a89797d0bfa320f88ea33">Sequence::repeatPreviousStepsTimes</a></div><div class="ttdeci">Sequence &amp; repeatPreviousStepsTimes(int steps, int times)</div><div class="ttdoc">Repeats n previous steps n times.</div><div class="ttdef"><b>Definition:</b> <a href="Sequence_8h_source.html#l00258">Sequence.h:258</a></div></div>
-<div class="ttc" id="aclassSequence_html_af1dbfa6630d8224407b489658f3cae13"><div class="ttname"><a href="classSequence.html#af1dbfa6630d8224407b489658f3cae13">Sequence::reset</a></div><div class="ttdeci">void reset()</div><div class="ttdoc">Will reset everything and move the sequence to the first step.</div><div class="ttdef"><b>Definition:</b> <a href="Sequence_8h_source.html#l00162">Sequence.h:162</a></div></div>
-<div class="ttc" id="aclassSequence_html_af1df81fd04771d39fe8c59f98201097f"><div class="ttname"><a href="classSequence.html#af1df81fd04771d39fe8c59f98201097f">Sequence::thenWhenReturnsTrue</a></div><div class="ttdeci">Sequence &amp; thenWhenReturnsTrue(F callback)</div><div class="ttdef"><b>Definition:</b> <a href="Sequence_8h_source.html#l00118">Sequence.h:118</a></div></div>
-<div class="ttc" id="aclassSequence_html_afc1e5684aff638ec7f3c361906eafacf"><div class="ttname"><a href="classSequence.html#afc1e5684aff638ec7f3c361906eafacf">Sequence::endOfSequence</a></div><div class="ttdeci">bool endOfSequence()</div><div class="ttdoc">Mark end of sequence and return true if sequence has finished executing.</div><div class="ttdef"><b>Definition:</b> <a href="Sequence_8h_source.html#l00436">Sequence.h:436</a></div></div>
+<div class="line"><a id="l00060" name="l00060"></a><span class="lineno"><a class="line" href="classSequence.html">   60</a></span><span class="keyword">class </span><a class="code hl_class" href="classSequence.html">Sequence</a></div>
+<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span>{</div>
+<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span><span class="keyword">private</span>:</div>
+<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span>    <span class="keywordtype">int</span> timesPreviousStepLooped = 0;</div>
+<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span> </div>
+<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span>    <span class="keywordtype">int</span> timesLooped = 0;</div>
+<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span>    <span class="keywordtype">int</span> timesToLoop = 0;</div>
+<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span> </div>
+<div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span>    <span class="keywordtype">int</span> sequenceStep = 0;</div>
+<div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span>    <span class="keywordtype">int</span> checkedSteps = 0;</div>
+<div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span>    <span class="keywordtype">int</span> numSteps = 0;</div>
+<div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span>    <span class="keywordtype">bool</span> sequenceHasFinished = <span class="keyword">false</span>;</div>
+<div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span>    <span class="keywordtype">bool</span> shouldLoop = <span class="keyword">false</span>;</div>
+<div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span>    <span class="keywordtype">bool</span> endSequenceShouldReturnTrueBetweenLoops = <span class="keyword">true</span>;</div>
+<div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span>    <span class="keywordtype">bool</span> paused = <span class="keyword">false</span>;</div>
+<div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span> </div>
+<div class="line"><a id="l00095" name="l00095"></a><span class="lineno">   95</span><span class="keyword">public</span>:</div>
+<div class="line"><a id="l00101" name="l00101"></a><span class="lineno"><a class="line" href="classSequence.html#aa76242a414c01a9a5890816d6f6589e7">  101</a></span>    <a class="code hl_class" href="classTimer.html">Timer</a> <a class="code hl_variable" href="classSequence.html#aa76242a414c01a9a5890816d6f6589e7">timer</a>;</div>
+<div class="line"><a id="l00107" name="l00107"></a><span class="lineno"><a class="line" href="classSequence.html#a89e0bd686b057dea2c85b24b00ea6ba6">  107</a></span>    <span class="keywordtype">void</span> <a class="code hl_function" href="classSequence.html#a89e0bd686b057dea2c85b24b00ea6ba6">moveSteps</a>(<span class="keywordtype">int</span> deltaSteps)</div>
+<div class="line"><a id="l00108" name="l00108"></a><span class="lineno">  108</span>    {</div>
+<div class="line"><a id="l00109" name="l00109"></a><span class="lineno">  109</span>        sequenceStep += deltaSteps;</div>
+<div class="line"><a id="l00110" name="l00110"></a><span class="lineno">  110</span>        <a class="code hl_variable" href="classSequence.html#aa76242a414c01a9a5890816d6f6589e7">timer</a>.<a class="code hl_function" href="classTimer.html#a9020542d73357a4eef512eefaf57524b">reset</a>();</div>
+<div class="line"><a id="l00111" name="l00111"></a><span class="lineno">  111</span>    }</div>
+<div class="line"><a id="l00112" name="l00112"></a><span class="lineno">  112</span> </div>
+<div class="line"><a id="l00118" name="l00118"></a><span class="lineno">  118</span>    <span class="keyword">template</span> &lt;<span class="keyword">typename</span> F&gt;</div>
+<div class="line"><a id="l00119" name="l00119"></a><span class="lineno"><a class="line" href="classSequence.html#af1df81fd04771d39fe8c59f98201097f">  119</a></span>    <a class="code hl_class" href="classSequence.html">Sequence</a> &amp;<a class="code hl_function" href="classSequence.html#af1df81fd04771d39fe8c59f98201097f">thenWhenReturnsTrue</a>(F callback)</div>
+<div class="line"><a id="l00120" name="l00120"></a><span class="lineno">  120</span>    {</div>
+<div class="line"><a id="l00121" name="l00121"></a><span class="lineno">  121</span>        <span class="keywordflow">if</span> (paused)</div>
+<div class="line"><a id="l00122" name="l00122"></a><span class="lineno">  122</span>        {</div>
+<div class="line"><a id="l00123" name="l00123"></a><span class="lineno">  123</span>            <span class="keywordflow">return</span> *<span class="keyword">this</span>;</div>
+<div class="line"><a id="l00124" name="l00124"></a><span class="lineno">  124</span>        }</div>
+<div class="line"><a id="l00125" name="l00125"></a><span class="lineno">  125</span> </div>
+<div class="line"><a id="l00126" name="l00126"></a><span class="lineno">  126</span>        <span class="keywordflow">if</span> (checkedSteps == sequenceStep)</div>
+<div class="line"><a id="l00127" name="l00127"></a><span class="lineno">  127</span>        {</div>
+<div class="line"><a id="l00128" name="l00128"></a><span class="lineno">  128</span>            <span class="keywordflow">if</span> (callback())</div>
+<div class="line"><a id="l00129" name="l00129"></a><span class="lineno">  129</span>            {</div>
+<div class="line"><a id="l00130" name="l00130"></a><span class="lineno">  130</span>                <a class="code hl_function" href="classSequence.html#a89e0bd686b057dea2c85b24b00ea6ba6">moveSteps</a>(1);</div>
+<div class="line"><a id="l00131" name="l00131"></a><span class="lineno">  131</span>            }</div>
+<div class="line"><a id="l00132" name="l00132"></a><span class="lineno">  132</span>        }</div>
+<div class="line"><a id="l00133" name="l00133"></a><span class="lineno">  133</span>        checkedSteps += 1;</div>
+<div class="line"><a id="l00134" name="l00134"></a><span class="lineno">  134</span>        <span class="keywordflow">return</span> *<span class="keyword">this</span>;</div>
+<div class="line"><a id="l00135" name="l00135"></a><span class="lineno">  135</span>    }</div>
+<div class="line"><a id="l00136" name="l00136"></a><span class="lineno">  136</span> </div>
+<div class="line"><a id="l00143" name="l00143"></a><span class="lineno">  143</span>    <span class="keyword">template</span> &lt;<span class="keyword">typename</span> F&gt;</div>
+<div class="line"><a id="l00144" name="l00144"></a><span class="lineno"><a class="line" href="classSequence.html#a3c07ef22748c098b0a5d93142dc52289">  144</a></span>    <a class="code hl_class" href="classSequence.html">Sequence</a> &amp;<a class="code hl_function" href="classSequence.html#a3c07ef22748c098b0a5d93142dc52289">then</a>(F callback)</div>
+<div class="line"><a id="l00145" name="l00145"></a><span class="lineno">  145</span>    {</div>
+<div class="line"><a id="l00146" name="l00146"></a><span class="lineno">  146</span>        <span class="keywordflow">if</span> (paused)</div>
+<div class="line"><a id="l00147" name="l00147"></a><span class="lineno">  147</span>        {</div>
+<div class="line"><a id="l00148" name="l00148"></a><span class="lineno">  148</span>            <span class="keywordflow">return</span> *<span class="keyword">this</span>;</div>
+<div class="line"><a id="l00149" name="l00149"></a><span class="lineno">  149</span>        }</div>
+<div class="line"><a id="l00150" name="l00150"></a><span class="lineno">  150</span>        <span class="keywordflow">if</span> (checkedSteps == sequenceStep)</div>
+<div class="line"><a id="l00151" name="l00151"></a><span class="lineno">  151</span>        {</div>
+<div class="line"><a id="l00152" name="l00152"></a><span class="lineno">  152</span>            callback();</div>
+<div class="line"><a id="l00153" name="l00153"></a><span class="lineno">  153</span>            <a class="code hl_function" href="classSequence.html#a89e0bd686b057dea2c85b24b00ea6ba6">moveSteps</a>(1);</div>
+<div class="line"><a id="l00154" name="l00154"></a><span class="lineno">  154</span>        }</div>
+<div class="line"><a id="l00155" name="l00155"></a><span class="lineno">  155</span>        checkedSteps += 1;</div>
+<div class="line"><a id="l00156" name="l00156"></a><span class="lineno">  156</span>        <span class="keywordflow">return</span> *<span class="keyword">this</span>;</div>
+<div class="line"><a id="l00157" name="l00157"></a><span class="lineno">  157</span>    }</div>
+<div class="line"><a id="l00158" name="l00158"></a><span class="lineno">  158</span> </div>
+<div class="line"><a id="l00163" name="l00163"></a><span class="lineno"><a class="line" href="classSequence.html#af1dbfa6630d8224407b489658f3cae13">  163</a></span>    <span class="keywordtype">void</span> <a class="code hl_function" href="classSequence.html#af1dbfa6630d8224407b489658f3cae13">reset</a>()</div>
+<div class="line"><a id="l00164" name="l00164"></a><span class="lineno">  164</span>    {</div>
+<div class="line"><a id="l00165" name="l00165"></a><span class="lineno">  165</span>        checkedSteps = 0;</div>
+<div class="line"><a id="l00166" name="l00166"></a><span class="lineno">  166</span>        sequenceStep = 0;</div>
+<div class="line"><a id="l00167" name="l00167"></a><span class="lineno">  167</span>        timesLooped = 0;</div>
+<div class="line"><a id="l00168" name="l00168"></a><span class="lineno">  168</span>        timesPreviousStepLooped = 0;</div>
+<div class="line"><a id="l00169" name="l00169"></a><span class="lineno">  169</span>        paused = <span class="keyword">false</span>;</div>
+<div class="line"><a id="l00170" name="l00170"></a><span class="lineno">  170</span>        sequenceHasFinished = <span class="keyword">false</span>;</div>
+<div class="line"><a id="l00171" name="l00171"></a><span class="lineno">  171</span>    }</div>
+<div class="line"><a id="l00172" name="l00172"></a><span class="lineno">  172</span> </div>
+<div class="line"><a id="l00177" name="l00177"></a><span class="lineno"><a class="line" href="classSequence.html#a324ee507087628879e9a2e5c7f8f5119">  177</a></span>    <span class="keywordtype">void</span> <a class="code hl_function" href="classSequence.html#a324ee507087628879e9a2e5c7f8f5119">start</a>()</div>
+<div class="line"><a id="l00178" name="l00178"></a><span class="lineno">  178</span>    {</div>
+<div class="line"><a id="l00179" name="l00179"></a><span class="lineno">  179</span>        <a class="code hl_function" href="classSequence.html#af1dbfa6630d8224407b489658f3cae13">reset</a>();</div>
+<div class="line"><a id="l00180" name="l00180"></a><span class="lineno">  180</span>    }</div>
+<div class="line"><a id="l00181" name="l00181"></a><span class="lineno">  181</span> </div>
+<div class="line"><a id="l00187" name="l00187"></a><span class="lineno"><a class="line" href="classSequence.html#a5a6fb2f1a1999b024cc14e89231247a6">  187</a></span>    <span class="keywordtype">void</span> <a class="code hl_function" href="classSequence.html#a5a6fb2f1a1999b024cc14e89231247a6">pause</a>()</div>
+<div class="line"><a id="l00188" name="l00188"></a><span class="lineno">  188</span>    {</div>
+<div class="line"><a id="l00189" name="l00189"></a><span class="lineno">  189</span>        paused = <span class="keyword">true</span>;</div>
+<div class="line"><a id="l00190" name="l00190"></a><span class="lineno">  190</span>    }</div>
+<div class="line"><a id="l00191" name="l00191"></a><span class="lineno">  191</span> </div>
+<div class="line"><a id="l00196" name="l00196"></a><span class="lineno"><a class="line" href="classSequence.html#a3eb07e08e59b731d6d950fac7140697e">  196</a></span>    <span class="keywordtype">void</span> <a class="code hl_function" href="classSequence.html#a3eb07e08e59b731d6d950fac7140697e">resume</a>()</div>
+<div class="line"><a id="l00197" name="l00197"></a><span class="lineno">  197</span>    {</div>
+<div class="line"><a id="l00198" name="l00198"></a><span class="lineno">  198</span>        paused = <span class="keyword">false</span>;</div>
+<div class="line"><a id="l00199" name="l00199"></a><span class="lineno">  199</span>    }</div>
+<div class="line"><a id="l00200" name="l00200"></a><span class="lineno">  200</span> </div>
+<div class="line"><a id="l00205" name="l00205"></a><span class="lineno"><a class="line" href="classSequence.html#a1391ca79fa87ccb9fe227db872d91277">  205</a></span>    <span class="keywordtype">int</span> <a class="code hl_function" href="classSequence.html#a1391ca79fa87ccb9fe227db872d91277">getTimesSequenceLooped</a>()</div>
+<div class="line"><a id="l00206" name="l00206"></a><span class="lineno">  206</span>    {</div>
+<div class="line"><a id="l00207" name="l00207"></a><span class="lineno">  207</span>        <span class="keywordflow">return</span> timesLooped;</div>
+<div class="line"><a id="l00208" name="l00208"></a><span class="lineno">  208</span>    }</div>
+<div class="line"><a id="l00209" name="l00209"></a><span class="lineno">  209</span> </div>
+<div class="line"><a id="l00215" name="l00215"></a><span class="lineno"><a class="line" href="classSequence.html#ad0788db9a4fc736a388e5ed95a2a4de3">  215</a></span>    <span class="keywordtype">int</span> <a class="code hl_function" href="classSequence.html#ad0788db9a4fc736a388e5ed95a2a4de3">getTimesPreviousStepLooped</a>()</div>
+<div class="line"><a id="l00216" name="l00216"></a><span class="lineno">  216</span>    {</div>
+<div class="line"><a id="l00217" name="l00217"></a><span class="lineno">  217</span>        <span class="keywordflow">return</span> timesPreviousStepLooped;</div>
+<div class="line"><a id="l00218" name="l00218"></a><span class="lineno">  218</span>    }</div>
+<div class="line"><a id="l00219" name="l00219"></a><span class="lineno">  219</span> </div>
+<div class="line"><a id="l00227" name="l00227"></a><span class="lineno">  227</span>    <span class="keyword">template</span> &lt;<span class="keyword">typename</span> F&gt;</div>
+<div class="line"><a id="l00228" name="l00228"></a><span class="lineno"><a class="line" href="classSequence.html#a29c30e4429bd42390d754d3f00061b52">  228</a></span>    <a class="code hl_class" href="classSequence.html">Sequence</a> &amp;<a class="code hl_function" href="classSequence.html#a29c30e4429bd42390d754d3f00061b52">repeatPreviousStepsUntil</a>(<span class="keywordtype">int</span> steps, F callback)</div>
+<div class="line"><a id="l00229" name="l00229"></a><span class="lineno">  229</span>    {</div>
+<div class="line"><a id="l00230" name="l00230"></a><span class="lineno">  230</span>        <span class="keywordflow">if</span> (paused)</div>
+<div class="line"><a id="l00231" name="l00231"></a><span class="lineno">  231</span>        {</div>
+<div class="line"><a id="l00232" name="l00232"></a><span class="lineno">  232</span>            <span class="keywordflow">return</span> *<span class="keyword">this</span>;</div>
+<div class="line"><a id="l00233" name="l00233"></a><span class="lineno">  233</span>        }</div>
+<div class="line"><a id="l00234" name="l00234"></a><span class="lineno">  234</span>        <span class="keywordflow">if</span> (checkedSteps == sequenceStep)</div>
+<div class="line"><a id="l00235" name="l00235"></a><span class="lineno">  235</span>        {</div>
+<div class="line"><a id="l00236" name="l00236"></a><span class="lineno">  236</span>            <span class="comment">// Should run before callback is checked</span></div>
+<div class="line"><a id="l00237" name="l00237"></a><span class="lineno">  237</span>            timesPreviousStepLooped += 1;</div>
+<div class="line"><a id="l00238" name="l00238"></a><span class="lineno">  238</span>            <span class="keywordflow">if</span> (callback())</div>
+<div class="line"><a id="l00239" name="l00239"></a><span class="lineno">  239</span>            {</div>
+<div class="line"><a id="l00240" name="l00240"></a><span class="lineno">  240</span>                <a class="code hl_function" href="classSequence.html#a89e0bd686b057dea2c85b24b00ea6ba6">moveSteps</a>(1);</div>
+<div class="line"><a id="l00241" name="l00241"></a><span class="lineno">  241</span>                timesPreviousStepLooped = 0;</div>
+<div class="line"><a id="l00242" name="l00242"></a><span class="lineno">  242</span>            }</div>
+<div class="line"><a id="l00243" name="l00243"></a><span class="lineno">  243</span>            <span class="keywordflow">else</span></div>
+<div class="line"><a id="l00244" name="l00244"></a><span class="lineno">  244</span>            {</div>
+<div class="line"><a id="l00245" name="l00245"></a><span class="lineno">  245</span>                <a class="code hl_function" href="classSequence.html#a89e0bd686b057dea2c85b24b00ea6ba6">moveSteps</a>(-steps);</div>
+<div class="line"><a id="l00246" name="l00246"></a><span class="lineno">  246</span>            }</div>
+<div class="line"><a id="l00247" name="l00247"></a><span class="lineno">  247</span>        }</div>
+<div class="line"><a id="l00248" name="l00248"></a><span class="lineno">  248</span>        checkedSteps += 1;</div>
+<div class="line"><a id="l00249" name="l00249"></a><span class="lineno">  249</span>        <span class="keywordflow">return</span> *<span class="keyword">this</span>;</div>
+<div class="line"><a id="l00250" name="l00250"></a><span class="lineno">  250</span>    }</div>
+<div class="line"><a id="l00251" name="l00251"></a><span class="lineno">  251</span> </div>
+<div class="line"><a id="l00259" name="l00259"></a><span class="lineno"><a class="line" href="classSequence.html#ad79f6e8b208a89797d0bfa320f88ea33">  259</a></span>    <a class="code hl_class" href="classSequence.html">Sequence</a> &amp;<a class="code hl_function" href="classSequence.html#ad79f6e8b208a89797d0bfa320f88ea33">repeatPreviousStepsTimes</a>(<span class="keywordtype">int</span> steps, <span class="keywordtype">int</span> times)</div>
+<div class="line"><a id="l00260" name="l00260"></a><span class="lineno">  260</span>    {</div>
+<div class="line"><a id="l00261" name="l00261"></a><span class="lineno">  261</span>        <span class="keywordflow">if</span> (paused)</div>
+<div class="line"><a id="l00262" name="l00262"></a><span class="lineno">  262</span>        {</div>
+<div class="line"><a id="l00263" name="l00263"></a><span class="lineno">  263</span>            <span class="keywordflow">return</span> *<span class="keyword">this</span>;</div>
+<div class="line"><a id="l00264" name="l00264"></a><span class="lineno">  264</span>        }</div>
+<div class="line"><a id="l00265" name="l00265"></a><span class="lineno">  265</span> </div>
+<div class="line"><a id="l00266" name="l00266"></a><span class="lineno">  266</span>        <span class="keywordflow">return</span> <a class="code hl_function" href="classSequence.html#a29c30e4429bd42390d754d3f00061b52">repeatPreviousStepsUntil</a>(steps, [&amp;]() { <span class="comment">//</span></div>
+<div class="line"><a id="l00267" name="l00267"></a><span class="lineno">  267</span>            <span class="keywordflow">return</span> timesPreviousStepLooped &gt;= times;</div>
+<div class="line"><a id="l00268" name="l00268"></a><span class="lineno">  268</span>        });</div>
+<div class="line"><a id="l00269" name="l00269"></a><span class="lineno">  269</span>    }</div>
+<div class="line"><a id="l00270" name="l00270"></a><span class="lineno">  270</span> </div>
+<div class="line"><a id="l00280" name="l00280"></a><span class="lineno">  280</span>    <span class="keyword">template</span> &lt;<span class="keyword">typename</span> F&gt;</div>
+<div class="line"><a id="l00281" name="l00281"></a><span class="lineno"><a class="line" href="classSequence.html#ac02925aa0a2ead8ff080eb46d20fc0aa">  281</a></span>    <a class="code hl_class" href="classSequence.html">Sequence</a> &amp;<a class="code hl_function" href="classSequence.html#ac02925aa0a2ead8ff080eb46d20fc0aa">thenRunFor</a>(<span class="keywordtype">long</span> durationMs, F callback)</div>
+<div class="line"><a id="l00282" name="l00282"></a><span class="lineno">  282</span>    {</div>
+<div class="line"><a id="l00283" name="l00283"></a><span class="lineno">  283</span>        <span class="keywordflow">if</span> (paused)</div>
+<div class="line"><a id="l00284" name="l00284"></a><span class="lineno">  284</span>        {</div>
+<div class="line"><a id="l00285" name="l00285"></a><span class="lineno">  285</span>            <span class="keywordflow">return</span> *<span class="keyword">this</span>;</div>
+<div class="line"><a id="l00286" name="l00286"></a><span class="lineno">  286</span>        }</div>
+<div class="line"><a id="l00287" name="l00287"></a><span class="lineno">  287</span> </div>
+<div class="line"><a id="l00288" name="l00288"></a><span class="lineno">  288</span>        <span class="keywordflow">if</span> (checkedSteps == sequenceStep)</div>
+<div class="line"><a id="l00289" name="l00289"></a><span class="lineno">  289</span>        {</div>
+<div class="line"><a id="l00290" name="l00290"></a><span class="lineno">  290</span>            <span class="keywordflow">if</span> (<a class="code hl_variable" href="classSequence.html#aa76242a414c01a9a5890816d6f6589e7">timer</a>.<a class="code hl_function" href="classTimer.html#ae1047e14c655cb046b999f6e414e1ece">isFinished</a>(durationMs))</div>
+<div class="line"><a id="l00291" name="l00291"></a><span class="lineno">  291</span>            {</div>
+<div class="line"><a id="l00292" name="l00292"></a><span class="lineno">  292</span>                <a class="code hl_function" href="classSequence.html#a89e0bd686b057dea2c85b24b00ea6ba6">moveSteps</a>(1);</div>
+<div class="line"><a id="l00293" name="l00293"></a><span class="lineno">  293</span>            }</div>
+<div class="line"><a id="l00294" name="l00294"></a><span class="lineno">  294</span>            <span class="keywordflow">else</span></div>
+<div class="line"><a id="l00295" name="l00295"></a><span class="lineno">  295</span>            {</div>
+<div class="line"><a id="l00296" name="l00296"></a><span class="lineno">  296</span>                callback();</div>
+<div class="line"><a id="l00297" name="l00297"></a><span class="lineno">  297</span>            }</div>
+<div class="line"><a id="l00298" name="l00298"></a><span class="lineno">  298</span>        }</div>
+<div class="line"><a id="l00299" name="l00299"></a><span class="lineno">  299</span>        checkedSteps += 1;</div>
+<div class="line"><a id="l00300" name="l00300"></a><span class="lineno">  300</span>        <span class="keywordflow">return</span> *<span class="keyword">this</span>;</div>
+<div class="line"><a id="l00301" name="l00301"></a><span class="lineno">  301</span>    }</div>
+<div class="line"><a id="l00302" name="l00302"></a><span class="lineno">  302</span> </div>
+<div class="line"><a id="l00312" name="l00312"></a><span class="lineno"><a class="line" href="classSequence.html#a9773b3c5eb200448e06af9c2379e363b">  312</a></span>    <a class="code hl_class" href="classSequence.html">Sequence</a> &amp;<a class="code hl_function" href="classSequence.html#a9773b3c5eb200448e06af9c2379e363b">delay</a>(<span class="keywordtype">long</span> delayMs)</div>
+<div class="line"><a id="l00313" name="l00313"></a><span class="lineno">  313</span>    {</div>
+<div class="line"><a id="l00314" name="l00314"></a><span class="lineno">  314</span>        <span class="keywordflow">if</span> (paused)</div>
+<div class="line"><a id="l00315" name="l00315"></a><span class="lineno">  315</span>        {</div>
+<div class="line"><a id="l00316" name="l00316"></a><span class="lineno">  316</span>            <span class="keywordflow">return</span> *<span class="keyword">this</span>;</div>
+<div class="line"><a id="l00317" name="l00317"></a><span class="lineno">  317</span>        }</div>
+<div class="line"><a id="l00318" name="l00318"></a><span class="lineno">  318</span>        <span class="keywordflow">return</span> <a class="code hl_function" href="classSequence.html#ac02925aa0a2ead8ff080eb46d20fc0aa">thenRunFor</a>(delayMs, [&amp;] {});</div>
+<div class="line"><a id="l00319" name="l00319"></a><span class="lineno">  319</span>    }</div>
+<div class="line"><a id="l00320" name="l00320"></a><span class="lineno">  320</span> </div>
+<div class="line"><a id="l00326" name="l00326"></a><span class="lineno"><a class="line" href="classSequence.html#a87f67de03373a3bb224bf21bfb7cabc7">  326</a></span>    <a class="code hl_class" href="classSequence.html">Sequence</a> &amp;<a class="code hl_function" href="classSequence.html#a87f67de03373a3bb224bf21bfb7cabc7">loop</a>()</div>
+<div class="line"><a id="l00327" name="l00327"></a><span class="lineno">  327</span>    {</div>
+<div class="line"><a id="l00328" name="l00328"></a><span class="lineno">  328</span>        <span class="keywordflow">if</span> (paused)</div>
+<div class="line"><a id="l00329" name="l00329"></a><span class="lineno">  329</span>        {</div>
+<div class="line"><a id="l00330" name="l00330"></a><span class="lineno">  330</span>            <span class="keywordflow">return</span> *<span class="keyword">this</span>;</div>
+<div class="line"><a id="l00331" name="l00331"></a><span class="lineno">  331</span>        }</div>
+<div class="line"><a id="l00332" name="l00332"></a><span class="lineno">  332</span> </div>
+<div class="line"><a id="l00333" name="l00333"></a><span class="lineno">  333</span>        <span class="keywordflow">if</span> (checkedSteps == sequenceStep)</div>
+<div class="line"><a id="l00334" name="l00334"></a><span class="lineno">  334</span>        {</div>
+<div class="line"><a id="l00335" name="l00335"></a><span class="lineno">  335</span>            endSequenceShouldReturnTrueBetweenLoops = <span class="keyword">true</span>;</div>
+<div class="line"><a id="l00336" name="l00336"></a><span class="lineno">  336</span>            shouldLoop = <span class="keyword">true</span>;</div>
+<div class="line"><a id="l00337" name="l00337"></a><span class="lineno">  337</span>            sequenceStep += 1;</div>
+<div class="line"><a id="l00338" name="l00338"></a><span class="lineno">  338</span>        }</div>
+<div class="line"><a id="l00339" name="l00339"></a><span class="lineno">  339</span> </div>
+<div class="line"><a id="l00340" name="l00340"></a><span class="lineno">  340</span>        checkedSteps += 1;</div>
+<div class="line"><a id="l00341" name="l00341"></a><span class="lineno">  341</span>        <span class="keywordflow">return</span> *<span class="keyword">this</span>;</div>
+<div class="line"><a id="l00342" name="l00342"></a><span class="lineno">  342</span>    }</div>
+<div class="line"><a id="l00343" name="l00343"></a><span class="lineno">  343</span> </div>
+<div class="line"><a id="l00351" name="l00351"></a><span class="lineno">  351</span>    <span class="keyword">template</span> &lt;<span class="keyword">typename</span> F&gt;</div>
+<div class="line"><a id="l00352" name="l00352"></a><span class="lineno"><a class="line" href="classSequence.html#ad62957ff73c2acbed6143a2728b701e6">  352</a></span>    <a class="code hl_class" href="classSequence.html">Sequence</a> &amp;<a class="code hl_function" href="classSequence.html#ad62957ff73c2acbed6143a2728b701e6">loopUntil</a>(F callback)</div>
+<div class="line"><a id="l00353" name="l00353"></a><span class="lineno">  353</span>    {</div>
+<div class="line"><a id="l00354" name="l00354"></a><span class="lineno">  354</span>        <span class="keywordflow">if</span> (paused)</div>
+<div class="line"><a id="l00355" name="l00355"></a><span class="lineno">  355</span>        {</div>
+<div class="line"><a id="l00356" name="l00356"></a><span class="lineno">  356</span>            <span class="keywordflow">return</span> *<span class="keyword">this</span>;</div>
+<div class="line"><a id="l00357" name="l00357"></a><span class="lineno">  357</span>        }</div>
+<div class="line"><a id="l00358" name="l00358"></a><span class="lineno">  358</span> </div>
+<div class="line"><a id="l00359" name="l00359"></a><span class="lineno">  359</span>        <span class="keywordflow">if</span> (checkedSteps == sequenceStep)</div>
+<div class="line"><a id="l00360" name="l00360"></a><span class="lineno">  360</span>        {</div>
+<div class="line"><a id="l00361" name="l00361"></a><span class="lineno">  361</span>            endSequenceShouldReturnTrueBetweenLoops = <span class="keyword">false</span>;</div>
+<div class="line"><a id="l00362" name="l00362"></a><span class="lineno">  362</span>            shouldLoop = !callback();</div>
+<div class="line"><a id="l00363" name="l00363"></a><span class="lineno">  363</span>            sequenceStep += 1;</div>
+<div class="line"><a id="l00364" name="l00364"></a><span class="lineno">  364</span>        }</div>
+<div class="line"><a id="l00365" name="l00365"></a><span class="lineno">  365</span> </div>
+<div class="line"><a id="l00366" name="l00366"></a><span class="lineno">  366</span>        checkedSteps += 1;</div>
+<div class="line"><a id="l00367" name="l00367"></a><span class="lineno">  367</span>        <span class="keywordflow">return</span> *<span class="keyword">this</span>;</div>
+<div class="line"><a id="l00368" name="l00368"></a><span class="lineno">  368</span>    }</div>
+<div class="line"><a id="l00369" name="l00369"></a><span class="lineno">  369</span> </div>
+<div class="line"><a id="l00386" name="l00386"></a><span class="lineno"><a class="line" href="classSequence.html#a788358f0132d4c8b9ebddcd3a63531cd">  386</a></span>    <a class="code hl_class" href="classSequence.html">Sequence</a> &amp;<a class="code hl_function" href="classSequence.html#a788358f0132d4c8b9ebddcd3a63531cd">loopTimes</a>(<span class="keywordtype">int</span> times, <span class="keywordtype">bool</span> restartAfterCompletion)</div>
+<div class="line"><a id="l00387" name="l00387"></a><span class="lineno">  387</span>    {</div>
+<div class="line"><a id="l00388" name="l00388"></a><span class="lineno">  388</span>        <span class="keywordflow">if</span> (paused)</div>
+<div class="line"><a id="l00389" name="l00389"></a><span class="lineno">  389</span>        {</div>
+<div class="line"><a id="l00390" name="l00390"></a><span class="lineno">  390</span>            <span class="keywordflow">return</span> *<span class="keyword">this</span>;</div>
+<div class="line"><a id="l00391" name="l00391"></a><span class="lineno">  391</span>        }</div>
+<div class="line"><a id="l00392" name="l00392"></a><span class="lineno">  392</span> </div>
+<div class="line"><a id="l00393" name="l00393"></a><span class="lineno">  393</span>        <span class="keywordflow">if</span> (checkedSteps == sequenceStep)</div>
+<div class="line"><a id="l00394" name="l00394"></a><span class="lineno">  394</span>        {</div>
+<div class="line"><a id="l00395" name="l00395"></a><span class="lineno">  395</span>            endSequenceShouldReturnTrueBetweenLoops = <span class="keyword">false</span>;</div>
+<div class="line"><a id="l00396" name="l00396"></a><span class="lineno">  396</span>            shouldLoop = <span class="keyword">true</span>;</div>
+<div class="line"><a id="l00397" name="l00397"></a><span class="lineno">  397</span>            sequenceStep += 1;</div>
+<div class="line"><a id="l00398" name="l00398"></a><span class="lineno">  398</span>            timesToLoop = times;</div>
+<div class="line"><a id="l00399" name="l00399"></a><span class="lineno">  399</span>            <span class="comment">// timesLooped should be incremented before the check</span></div>
+<div class="line"><a id="l00400" name="l00400"></a><span class="lineno">  400</span>            timesLooped += 1;</div>
+<div class="line"><a id="l00401" name="l00401"></a><span class="lineno">  401</span>            <span class="keywordflow">if</span> (timesLooped == timesToLoop)</div>
+<div class="line"><a id="l00402" name="l00402"></a><span class="lineno">  402</span>            {</div>
+<div class="line"><a id="l00403" name="l00403"></a><span class="lineno">  403</span>                endSequenceShouldReturnTrueBetweenLoops = <span class="keyword">true</span>;</div>
+<div class="line"><a id="l00404" name="l00404"></a><span class="lineno">  404</span>                <span class="comment">// This will allow the sequence to restart from the first step</span></div>
+<div class="line"><a id="l00405" name="l00405"></a><span class="lineno">  405</span>                <span class="comment">// and simply return true after the specified number of times has been looped</span></div>
+<div class="line"><a id="l00406" name="l00406"></a><span class="lineno">  406</span>                <span class="comment">// This way there is a queue for when the fixed number of loops has been completed</span></div>
+<div class="line"><a id="l00407" name="l00407"></a><span class="lineno">  407</span>                <span class="comment">// and the sequence can be restarted from the first step just like with a normal</span></div>
+<div class="line"><a id="l00408" name="l00408"></a><span class="lineno">  408</span>                <span class="comment">// loop. This results in reusable sequences that do not require a manual restart.</span></div>
+<div class="line"><a id="l00409" name="l00409"></a><span class="lineno">  409</span>                shouldLoop = restartAfterCompletion;</div>
+<div class="line"><a id="l00410" name="l00410"></a><span class="lineno">  410</span>                timesToLoop = 0;</div>
+<div class="line"><a id="l00411" name="l00411"></a><span class="lineno">  411</span>                timesLooped = 0;</div>
+<div class="line"><a id="l00412" name="l00412"></a><span class="lineno">  412</span>            }</div>
+<div class="line"><a id="l00413" name="l00413"></a><span class="lineno">  413</span>        }</div>
+<div class="line"><a id="l00414" name="l00414"></a><span class="lineno">  414</span> </div>
+<div class="line"><a id="l00415" name="l00415"></a><span class="lineno">  415</span>        checkedSteps += 1;</div>
+<div class="line"><a id="l00416" name="l00416"></a><span class="lineno">  416</span>        <span class="keywordflow">return</span> *<span class="keyword">this</span>;</div>
+<div class="line"><a id="l00417" name="l00417"></a><span class="lineno">  417</span>    }</div>
+<div class="line"><a id="l00418" name="l00418"></a><span class="lineno">  418</span> </div>
+<div class="line"><a id="l00425" name="l00425"></a><span class="lineno"><a class="line" href="classSequence.html#a075dec14774973136c4a3c7035d615ee">  425</a></span>    <span class="keywordtype">bool</span> <a class="code hl_function" href="classSequence.html#a075dec14774973136c4a3c7035d615ee">hasFinished</a>()</div>
+<div class="line"><a id="l00426" name="l00426"></a><span class="lineno">  426</span>    {</div>
+<div class="line"><a id="l00427" name="l00427"></a><span class="lineno">  427</span>        <span class="keywordflow">return</span> sequenceHasFinished;</div>
+<div class="line"><a id="l00428" name="l00428"></a><span class="lineno">  428</span>    }</div>
+<div class="line"><a id="l00429" name="l00429"></a><span class="lineno">  429</span> </div>
+<div class="line"><a id="l00437" name="l00437"></a><span class="lineno"><a class="line" href="classSequence.html#afc1e5684aff638ec7f3c361906eafacf">  437</a></span>    <span class="keywordtype">bool</span> <a class="code hl_function" href="classSequence.html#afc1e5684aff638ec7f3c361906eafacf">endOfSequence</a>()</div>
+<div class="line"><a id="l00438" name="l00438"></a><span class="lineno">  438</span>    {</div>
+<div class="line"><a id="l00439" name="l00439"></a><span class="lineno">  439</span>        <span class="keywordflow">if</span> (paused)</div>
+<div class="line"><a id="l00440" name="l00440"></a><span class="lineno">  440</span>        {</div>
+<div class="line"><a id="l00441" name="l00441"></a><span class="lineno">  441</span>            <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
+<div class="line"><a id="l00442" name="l00442"></a><span class="lineno">  442</span>        }</div>
+<div class="line"><a id="l00443" name="l00443"></a><span class="lineno">  443</span> </div>
+<div class="line"><a id="l00444" name="l00444"></a><span class="lineno">  444</span>        <span class="keywordflow">if</span> (numSteps &lt; checkedSteps)</div>
+<div class="line"><a id="l00445" name="l00445"></a><span class="lineno">  445</span>        {</div>
+<div class="line"><a id="l00446" name="l00446"></a><span class="lineno">  446</span>            numSteps = checkedSteps;</div>
+<div class="line"><a id="l00447" name="l00447"></a><span class="lineno">  447</span>        }</div>
+<div class="line"><a id="l00448" name="l00448"></a><span class="lineno">  448</span>        checkedSteps = 0;</div>
+<div class="line"><a id="l00449" name="l00449"></a><span class="lineno">  449</span> </div>
+<div class="line"><a id="l00450" name="l00450"></a><span class="lineno">  450</span>        sequenceHasFinished = sequenceStep == numSteps;</div>
+<div class="line"><a id="l00451" name="l00451"></a><span class="lineno">  451</span> </div>
+<div class="line"><a id="l00452" name="l00452"></a><span class="lineno">  452</span>        <span class="keywordflow">if</span> (sequenceHasFinished)</div>
+<div class="line"><a id="l00453" name="l00453"></a><span class="lineno">  453</span>        {</div>
+<div class="line"><a id="l00454" name="l00454"></a><span class="lineno">  454</span>            <span class="keywordflow">if</span> (shouldLoop)</div>
+<div class="line"><a id="l00455" name="l00455"></a><span class="lineno">  455</span>            {</div>
+<div class="line"><a id="l00456" name="l00456"></a><span class="lineno">  456</span>                sequenceStep = 0;</div>
+<div class="line"><a id="l00457" name="l00457"></a><span class="lineno">  457</span>                <span class="keywordflow">return</span> endSequenceShouldReturnTrueBetweenLoops;</div>
+<div class="line"><a id="l00458" name="l00458"></a><span class="lineno">  458</span>            }</div>
+<div class="line"><a id="l00459" name="l00459"></a><span class="lineno">  459</span>            <span class="keywordflow">else</span></div>
+<div class="line"><a id="l00460" name="l00460"></a><span class="lineno">  460</span>            {</div>
+<div class="line"><a id="l00461" name="l00461"></a><span class="lineno">  461</span>                <span class="comment">// The sequence execution</span></div>
+<div class="line"><a id="l00462" name="l00462"></a><span class="lineno">  462</span>                <span class="comment">// is complete and there is</span></div>
+<div class="line"><a id="l00463" name="l00463"></a><span class="lineno">  463</span>                <span class="comment">// no looping. This block will</span></div>
+<div class="line"><a id="l00464" name="l00464"></a><span class="lineno">  464</span>                <span class="comment">// run until the sequence is</span></div>
+<div class="line"><a id="l00465" name="l00465"></a><span class="lineno">  465</span>                <span class="comment">// restarted manually by the user</span></div>
+<div class="line"><a id="l00466" name="l00466"></a><span class="lineno">  466</span>                <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
+<div class="line"><a id="l00467" name="l00467"></a><span class="lineno">  467</span>            }</div>
+<div class="line"><a id="l00468" name="l00468"></a><span class="lineno">  468</span>        }</div>
+<div class="line"><a id="l00469" name="l00469"></a><span class="lineno">  469</span> </div>
+<div class="line"><a id="l00470" name="l00470"></a><span class="lineno">  470</span>        <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line"><a id="l00471" name="l00471"></a><span class="lineno">  471</span>    }</div>
+<div class="line"><a id="l00472" name="l00472"></a><span class="lineno">  472</span>};</div>
+<div class="line"><a id="l00473" name="l00473"></a><span class="lineno">  473</span> </div>
+<div class="line"><a id="l00474" name="l00474"></a><span class="lineno">  474</span><span class="preprocessor">#endif</span></div>
+<div class="ttc" id="aclassSequence_html"><div class="ttname"><a href="classSequence.html">Sequence</a></div><div class="ttdef"><b>Definition:</b> <a href="Sequence_8h_source.html#l00060">Sequence.h:61</a></div></div>
+<div class="ttc" id="aclassSequence_html_a075dec14774973136c4a3c7035d615ee"><div class="ttname"><a href="classSequence.html#a075dec14774973136c4a3c7035d615ee">Sequence::hasFinished</a></div><div class="ttdeci">bool hasFinished()</div><div class="ttdef"><b>Definition:</b> <a href="Sequence_8h_source.html#l00425">Sequence.h:425</a></div></div>
+<div class="ttc" id="aclassSequence_html_a1391ca79fa87ccb9fe227db872d91277"><div class="ttname"><a href="classSequence.html#a1391ca79fa87ccb9fe227db872d91277">Sequence::getTimesSequenceLooped</a></div><div class="ttdeci">int getTimesSequenceLooped()</div><div class="ttdef"><b>Definition:</b> <a href="Sequence_8h_source.html#l00205">Sequence.h:205</a></div></div>
+<div class="ttc" id="aclassSequence_html_a29c30e4429bd42390d754d3f00061b52"><div class="ttname"><a href="classSequence.html#a29c30e4429bd42390d754d3f00061b52">Sequence::repeatPreviousStepsUntil</a></div><div class="ttdeci">Sequence &amp; repeatPreviousStepsUntil(int steps, F callback)</div><div class="ttdoc">Repeats n previous steps until callback returns true.</div><div class="ttdef"><b>Definition:</b> <a href="Sequence_8h_source.html#l00228">Sequence.h:228</a></div></div>
+<div class="ttc" id="aclassSequence_html_a324ee507087628879e9a2e5c7f8f5119"><div class="ttname"><a href="classSequence.html#a324ee507087628879e9a2e5c7f8f5119">Sequence::start</a></div><div class="ttdeci">void start()</div><div class="ttdoc">Will reset the sequence. If you want to resume after a pause, call resume() instead.</div><div class="ttdef"><b>Definition:</b> <a href="Sequence_8h_source.html#l00177">Sequence.h:177</a></div></div>
+<div class="ttc" id="aclassSequence_html_a3c07ef22748c098b0a5d93142dc52289"><div class="ttname"><a href="classSequence.html#a3c07ef22748c098b0a5d93142dc52289">Sequence::then</a></div><div class="ttdeci">Sequence &amp; then(F callback)</div><div class="ttdoc">Will run the code provided and go to next sequence step.</div><div class="ttdef"><b>Definition:</b> <a href="Sequence_8h_source.html#l00144">Sequence.h:144</a></div></div>
+<div class="ttc" id="aclassSequence_html_a3eb07e08e59b731d6d950fac7140697e"><div class="ttname"><a href="classSequence.html#a3eb07e08e59b731d6d950fac7140697e">Sequence::resume</a></div><div class="ttdeci">void resume()</div><div class="ttdoc">Will resume execution of the sequence if it is paused.</div><div class="ttdef"><b>Definition:</b> <a href="Sequence_8h_source.html#l00196">Sequence.h:196</a></div></div>
+<div class="ttc" id="aclassSequence_html_a5a6fb2f1a1999b024cc14e89231247a6"><div class="ttname"><a href="classSequence.html#a5a6fb2f1a1999b024cc14e89231247a6">Sequence::pause</a></div><div class="ttdeci">void pause()</div><div class="ttdef"><b>Definition:</b> <a href="Sequence_8h_source.html#l00187">Sequence.h:187</a></div></div>
+<div class="ttc" id="aclassSequence_html_a788358f0132d4c8b9ebddcd3a63531cd"><div class="ttname"><a href="classSequence.html#a788358f0132d4c8b9ebddcd3a63531cd">Sequence::loopTimes</a></div><div class="ttdeci">Sequence &amp; loopTimes(int times, bool restartAfterCompletion)</div><div class="ttdef"><b>Definition:</b> <a href="Sequence_8h_source.html#l00386">Sequence.h:386</a></div></div>
+<div class="ttc" id="aclassSequence_html_a87f67de03373a3bb224bf21bfb7cabc7"><div class="ttname"><a href="classSequence.html#a87f67de03373a3bb224bf21bfb7cabc7">Sequence::loop</a></div><div class="ttdeci">Sequence &amp; loop()</div><div class="ttdoc">Restart sequence from beginning when sequence has finished executing.</div><div class="ttdef"><b>Definition:</b> <a href="Sequence_8h_source.html#l00326">Sequence.h:326</a></div></div>
+<div class="ttc" id="aclassSequence_html_a89e0bd686b057dea2c85b24b00ea6ba6"><div class="ttname"><a href="classSequence.html#a89e0bd686b057dea2c85b24b00ea6ba6">Sequence::moveSteps</a></div><div class="ttdeci">void moveSteps(int deltaSteps)</div><div class="ttdoc">Will move n steps back or forth in the sequence. You should usually not use this directly.</div><div class="ttdef"><b>Definition:</b> <a href="Sequence_8h_source.html#l00107">Sequence.h:107</a></div></div>
+<div class="ttc" id="aclassSequence_html_a9773b3c5eb200448e06af9c2379e363b"><div class="ttname"><a href="classSequence.html#a9773b3c5eb200448e06af9c2379e363b">Sequence::delay</a></div><div class="ttdeci">Sequence &amp; delay(long delayMs)</div><div class="ttdef"><b>Definition:</b> <a href="Sequence_8h_source.html#l00312">Sequence.h:312</a></div></div>
+<div class="ttc" id="aclassSequence_html_aa76242a414c01a9a5890816d6f6589e7"><div class="ttname"><a href="classSequence.html#aa76242a414c01a9a5890816d6f6589e7">Sequence::timer</a></div><div class="ttdeci">Timer timer</div><div class="ttdef"><b>Definition:</b> <a href="Sequence_8h_source.html#l00101">Sequence.h:101</a></div></div>
+<div class="ttc" id="aclassSequence_html_ac02925aa0a2ead8ff080eb46d20fc0aa"><div class="ttname"><a href="classSequence.html#ac02925aa0a2ead8ff080eb46d20fc0aa">Sequence::thenRunFor</a></div><div class="ttdeci">Sequence &amp; thenRunFor(long durationMs, F callback)</div><div class="ttdef"><b>Definition:</b> <a href="Sequence_8h_source.html#l00281">Sequence.h:281</a></div></div>
+<div class="ttc" id="aclassSequence_html_ad0788db9a4fc736a388e5ed95a2a4de3"><div class="ttname"><a href="classSequence.html#ad0788db9a4fc736a388e5ed95a2a4de3">Sequence::getTimesPreviousStepLooped</a></div><div class="ttdeci">int getTimesPreviousStepLooped()</div><div class="ttdef"><b>Definition:</b> <a href="Sequence_8h_source.html#l00215">Sequence.h:215</a></div></div>
+<div class="ttc" id="aclassSequence_html_ad62957ff73c2acbed6143a2728b701e6"><div class="ttname"><a href="classSequence.html#ad62957ff73c2acbed6143a2728b701e6">Sequence::loopUntil</a></div><div class="ttdeci">Sequence &amp; loopUntil(F callback)</div><div class="ttdef"><b>Definition:</b> <a href="Sequence_8h_source.html#l00352">Sequence.h:352</a></div></div>
+<div class="ttc" id="aclassSequence_html_ad79f6e8b208a89797d0bfa320f88ea33"><div class="ttname"><a href="classSequence.html#ad79f6e8b208a89797d0bfa320f88ea33">Sequence::repeatPreviousStepsTimes</a></div><div class="ttdeci">Sequence &amp; repeatPreviousStepsTimes(int steps, int times)</div><div class="ttdoc">Repeats n previous steps n times.</div><div class="ttdef"><b>Definition:</b> <a href="Sequence_8h_source.html#l00259">Sequence.h:259</a></div></div>
+<div class="ttc" id="aclassSequence_html_af1dbfa6630d8224407b489658f3cae13"><div class="ttname"><a href="classSequence.html#af1dbfa6630d8224407b489658f3cae13">Sequence::reset</a></div><div class="ttdeci">void reset()</div><div class="ttdoc">Will reset everything and move the sequence to the first step.</div><div class="ttdef"><b>Definition:</b> <a href="Sequence_8h_source.html#l00163">Sequence.h:163</a></div></div>
+<div class="ttc" id="aclassSequence_html_af1df81fd04771d39fe8c59f98201097f"><div class="ttname"><a href="classSequence.html#af1df81fd04771d39fe8c59f98201097f">Sequence::thenWhenReturnsTrue</a></div><div class="ttdeci">Sequence &amp; thenWhenReturnsTrue(F callback)</div><div class="ttdef"><b>Definition:</b> <a href="Sequence_8h_source.html#l00119">Sequence.h:119</a></div></div>
+<div class="ttc" id="aclassSequence_html_afc1e5684aff638ec7f3c361906eafacf"><div class="ttname"><a href="classSequence.html#afc1e5684aff638ec7f3c361906eafacf">Sequence::endOfSequence</a></div><div class="ttdeci">bool endOfSequence()</div><div class="ttdoc">Mark end of sequence and return true if sequence has finished executing.</div><div class="ttdef"><b>Definition:</b> <a href="Sequence_8h_source.html#l00437">Sequence.h:437</a></div></div>
 <div class="ttc" id="aclassTimer_html"><div class="ttname"><a href="classTimer.html">Timer</a></div><div class="ttdef"><b>Definition:</b> <a href="Timer_8h_source.html#l00005">Timer.h:6</a></div></div>
 <div class="ttc" id="aclassTimer_html_a9020542d73357a4eef512eefaf57524b"><div class="ttname"><a href="classTimer.html#a9020542d73357a4eef512eefaf57524b">Timer::reset</a></div><div class="ttdeci">void reset()</div><div class="ttdoc">Will reset the timer.</div><div class="ttdef"><b>Definition:</b> <a href="Timer_8h_source.html#l00020">Timer.h:20</a></div></div>
 <div class="ttc" id="aclassTimer_html_ae1047e14c655cb046b999f6e414e1ece"><div class="ttname"><a href="classTimer.html#ae1047e14c655cb046b999f6e414e1ece">Timer::isFinished</a></div><div class="ttdeci">bool isFinished(const unsigned long durationMs)</div><div class="ttdef"><b>Definition:</b> <a href="Timer_8h_source.html#l00040">Timer.h:40</a></div></div>

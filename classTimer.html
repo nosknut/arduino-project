@@ -202,9 +202,17 @@ Public Member Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
-<p >Will return false until the given time has passed Then it will return true and start counting down the same amount again Example: <a class="el" href="classTimer.html">Timer</a> timer; while(true) { if(timer.loopWait(1000)) { // Will run every 1000ms } } </p>
-
-<p class="definition">Definition at line <a class="el" href="Timer_8h_source.html#l00056">56</a> of file <a class="el" href="Timer_8h_source.html">Timer.h</a>.</p>
+<p >Will return false until the given time has passed Then it will return true and start counting down the same amount again </p><div class="fragment"><div class="line"><span class="comment">// Example</span></div>
+<div class="line"><a class="code hl_class" href="classTimer.html">Timer</a> timer;</div>
+<div class="line"><span class="keywordflow">while</span>(<span class="keyword">true</span>) {</div>
+<div class="line">    <span class="keywordflow">if</span>(timer.<a class="code hl_function" href="classTimer.html#a926ff3ad8b00389815d2c2fcc5a80e7f">loopWait</a>(1000)) {</div>
+<div class="line">        <span class="comment">// Will run every 1000ms</span></div>
+<div class="line">    }</div>
+<div class="line">}</div>
+<div class="ttc" id="aclassTimer_html"><div class="ttname"><a href="classTimer.html">Timer</a></div><div class="ttdef"><b>Definition:</b> <a href="Timer_8h_source.html#l00005">Timer.h:6</a></div></div>
+<div class="ttc" id="aclassTimer_html_a926ff3ad8b00389815d2c2fcc5a80e7f"><div class="ttname"><a href="classTimer.html#a926ff3ad8b00389815d2c2fcc5a80e7f">Timer::loopWait</a></div><div class="ttdeci">bool loopWait(const unsigned long durationMs)</div><div class="ttdef"><b>Definition:</b> <a href="Timer_8h_source.html#l00058">Timer.h:58</a></div></div>
+</div><!-- fragment --> 
+<p class="definition">Definition at line <a class="el" href="Timer_8h_source.html#l00058">58</a> of file <a class="el" href="Timer_8h_source.html">Timer.h</a>.</p>
 
 </div>
 </div>
