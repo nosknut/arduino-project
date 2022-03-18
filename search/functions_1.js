@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['endofsequence_0',['endOfSequence',['../classSequence.html#afc1e5684aff638ec7f3c361906eafacf',1,'Sequence']]]
+  ['delay_0',['delay',['../classSequence.html#a9773b3c5eb200448e06af9c2379e363b',1,'Sequence']]]
 ];

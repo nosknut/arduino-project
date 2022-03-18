@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['isfinished_0',['isFinished',['../classTimer.html#ae1047e14c655cb046b999f6e414e1ece',1,'Timer']]]
+  ['hasfinished_0',['hasFinished',['../classSequence.html#a075dec14774973136c4a3c7035d615ee',1,'Sequence']]]
 ];

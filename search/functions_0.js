@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['delay_0',['delay',['../classSequence.html#a9773b3c5eb200448e06af9c2379e363b',1,'Sequence']]]
+  ['clamp_0',['clamp',['../classScaling.html#ab455714ba4941437d3ef0259e4d33309',1,'Scaling']]]
 ];

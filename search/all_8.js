@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['pause_0',['pause',['../classSequence.html#a5a6fb2f1a1999b024cc14e89231247a6',1,'Sequence']]],
-  ['pidcontroller_1',['PidController',['../classPidController.html',1,'PidController'],['../classPidController.html#af9e3b264f160be2d0c3403d9a2de079a',1,'PidController::PidController()']]],
-  ['pidcontrollerconfig_2',['PidControllerConfig',['../structPidControllerConfig.html',1,'']]]
+  ['map_0',['map',['../classScaling.html#a61926faf645710137ced513b2f08009d',1,'Scaling']]],
+  ['maptorange_1',['mapToRange',['../classScaling.html#a01258632c24281e1c38c09f4934938e6',1,'Scaling']]],
+  ['movesteps_2',['moveSteps',['../classSequence.html#a89e0bd686b057dea2c85b24b00ea6ba6',1,'Sequence']]]
 ];
