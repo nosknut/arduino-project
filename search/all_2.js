@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['pidcontroller_0',['PidController',['../classPidController.html',1,'']]],
-  ['pidcontrollerconfig_1',['PidControllerConfig',['../structPidControllerConfig.html',1,'']]]
+  ['endofsequence_0',['endOfSequence',['../classSequence.html#afc1e5684aff638ec7f3c361906eafacf',1,'Sequence']]]
 ];

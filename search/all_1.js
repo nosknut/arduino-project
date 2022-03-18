@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['looptimes_0',['loopTimes',['../classSequence.html#a788358f0132d4c8b9ebddcd3a63531cd',1,'Sequence']]]
+  ['delay_0',['delay',['../classSequence.html#a9773b3c5eb200448e06af9c2379e363b',1,'Sequence']]]
 ];
