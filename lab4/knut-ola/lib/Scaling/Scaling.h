@@ -1,9 +1,10 @@
 #ifndef Scaling_h
 #define Scaling_h
 #include <Range.h>
-namespace Scaling
+class Scaling
 {
 
+public:
     /**
      * Keeps the value within the given range. If it exceeds the range, the
      * return value will be the maximum or minimum value given by the range.
@@ -12,7 +13,7 @@ namespace Scaling
      * @param range the range limiting the value
      * @return int the clamped value
      */
-    int clamp(const int value, Range range)
+    static int clamp(const int value, Range range)
     {
         if (value < range.minValue)
         {
@@ -40,7 +41,7 @@ namespace Scaling
      * \endcode
      *
      */
-    int remainderFromClamp(const int value, Range range)
+    static int remainderFromClamp(const int value, Range range)
     {
         return value - clamp(value, range);
     }
@@ -48,7 +49,7 @@ namespace Scaling
     /**
      * @brief Same as in Arduino.h https://www.arduino.cc/reference/en/language/functions/math/map/
      */
-    long map(long x, long in_min, long in_max, long out_min, long out_max)
+    static long map(long x, long in_min, long in_max, long out_min, long out_max)
     {
         return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
     }
@@ -61,7 +62,7 @@ namespace Scaling
      * @param outputRange
      * @return long
      */
-    long mapToRange(const long value, Range inputRange, Range outputRange)
+    static long mapToRange(const long value, Range inputRange, Range outputRange)
     {
         return map(
             value,
@@ -70,7 +71,6 @@ namespace Scaling
             outputRange.minValue,
             outputRange.maxValue);
     }
-
-}
+};
 
 #endif
