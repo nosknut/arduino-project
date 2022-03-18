@@ -102,7 +102,7 @@ $(function() {
 <div class="line"><a id="l00106" name="l00106"></a><span class="lineno"><a class="line" href="classSequence.html#a89e0bd686b057dea2c85b24b00ea6ba6">  106</a></span>    <span class="keywordtype">void</span> <a class="code hl_function" href="classSequence.html#a89e0bd686b057dea2c85b24b00ea6ba6">moveSteps</a>(<span class="keywordtype">int</span> deltaSteps)</div>
 <div class="line"><a id="l00107" name="l00107"></a><span class="lineno">  107</span>    {</div>
 <div class="line"><a id="l00108" name="l00108"></a><span class="lineno">  108</span>        sequenceStep += deltaSteps;</div>
-<div class="line"><a id="l00109" name="l00109"></a><span class="lineno">  109</span>        <a class="code hl_variable" href="classSequence.html#aa76242a414c01a9a5890816d6f6589e7">timer</a>.reset();</div>
+<div class="line"><a id="l00109" name="l00109"></a><span class="lineno">  109</span>        <a class="code hl_variable" href="classSequence.html#aa76242a414c01a9a5890816d6f6589e7">timer</a>.<a class="code hl_function" href="classTimer.html#a9020542d73357a4eef512eefaf57524b">reset</a>();</div>
 <div class="line"><a id="l00110" name="l00110"></a><span class="lineno">  110</span>    }</div>
 <div class="line"><a id="l00111" name="l00111"></a><span class="lineno">  111</span> </div>
 <div class="line"><a id="l00117" name="l00117"></a><span class="lineno">  117</span>    <span class="keyword">template</span> &lt;<span class="keyword">typename</span> F&gt;</div>
@@ -378,7 +378,8 @@ $(function() {
 <div class="ttc" id="aclassSequence_html_af1df81fd04771d39fe8c59f98201097f"><div class="ttname"><a href="classSequence.html#af1df81fd04771d39fe8c59f98201097f">Sequence::thenWhenReturnsTrue</a></div><div class="ttdeci">Sequence &amp; thenWhenReturnsTrue(F callback)</div><div class="ttdef"><b>Definition:</b> <a href="Sequence_8h_source.html#l00118">Sequence.h:118</a></div></div>
 <div class="ttc" id="aclassSequence_html_afc1e5684aff638ec7f3c361906eafacf"><div class="ttname"><a href="classSequence.html#afc1e5684aff638ec7f3c361906eafacf">Sequence::endOfSequence</a></div><div class="ttdeci">bool endOfSequence()</div><div class="ttdoc">Mark end of sequence and return true if sequence has finished executing.</div><div class="ttdef"><b>Definition:</b> <a href="Sequence_8h_source.html#l00436">Sequence.h:436</a></div></div>
 <div class="ttc" id="aclassTimer_html"><div class="ttname"><a href="classTimer.html">Timer</a></div><div class="ttdef"><b>Definition:</b> <a href="Timer_8h_source.html#l00005">Timer.h:6</a></div></div>
-<div class="ttc" id="aclassTimer_html_ae1047e14c655cb046b999f6e414e1ece"><div class="ttname"><a href="classTimer.html#ae1047e14c655cb046b999f6e414e1ece">Timer::isFinished</a></div><div class="ttdeci">bool isFinished(const unsigned long durationMs)</div><div class="ttdef"><b>Definition:</b> <a href="Timer_8h_source.html#l00031">Timer.h:31</a></div></div>
+<div class="ttc" id="aclassTimer_html_a9020542d73357a4eef512eefaf57524b"><div class="ttname"><a href="classTimer.html#a9020542d73357a4eef512eefaf57524b">Timer::reset</a></div><div class="ttdeci">void reset()</div><div class="ttdoc">Will reset the timer.</div><div class="ttdef"><b>Definition:</b> <a href="Timer_8h_source.html#l00020">Timer.h:20</a></div></div>
+<div class="ttc" id="aclassTimer_html_ae1047e14c655cb046b999f6e414e1ece"><div class="ttname"><a href="classTimer.html#ae1047e14c655cb046b999f6e414e1ece">Timer::isFinished</a></div><div class="ttdeci">bool isFinished(const unsigned long durationMs)</div><div class="ttdef"><b>Definition:</b> <a href="Timer_8h_source.html#l00040">Timer.h:40</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

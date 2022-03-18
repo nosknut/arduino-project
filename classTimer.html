@@ -79,8 +79,10 @@ $(function() {
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a9020542d73357a4eef512eefaf57524b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classTimer.html#a9020542d73357a4eef512eefaf57524b">reset</a> ()</td></tr>
+<tr class="memdesc:a9020542d73357a4eef512eefaf57524b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Will reset the timer.  <a href="classTimer.html#a9020542d73357a4eef512eefaf57524b">More...</a><br /></td></tr>
 <tr class="separator:a9020542d73357a4eef512eefaf57524b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab95ab895bd12d77493515bdbd7cb1f1c"><td class="memItemLeft" align="right" valign="top">unsigned long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classTimer.html#ab95ab895bd12d77493515bdbd7cb1f1c">getElapsedTime</a> ()</td></tr>
+<tr class="memdesc:ab95ab895bd12d77493515bdbd7cb1f1c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the time in milliseconds since the timer was started or reset.  <a href="classTimer.html#ab95ab895bd12d77493515bdbd7cb1f1c">More...</a><br /></td></tr>
 <tr class="separator:ab95ab895bd12d77493515bdbd7cb1f1c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae1047e14c655cb046b999f6e414e1ece"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classTimer.html#ae1047e14c655cb046b999f6e414e1ece">isFinished</a> (const unsigned long durationMs)</td></tr>
 <tr class="separator:ae1047e14c655cb046b999f6e414e1ece"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -142,7 +144,9 @@ Public Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="Timer_8h_source.html#l00020">20</a> of file <a class="el" href="Timer_8h_source.html">Timer.h</a>.</p>
+<p>Get the time in milliseconds since the timer was started or reset. </p>
+
+<p class="definition">Definition at line <a class="el" href="Timer_8h_source.html#l00029">29</a> of file <a class="el" href="Timer_8h_source.html">Timer.h</a>.</p>
 
 </div>
 </div>
@@ -169,9 +173,9 @@ Public Member Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
-<p >Will check if the time since last reset() call is greater than the given time Note that while loopWait() automatically resets after the given time, this function does not </p>
+<p >Will check if the time since last <a class="el" href="classTimer.html#a9020542d73357a4eef512eefaf57524b" title="Will reset the timer.">reset()</a> call is greater than the given time Note that while <a class="el" href="classTimer.html#a926ff3ad8b00389815d2c2fcc5a80e7f">loopWait()</a> automatically resets after the given time, this function does not </p>
 
-<p class="definition">Definition at line <a class="el" href="Timer_8h_source.html#l00031">31</a> of file <a class="el" href="Timer_8h_source.html">Timer.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Timer_8h_source.html#l00040">40</a> of file <a class="el" href="Timer_8h_source.html">Timer.h</a>.</p>
 
 </div>
 </div>
@@ -198,8 +202,9 @@ Public Member Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+<p >Will return false until the given time has passed Then it will return true and start counting down the same amount again Example: <a class="el" href="classTimer.html">Timer</a> timer; while(true) { if(timer.loopWait(1000)) { // Will run every 1000ms } } </p>
 
-<p class="definition">Definition at line <a class="el" href="Timer_8h_source.html#l00047">47</a> of file <a class="el" href="Timer_8h_source.html">Timer.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Timer_8h_source.html#l00056">56</a> of file <a class="el" href="Timer_8h_source.html">Timer.h</a>.</p>
 
 </div>
 </div>
@@ -226,7 +231,9 @@ Public Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="Timer_8h_source.html#l00015">15</a> of file <a class="el" href="Timer_8h_source.html">Timer.h</a>.</p>
+<p>Will reset the timer. </p>
+
+<p class="definition">Definition at line <a class="el" href="Timer_8h_source.html#l00020">20</a> of file <a class="el" href="Timer_8h_source.html">Timer.h</a>.</p>
 
 </div>
 </div>
