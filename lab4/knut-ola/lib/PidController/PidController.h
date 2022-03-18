@@ -18,7 +18,11 @@ private:
     double previousUpdateOutput = 0;
 
 public:
-    // Set kp, ki and/or kd to 0.0 to disable the respective mode
+    /**
+     * @brief Set kp, ki and/or kd to 0.0 to disable the respective mode
+     *
+     * @param pidConfig
+     */
     PidController(PidControllerConfig pidConfig) : pidConfig(pidConfig)
     {
     }
