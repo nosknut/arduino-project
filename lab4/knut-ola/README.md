@@ -1,3 +1,6 @@
+## Documentation
+https://nosknut.github.io/arduino-project/annotated.html
+
 ## Setup
 - Install python
     - [Download](https://www.python.org/downloads/)
