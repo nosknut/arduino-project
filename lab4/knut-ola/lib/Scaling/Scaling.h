@@ -29,13 +29,16 @@ namespace Scaling
     }
 
     /** Returns the amount that was left out of a range
-     * Example:
+     *
+     * \code{.cpp}
      * remainderFromClamp(-1, Range(0, 10)) == -1
      * remainderFromClamp(0, Range(0, 10)) == 0
      * remainderFromClamp(1, Range(0, 10)) == 0
      * remainderFromClamp(9, Range(0, 10)) == 0
      * remainderFromClamp(10, Range(0, 10)) == 0
      * remainderFromClamp(11, Range(0, 10)) == 1
+     * \endcode
+     *
      */
     int remainderFromClamp(const int value, Range range)
     {

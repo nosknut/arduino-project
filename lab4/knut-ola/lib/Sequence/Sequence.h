@@ -21,8 +21,8 @@
  * to a new line. If you do not include this the
  * code becomes ugly and hard to read.
  *
- * Example usage:
- *
+ * \code{.cpp}
+ * // Example
  * struct Sequences {
  *     Sequence red;
  *     Sequence yellow;
@@ -54,6 +54,7 @@
  *         .loop()
  *         .endOfSequence();
  * }
+ * \endcode
  *
  */
 class Sequence

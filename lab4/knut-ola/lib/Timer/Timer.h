@@ -45,13 +45,15 @@ public:
     /**
      * Will return false until the given time has passed
      * Then it will return true and start counting down the same amount again
-     * Example:
-     *     Timer timer;
-     *     while(true) {
-     *         if(timer.loopWait(1000)) {
-     *             // Will run every 1000ms
-     *         }
+     * \code{.cpp}
+     * // Example
+     * Timer timer;
+     * while(true) {
+     *     if(timer.loopWait(1000)) {
+     *         // Will run every 1000ms
      *     }
+     * }
+     * \endcode
      */
     bool loopWait(const unsigned long durationMs)
     {
