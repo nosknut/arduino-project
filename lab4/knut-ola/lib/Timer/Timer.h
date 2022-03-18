@@ -12,11 +12,20 @@ public:
     {
         reset();
     }
+
+    /**
+     * @brief Will reset the timer
+     *
+     */
     void reset()
     {
         startTime = millis();
     }
 
+    /**
+     * @brief Get the time in milliseconds since the timer was started or reset
+     *
+     */
     unsigned long getElapsedTime()
     {
         return millis() - startTime;
@@ -33,7 +42,7 @@ public:
         return getElapsedTime() >= durationMs;
     }
 
-    /*
+    /**
      * Will return false until the given time has passed
      * Then it will return true and start counting down the same amount again
      * Example:
