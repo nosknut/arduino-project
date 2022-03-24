@@ -4,6 +4,12 @@
 #include <Timer.h>
 #include <Optional.h>
 
+template <typename T>
+struct Container
+{
+    T &value;
+};
+
 /*
 Warnings:
 The & symbol inside the capture-clause [&]
@@ -59,7 +65,7 @@ void loop()
 class Sequence
 {
 private:
-    IOptional<Sequence, void, void, void, void> subSequence = Optional<Sequence, void, void, void, void>::empty();
+    Optional<Sequence> subSequence;
     int timesPreviousStepLooped = 0;
 
     int timesLooped = 0;
@@ -81,7 +87,36 @@ private:
     bool endSequenceShouldReturnTrueBetweenLoops = true;
     bool paused = false;
 
+    void addSubSequence()
+    {
+        if (subSequence.isEmpty())
+        {
+            Sequence val = Sequence();
+            subSequence = Optional<Sequence>::of(val);
+        }
+    }
+
+    template <typename Callback, typename Dispatch>
+    Dispatch applySubsequence(Callback callback)
+    {
+        addSubSequence();
+        return [&] { //
+            // Some of the callbacks return a value
+            // Return values must be forwarded
+            // to the next callback
+            Sequence ss = subSequence.get();
+            return callback(ss);
+        };
+    }
+
 public:
+    // ~Sequence()
+    // {
+    //     if (subSequence != nullptr)
+    //     {
+    //         delete subSequence;
+    //     }
+    // }
     Timer timer;
     void moveSteps(int deltaSteps)
     {
@@ -100,13 +135,22 @@ public:
 
         if (checkedSteps == sequenceStep)
         {
-            if (callback()) // subSequence))
+            if (callback())
             {
                 moveSteps(1);
             }
         }
         checkedSteps += 1;
         return *this;
+    }
+
+    /**
+     * @param withSubSequence should always be set to true
+     */
+    template <typename F>
+    Sequence &thenWhenReturnsTrue(bool withSubSequence, F callback)
+    {
+        return thenWhenReturnsTrue(applySubsequence(callback));
     }
 
     // Will run the code provided and go to next sequence step
@@ -126,25 +170,13 @@ public:
         return *this;
     }
 
-    Sequence &addOrResetSubSequence()
+    /**
+     * @param withSubSequence should always be set to true
+     */
+    template <typename F>
+    Sequence &then(bool withSubSequence, F callback)
     {
-        if (paused)
-        {
-            return *this;
-        }
-        if (checkedSteps == sequenceStep)
-        {
-            if (subSequence.isPresent())
-            {
-                subSequence.get().reset();
-            }
-            else
-            {
-                subSequence = Optional<Sequence, void, void, void, void>::of(Sequence());
-            }
-        }
-        checkedSteps += 1;
-        return *this;
+        return then(applySubsequence(callback));
     }
 
     // Will reset the sequence to the first step
@@ -201,7 +233,7 @@ public:
         {
             // SHould run before callback is checked
             timesPreviousStepLooped += 1;
-            if (callback()) // subSequence))
+            if (callback())
             {
                 moveSteps(1);
                 timesPreviousStepLooped = 0;
@@ -213,6 +245,15 @@ public:
         }
         checkedSteps += 1;
         return *this;
+    }
+
+    /**
+     * @param withSubSequence should always be set to true
+     */
+    template <typename F>
+    Sequence &repeatPreviousStepsUntil(bool withSubSequence, int steps, F callback)
+    {
+        return repeatPreviousStepsUntil(steps, applySubsequence(callback));
     }
 
     /**
@@ -229,7 +270,7 @@ public:
             return *this;
         }
 
-        return repeatPreviousStepsUntil(steps, [&]() { //
+        return repeatPreviousStepsUntil(steps, [&] { //
             return timesPreviousStepLooped >= times;
         });
     }
@@ -252,11 +293,20 @@ public:
             }
             else
             {
-                callback(); // subSequence);
+                callback();
             }
         }
         checkedSteps += 1;
         return *this;
+    }
+
+    /**
+     * @param withSubSequence should always be set to true
+     */
+    template <typename F>
+    Sequence &thenRunFor(bool withSubSequence, long durationMs, F callback)
+    {
+        return thenRunFor(durationMs, applySubsequence(callback));
     }
 
     // Will wait until the specified time has passed and then go to next sequence step
@@ -301,12 +351,20 @@ public:
         if (checkedSteps == sequenceStep)
         {
             endSequenceShouldReturnTrueBetweenLoops = false;
-            shouldLoop = !callback(subSequence);
+            shouldLoop = !callback();
             sequenceStep += 1;
         }
 
         checkedSteps += 1;
         return *this;
+    }
+    /**
+     * @param withSubSequence should always be set to true
+     */
+    template <typename F>
+    Sequence &loopUntil(bool withSubSequence, F callback)
+    {
+        return loopUntil(applySubsequence(callback));
     }
 
     /**

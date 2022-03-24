@@ -15,24 +15,6 @@ Zumo32U4LCD lcd;
 
 struct Sequences
 {
-    /*
-
-    // Exercises
-    Sequence<void, void, void, void> exercise1;
-    Sequence<void, void, void, void> exercise2;
-    Sequence<void, void, void, void> exercise3;
-    Sequence<void, void, void, void> exercise4;
-
-    // Functions
-    Sequence<void, void, void, void> moveEight;
-    Sequence<void, void, void, void> flashAllLeds;
-    Sequence<void, void, void, void> calibration;
-    Sequence<void, void, void, void> printPosition;
-    Sequence<void, void, void, void> lcdScroll;
-    Sequence<void, void, void, void> loop;
-    Sequence<void, void, void, void> followLine;
-    */
-
     // Exercises
     Sequence exercise1;
     Sequence exercise2;
@@ -99,11 +81,11 @@ void exercise1()
     if (buttonA.isPressed() || sequences.exercise1.hasFinished())
     {
         sequences.exercise1
-            .then([&] { //
+            .then(/*true, [&](Sequence &subSequence)*/ [&] { //
                 ledGreen(true);
             })
             .delay(100)
-            .then([&] { //
+            .then(/*true, [&](Sequence &subSequence)*/ [&] { //
                 ledGreen(false);
             })
             .delay(100)
@@ -118,15 +100,15 @@ void exercise1()
 bool moveEight(int speed)
 {
     return sequences.moveEight
-        .then([&] { //
+        .then(/*true, [&](Sequence &subSequence)*/ [&] { //
             motors.setSpeeds(0, speed);
         })
         .delay(2000)
-        .then([&] { //
+        .then(/*true, [&](Sequence &subSequence)*/ [&] { //
             motors.setSpeeds(speed, speed);
         })
         .delay(1000)
-        .then([&] { //
+        .then(/*true, [&](Sequence &subSequence)*/ [&] { //
             motors.setSpeeds(speed, 0);
         })
         .delay(2000)
@@ -150,7 +132,7 @@ void moveCircle(int speed, bool direction)
 void exercise2()
 {
     sequences.exercise2
-        .thenWhenReturnsTrue([&] { //
+        .thenWhenReturnsTrue(/*true, [&](Sequence &subSequence)*/ [&] { //
             // moveEight returns true when its sequence has finished
             // this function will continue to the next step when
             // its return value is true.
@@ -158,14 +140,14 @@ void exercise2()
             // after the moveEight sequence finishes.
             return moveEight(appConfig.targetSpeed);
         })
-        .thenWhenReturnsTrue([&] { //
+        .thenWhenReturnsTrue(/*true, [&](Sequence &subSequence)*/ [&] { //
             return moveEight(appConfig.targetSpeed);
         })
-        .then([&] { //
+        .then(/*true, [&](Sequence &subSequence)*/ [&] { //
             moveCircle(appConfig.targetSpeed, true);
         })
         .delay(2000)
-        .then([&] { //
+        .then(/*true, [&](Sequence &subSequence)*/ [&] { //
             moveCircle(appConfig.targetSpeed, false);
         })
         .delay(2000)
@@ -211,7 +193,7 @@ bool flashAllLeds(const int numFlashes, const int flashDuration)
             ledYellow(true);
         })
         .delay(flashDuration)
-        .then([&] { //
+        .then(/*true, [&](Sequence &subSequence)*/ [&] { //
             ledGreen(false);
             ledRed(false);
             ledYellow(false);
@@ -234,40 +216,40 @@ bool calibrate(const int speed)
         return true;
     }
     return sequences.calibration
-        .then([&] { //
+        .then(/*true, [&](Sequence &subSequence)*/ [&] { //
             printMessage("Press A", "to cancel");
         })
         .delay(1000)
-        .then([&] { //
+        .then(/*true, [&](Sequence &subSequence)*/ [&] { //
             printMessage("Starting in", "3");
         })
         .delay(1000)
-        .then([&] { //
+        .then(/*true, [&](Sequence &subSequence)*/ [&] { //
             printMessage("Starting in", "2");
         })
         .delay(1000)
-        .then([&] { //
+        .then(/*true, [&](Sequence &subSequence)*/ [&] { //
             printMessage("Starting in", "1");
         })
         .delay(1000)
-        .then([&] { //
+        .then(/*true, [&](Sequence &subSequence)*/ [&] { //
             printMessage("Calibrating", "...");
         })
-        .thenWhenReturnsTrue([&] { //
+        .thenWhenReturnsTrue(/*true, [&](Sequence &subSequence)*/ [&] { //
             return flashAllLeds(
                 appConfig.numSafetyFlashesBeforeStart,
                 appConfig.safetyFlashDurationMs);
         })
-        .thenRunFor(2000, [&] { //
+        .thenRunFor(2000, /*true, [&](Sequence &subSequence)*/ [&] { //
             motors.setSpeeds(-speed, speed);
             lineSensors.calibrate();
         })
-        .thenRunFor(2000, [&] { //
+        .thenRunFor(2000, /*true, [&](Sequence &subSequence)*/ [&] { //
             motors.setSpeeds(speed, -speed);
             lineSensors.calibrate();
         })
         .repeatPreviousStepsTimes(2, 2)
-        .then([&] { //
+        .then(/*true, [&](Sequence &subSequence)*/ [&] { //
             motors.setSpeeds(0, 0);
             printMessage("Done!");
         })
@@ -309,11 +291,11 @@ void printValue(const String message, const int value)
 bool printPosition()
 {
     return sequences.printPosition
-        .then([&] { //
+        .then(/*true, [&](Sequence &subSequence)*/ [&] { //
             printMessage("Press A", "to cancel");
         })
         .delay(3000)
-        .thenWhenReturnsTrue([&] { //
+        .thenWhenReturnsTrue(/*true, [&](Sequence &subSequence)*/ [&] { //
             const int position = getLineSensorValue();
             printValue("Position: ", position);
             return buttonA.getSingleDebouncedPress();
@@ -348,15 +330,15 @@ bool followLine()
         return true;
     }
     return sequences.followLine
-        .then([&] { //
+        .then(/*true, [&](Sequence &subSequence)*/ [&] { //
             printMessage("Press A", "to cancel");
         })
         .delay(1000)
-        .then([&] { //
+        .then(/*true, [&](Sequence &subSequence)*/ [&] { //
             printMessage("Press B to", "show sp/pos");
         })
         .delay(1000)
-        .then([&] { //
+        .then(/*true, [&](Sequence &subSequence)*/ [&] { //
             printMessage("Starting in", "3");
         })
         .delay(1000)
@@ -364,19 +346,19 @@ bool followLine()
             printMessage("Starting in", "2");
         })
         .delay(1000)
-        .then([&] { //
+        .then(/*true, [&](Sequence &subSequence)*/ [&] { //
             printMessage("Starting in", "1");
         })
         .delay(1000)
-        .then([&] { //
+        .then(/*true, [&](Sequence &subSequence)*/ [&] { //
             printMessage("Following", "line ...");
         })
-        .thenWhenReturnsTrue([&] { //
+        .thenWhenReturnsTrue(/*true, [&](Sequence &subSequence)*/ [&] { //
             return flashAllLeds(
                 appConfig.numSafetyFlashesBeforeStart,
                 appConfig.safetyFlashDurationMs);
         })
-        .thenWhenReturnsTrue([&](/*Optional<Sequence> optionalSubSequence*/) { //
+        .thenWhenReturnsTrue(/*true, [&](Sequence &subSequence)*/ [&] { //
             Range outputRange = appConfig.linePidConfig.outputRange;
             Range inputRange = appConfig.linePidConfig.inputRange;
             // const int sensorValue = currentPosition;
@@ -395,32 +377,30 @@ bool followLine()
             // Clamp the distributed speeds to the output range
             const int clampedLeftSpeed = Scaling::clamp(rightCompensatedLeftSpeed, outputRange);
             const int clampedRightSpeed = Scaling::clamp(rightSpeed, outputRange);
-            /*
-                        optionalSubSequence.ifPresent([&](Sequence subSequence) { //
-                            subSequence
-                                .thenWhenReturnsTrue([&] { //
-                                    printMessage(
-                                        "Position",
-                                        getProgressBar(sensorValue, inputRange));
 
-                                    return buttonB.getSingleDebouncedPress();
-                                })
-                                .thenWhenReturnsTrue([&] { //
-                                    printValues(sensorValue, output);
-                                    return buttonB.getSingleDebouncedPress();
-                                })
-                                .thenWhenReturnsTrue([&] { //
-                                    printValues(clampedLeftSpeed, clampedRightSpeed);
-                                    return buttonB.getSingleDebouncedPress();
-                                })
-                                .loop()
-                                .endOfSequence();
-                        });*/
+            //            subSequence
+            //                .thenWhenReturnsTrue(/*true, [&](Sequence &subSequence)*/ [&] { //
+            //            printMessage(
+            //                "Position",
+            //                getProgressBar(sensorValue, inputRange));
+            //
+            //            return buttonB.getSingleDebouncedPress();
+            //                })
+            //                .thenWhenReturnsTrue(/*true, [&](Sequence &subSequence)*/ [&] { //
+            //            printValues(sensorValue, output);
+            //            return buttonB.getSingleDebouncedPress();
+            //                })
+            //                .thenWhenReturnsTrue(/*true, [&](Sequence &subSequence)*/ [&] { //
+            //            printValues(clampedLeftSpeed, clampedRightSpeed);
+            //            return buttonB.getSingleDebouncedPress();
+            //                })
+            //                .loop()
+            //                .endOfSequence();
 
             motors.setSpeeds(clampedLeftSpeed, clampedRightSpeed);
             return buttonA.getSingleDebouncedPress();
         })
-        .then([&] { //
+        .then(/*true, [&](Sequence &subSequence)*/ [&] { //
             // Kill the motors after the user stops the program
             motors.setSpeeds(0, 0);
         })
@@ -431,16 +411,16 @@ bool followLine()
 void exercise3()
 {
     sequences.exercise3
-        .then([&] { //
+        .then(/*true, [&](Sequence &subSequence)*/ [&] { //
             printMessage("Press A to", "calibrate");
         })
-        .thenWhenReturnsTrue([&] { //
+        .thenWhenReturnsTrue(/*true, [&](Sequence &subSequence)*/ [&] { //
             return buttonA.getSingleDebouncedRelease();
         })
-        .thenWhenReturnsTrue([&] { //
+        .thenWhenReturnsTrue(/*true, [&](Sequence &subSequence)*/ [&] { //
             return calibrate(appConfig.calibrationSpeed);
         })
-        .thenWhenReturnsTrue([&] { //
+        .thenWhenReturnsTrue(/*true, [&](Sequence &subSequence)*/ [&] { //
             return printPosition();
         })
         .loop()
@@ -450,22 +430,28 @@ void exercise3()
 void exercise4()
 {
     sequences.exercise4
-        .then([&] { //
+        .then(/*true, [&](Sequence &subSequence)*/ [&] { //
             printMessage("Press A to", "calibrate");
         })
-        .thenWhenReturnsTrue([&] { //
+        .thenWhenReturnsTrue(/*true, [&](Sequence &subSequence)*/ [&] { //
             return buttonA.getSingleDebouncedRelease();
         })
-        .thenWhenReturnsTrue([&] { //
+        .thenWhenReturnsTrue(/*true, [&](Sequence &subSequence)*/ [&] { //
             return calibrate(appConfig.calibrationSpeed);
         })
-        .then([&] { //
+        .then(/*true, [&](Sequence &subSequence)*/ [&] { //
             printMessage("Press A to", "follow line");
         })
-        .thenWhenReturnsTrue([&] { //
+        .thenWhenReturnsTrue(/*true, [&](Sequence &subSequence)*/ [&] { //
             return buttonA.getSingleDebouncedRelease();
         })
-        .thenWhenReturnsTrue([&] { //
+        .thenWhenReturnsTrue(true, [&](Sequence subSequence) { //
+            // subSequence
+            //     .then(/*true, [&](Sequence &subSequence)*/ [&] { //
+            //         return followLine();
+            //     })
+            //     .loop()
+            //     .endOfSequence();
             return followLine();
         })
         .loop()
@@ -480,12 +466,12 @@ void updateLcdScroll()
     if (false)
     {
         sequences.lcdScroll
-            .then([&] { //
+            .then(/*true, [&](Sequence &subSequence)*/ [&] { //
                 lcd.scrollDisplayLeft();
             })
             .delay(300)
             .repeatPreviousStepsTimes(2, 20)
-            .then([&] { //
+            .then(/*true, [&](Sequence &subSequence)*/ [&] { //
                 lcd.scrollDisplayRight();
             })
             .repeatPreviousStepsTimes(1, 20)
@@ -498,14 +484,14 @@ void updateLcdScroll()
 void updateMenuControls()
 {
     sequences.loop
-        .then([&] { //
+        .then(/*true, [&](Sequence &subSequence)*/ [&] { //
             printScrollMessage("A: Calibrate", "B: Follow Line");
             sequences.calibration.reset();
             sequences.followLine.reset();
             sequences.calibration.pause();
             sequences.followLine.pause();
         })
-        .thenWhenReturnsTrue([&] { //
+        .thenWhenReturnsTrue(/*true, [&](Sequence &subSequence)*/ [&] { //
             if (buttonA.getSingleDebouncedPress())
             {
                 sequences.calibration.start();
@@ -522,11 +508,11 @@ void updateMenuControls()
         // Only one of these two next sequences should be running at a time.
         // because we reset them in the steps above
         //.thenWhenReturnsTrue([&] { //
-        .thenWhenReturnsTrue([&] { //
+        .thenWhenReturnsTrue(/*true, [&](Sequence &subSequence)*/ [&] { //
             // Will continue if the sequence is not running
             return calibrate(appConfig.calibrationSpeed);
         })
-        .thenWhenReturnsTrue([&] { //
+        .thenWhenReturnsTrue(/*true, [&](Sequence &subSequence)*/ [&] { //
             // Will continue if the sequence is not running
             return followLine();
         })
