@@ -1,0 +1,17 @@
+# Source: https://piolabs.com/blog/insights/unit-testing-part-3.html
+name: Run all native tests
+on: [push]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: Set up Python
+        uses: actions/setup-python@v1
+      - name: Install PlatformIO
+        run: |
+          python -m pip install --upgrade pip
+          pip install platformio
+      - name: Run tests in lab-1
+        working-directory: ./lab-1/knut-ola
+        run: platformio test -e CI
