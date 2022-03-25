@@ -1,0 +1,52 @@
+{
+    "folders": [
+        {
+            "path": "."
+        },
+        {
+            "name": "arduino-project/lab-1/knut-ola",
+            "path": "./lab-1\\knut-ola"
+        },
+        {
+            "name": "arduino-project/knut-ola\\lectures\\YR6018\\10_03_2022_17_00_19_00/millis-demo-2",
+            "path": "./knut-ola\\lectures\\YR6018\\10_03_2022_17_00_19_00\\millis-demo-2"
+        },
+        {
+            "name": "arduino-project/knut-ola\\lectures\\YR6018\\10_03_2022_17_00_19_00/millis-demo-3",
+            "path": "./knut-ola\\lectures\\YR6018\\10_03_2022_17_00_19_00\\millis-demo-3"
+        },
+        {
+            "name": "arduino-project/knut-ola\\lectures\\YR6018\\10_03_2022_17_00_19_00/millis-demo-4",
+            "path": "./knut-ola\\lectures\\YR6018\\10_03_2022_17_00_19_00\\millis-demo-4"
+        },
+        {
+            "name": "arduino-project/knut-ola\\lectures\\YR6018\\10_03_2022_17_00_19_00/millis-demo-5",
+            "path": "./knut-ola\\lectures\\YR6018\\10_03_2022_17_00_19_00\\millis-demo-5"
+        },
+        {
+            "name": "arduino-project/knut-ola\\lectures\\YR6018\\10_03_2022_17_00_19_00/millis-demo-6",
+            "path": "./knut-ola\\lectures\\YR6018\\10_03_2022_17_00_19_00\\millis-demo-6"
+        },
+        {
+            "name": "arduino-project/lab-1/knut-ola",
+            "path": "./lab-1\\knut-ola"
+        },
+        {
+            "name": "arduino-project/lab-2/knut-ola",
+            "path": "./lab-2\\knut-ola"
+        },
+        {
+            "name": "arduino-project/lab-3/knut-ola",
+            "path": "./lab-3\\knut-ola"
+        },
+        {
+            "name": "arduino-project/lab-4/knut-ola",
+            "path": "./lab-4\\knut-ola"
+        },
+        {
+            "name": "arduino-project/oving-3/knut-ola",
+            "path": "./oving-3\\knut-ola"
+        }
+    ],
+    "settings": {}
+}
