@@ -1,190 +1,122 @@
-/*********
-  Rui Santos
-  Complete project details at https://randomnerdtutorials.com
-*********/
-
 // Load Wi-Fi library
-#include <WiFi.h>
+
 #include <Arduino.h>
 #include <Adafruit_SSD1306.h>
 #include <Adafruit_I2CDevice.h>
-
+#include <Wire.h>
+#include "ESPAsyncWebServer.h"
+#include "SPIFFS.h"
+#include <WiFi.h>
 // Replace with your network credentials
 const char *ssid = "KristianIPHONE";
 const char *password = "kristian";
 
-// Set web server port number to 80
-WiFiServer server(80);
+// Set LED GPIO
+const int ledPin = 2;
+// Stores LED state
+String ledState;
 
-// Variable to store the HTTP request
-String header;
+// Create AsyncWebServer object on port 80
+AsyncWebServer server(80);
 
-String HTMLdata = "<!DOCTYPE html><html>"
-                  "<head><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">"
-                  "<link rel=\"icon\" href=\"data:,\">"
-                  "<style>html { font-family: Helvetica; display: inline-block; margin: 0px auto; text-align: center;}"
-                  ".button { background-color: #4CAF50; border: none; color: white; padding: 16px 40px;"
-                  "text-decoration: none; font-size: 30px; margin: 2px; cursor: pointer;}"
-                  ".button2 {background-color: #555555;}</style></head>";
-
-// Auxiliar variables to store the current output state
-String output26State = "off";
-String output27State = "off";
-
-// Assign output variables to GPIO pins
-const int GREEN_LED = 26;
-const int channelGREEN = 1;
-const int BLUE_LED = 27;
-const int channelBLUE = 2;
-
-void setupLED(int ledPin, int channelLED)
+// Replaces placeholder with LED state value
+String processor(const String &var)
 {
-  pinMode(ledPin, OUTPUT);
-  ledcSetup(channelLED, 2000, 8);
-  ledcAttachPin(ledPin, channelLED);
-  ledcWrite(channelLED, 0);
+  Serial.println(var);
+  if (var == "STATE")
+  {
+    if (digitalRead(ledPin))
+    {
+      ledState = "ON";
+    }
+    else
+    {
+      ledState = "OFF";
+    }
+    Serial.print(ledState);
+    return ledState;
+  }
+  return String();
 }
-
-// Current time
-unsigned long currentTime = millis();
-// Previous time
-unsigned long previousTime = 0;
-// Define timeout time in milliseconds (example: 2000ms = 2s)
-const long timeoutTime = 2000;
 
 void setup()
 {
-  Serial.begin(9600);
-  // Initialize the output variables as outputs
-  setupLED(BLUE_LED, channelBLUE);
-  setupLED(GREEN_LED, channelGREEN);
+  // Serial port for debugging purposes
+  Serial.begin(115200);
+  pinMode(ledPin, OUTPUT);
 
-  // Connect to Wi-Fi network with SSID and password
-  Serial.print("Connecting to ");
-  Serial.println(ssid);
+  // Initialize SPIFFS
+  if (!SPIFFS.begin(true))
+  {
+    Serial.println("An Error has occurred while mounting SPIFFS");
+    return;
+  }
+
+  // Connect to Wi-Fi
   WiFi.begin(ssid, password);
   while (WiFi.status() != WL_CONNECTED)
   {
-    delay(500);
-    Serial.print(".");
+    delay(1000);
+    Serial.println("Connecting to WiFi..");
   }
-  // Print local IP address and start web server
-  Serial.println("");
-  Serial.println("WiFi connected.");
-  Serial.println("IP address: ");
+
+  // Print ESP32 Local IP Address
   Serial.println(WiFi.localIP());
+
+  // Route for root / web page
+  server.on("/", HTTP_GET, [](AsyncWebServerRequest *request)
+            { request->send(SPIFFS, "/index.html", String(), false, processor); });
+
+  // Route to load style.css file
+  server.on("/style.css", HTTP_GET, [](AsyncWebServerRequest *request)
+            { request->send(SPIFFS, "/style.css", "text/css"); });
+
+  // Route to set GPIO to HIGH
+  server.on("/on", HTTP_GET, [](AsyncWebServerRequest *request)
+            {
+    digitalWrite(ledPin, HIGH);
+    request->send(SPIFFS, "/index.html", String(), false, processor); });
+
+  // Route to set GPIO to LOW
+  server.on("/off", HTTP_GET, [](AsyncWebServerRequest *request)
+            {
+    digitalWrite(ledPin, LOW);
+    request->send(SPIFFS, "/index.html", String(), false, processor); });
+
+  // Start server
   server.begin();
 }
 
 void loop()
 {
-  WiFiClient client = server.available(); // Listen for incoming clients
-
-  if (client)
-  { // If a new client connects,
-    currentTime = millis();
-    previousTime = currentTime;
-    Serial.println("New Client."); // print a message out in the serial port
-    String currentLine = "";       // make a String to hold incoming data from the client
-    while (client.connected() && currentTime - previousTime <= timeoutTime)
-    { // loop while the client's connected
-      currentTime = millis();
-      if (client.available())
-      {                         // if there's bytes to read from the client,
-        char c = client.read(); // read a byte, then
-        Serial.write(c);        // print it out the serial monitor
-        header += c;
-        if (c == '\n')
-        { // if the byte is a newline character
-          // if the current line is blank, you got two newline characters in a row.
-          // that's the end of the client HTTP request, so send a response:
-          if (currentLine.length() == 0)
-          {
-            // HTTP headers always start with a response code (e.g. HTTP/1.1 200 OK)
-            // and a content-type so the client knows what's coming, then a blank line:
-            client.println("HTTP/1.1 200 OK");
-            client.println("Content-type:text/html");
-            client.println("Connection: close");
-            client.println();
-
-            // turns the GPIOs on and off
-            if (header.indexOf("GET /26/on") >= 0)
-            {
-              Serial.println("GPIO 26 on");
-              output26State = "on";
-              ledcWrite(channelGREEN, 255);
-            }
-            else if (header.indexOf("GET /26/off") >= 0)
-            {
-              Serial.println("GPIO 26 off");
-              output26State = "off";
-              ledcWrite(channelGREEN, 0);
-            }
-            else if (header.indexOf("GET /27/on") >= 0)
-            {
-              Serial.println("GPIO 27 on");
-              output27State = "on";
-              ledcWrite(channelBLUE, 255);
-            }
-            else if (header.indexOf("GET /27/off") >= 0)
-            {
-              Serial.println("GPIO 27 off");
-              output27State = "off";
-              ledcWrite(channelBLUE, 0);
-            }
-
-            // Display the HTML web page
-            client.println(HTMLdata);
-
-            // Web Page Heading
-            client.println("<body><h1>ESP32 Web Server</h1>");
-
-            // Display current state, and ON/OFF buttons for GPIO 26
-            client.println("<p>GPIO 26 - State " + output26State + "</p>");
-            // If the output26State is off, it displays the ON button
-            if (output26State == "off")
-            {
-              client.println("<p><a href=\"/26/on\"><button class=\"button\">ON</button></a></p>");
-            }
-            else
-            {
-              client.println("<p><a href=\"/26/off\"><button class=\"button button2\">OFF</button></a></p>");
-            }
-
-            // Display current state, and ON/OFF buttons for GPIO 27
-            client.println("<p>GPIO 27 - State " + output27State + "</p>");
-            // If the output27State is off, it displays the ON button
-            if (output27State == "off")
-            {
-              client.println("<p><a href=\"/27/on\"><button class=\"button\">ON</button></a></p>");
-            }
-            else
-            {
-              client.println("<p><a href=\"/27/off\"><button class=\"button button2\">OFF</button></a></p>");
-            }
-            client.println("</body></html>");
-
-            // The HTTP response ends with another blank line
-            client.println();
-            // Break out of the while loop
-            break;
-          }
-          else
-          { // if you got a newline, then clear currentLine
-            currentLine = "";
-          }
-        }
-        else if (c != '\r')
-        {                   // if you got anything else but a carriage return character,
-          currentLine += c; // add it to the end of the currentLine
-        }
-      }
-    }
-    // Clear the header variable
-    header = "";
-    // Close the connection
-    client.stop();
-    Serial.println("Client disconnected.");
-    Serial.println("");
-  }
 }
+
+/*
+
+void setup()
+{
+  Serial.begin(9600);
+
+  if (!SPIFFS.begin(true))
+  {
+    Serial.println("An Error has occurred while mounting SPIFFS");
+    return;
+  }
+
+  File file = SPIFFS.open("/text.txt");
+  if (!file)
+  {
+    Serial.println("Failed to open file for reading");
+    return;
+  }
+
+  Serial.println("File Content:");
+  while (file.available())
+  {
+    Serial.write(file.read());
+  }
+  file.close();
+}
+
+void loop(){}
+*/
