@@ -43,15 +43,14 @@ String refreshWebData()
   HTMLdata += "</h2>";
 
   return HTMLdata; // returner HTML stringen
-
-} // end string refreshData
+}
 
 // funksjon for når en klinet er koblet til
 void handle_root()
 {
   // 200 status kode, "text/html" data type, hva som sendes
   server.send(200, "text/html", refreshWebData());
-} // end void handle_root
+}
 
 void setup()
 {
@@ -80,14 +79,11 @@ void setup()
   server.begin();
   Serial.println("HTTP server started");
   delay(100);
-
-} // end void setup
+}
 
 void loop()
 {
   // holder nettsiden oppe med automatisk refresh av siden hver gang void loop kjører
-  // ved å ha en refresh tid lik tiden void loop tar, blir verdien skrevet med en gang noe skjer på sensorene
   server.handleClient();
   delay(10);
-
-} // end void loop
+}
