@@ -23,6 +23,7 @@ enum class OppgaveStatus
 
 OppgaveStatus oppgave = OppgaveStatus::OPPGAVE2_A;
 
+// lager en switchcase for å rullere mellom program ved hjelp av knapp
 OppgaveStatus getNextStatus(OppgaveStatus currentState)
 {
   switch (currentState)
@@ -69,7 +70,7 @@ int maxPhoto = 0;
 int minPhoto = 1000;
 long timedOut = 1000; // valgfri hvis man ønsker dette
 
-// ezbutton er digg
+// ezbutton gjør ting veldig enkelt
 ezButton buttonOne(33);
 
 // led - row
@@ -87,6 +88,7 @@ const int LED = 32;
 // channels
 const int channelLED = 0;
 
+// funksjon som setter opp led og channel (tar da inn ledPinne og ønsket kanal)
 void setupLED(int ledPin, int channelLED)
 {
   pinMode(ledPin, OUTPUT);
@@ -130,11 +132,13 @@ float getTemperatureCelsiusFor(int pin)
 
 void loop()
 {
+  // venter på trykk, hvis trykk -> endre oppgavestatus
   buttonOne.loop();
   if (buttonOne.isPressed())
   {
     oppgave = getNextStatus(oppgave);
   }
+  // blinker led og oled skjerm
   if (oppgave == OppgaveStatus::OPPGAVE2_A)
   {
     ledcWrite(channelLED, 0);
@@ -151,6 +155,8 @@ void loop()
     ledcWrite(channelLED, 255);
     delay(1000);
   }
+  // oled skjerm skriver hello world
+  // med serial: Serial.println("hello world");
   if (oppgave == OppgaveStatus::OPPGAVE2_B)
   {
     Serial.println("Hello World!");
@@ -164,6 +170,7 @@ void loop()
     display.print("HELLO WORLD!");
     display.display();
   }
+  // test loop, skriver potensometer verdier til oled skjerm
   if (oppgave == OppgaveStatus::TEST)
   {
     buttonOne.loop();
@@ -182,6 +189,7 @@ void loop()
     display.print("Skru pot meteret:)");
     display.display();
   }
+  // oppgave som printer alle verdier fra sensorer til oled-skjerm
   if (oppgave == OppgaveStatus::OLED)
   {
     int analogValue = analogRead(POT_PIN);
@@ -201,7 +209,7 @@ void loop()
       // endres hvis den får en stor verdi
       // men resetter etter en hvis tid
       maxPhoto = photoResistorReading;
-      // timedOut = millis() + 500;
+      // timedOut = millis() + 500; litt ekstra kode hvis timedOut ønskes
     }
     // min = 300
     if (photoResistorReading < minPhoto)
@@ -238,6 +246,7 @@ void loop()
 
     delay(10);
   }
+  // oppgave som gir en bølge effekt med led og potensometer
   if (oppgave == OppgaveStatus::LED_ROW)
   {
     display.clearDisplay();
