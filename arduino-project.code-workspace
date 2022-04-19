@@ -46,6 +46,10 @@
         {
             "name": "arduino-project/oving-3/knut-ola",
             "path": "./oving-3\\knut-ola"
+        },
+        {
+            "name": "arduino-project/the-free-elected-peoples-democracy-of-libertyland/software-battery",
+            "path": "./the-free-elected-peoples-democracy-of-libertyland\\software-battery"
         }
     ],
     "settings": {}
