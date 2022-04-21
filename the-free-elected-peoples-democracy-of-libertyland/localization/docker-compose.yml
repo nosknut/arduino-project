@@ -2,10 +2,10 @@ version: '3'
 
 services:
   master:
+    image: ros:noetic-ros-base
     container_name: master
     volumes:
       - .ros_logs/talker:/root/.ros/
-    build: ./
     command: roscore
 
   turtlesim:
@@ -15,5 +15,5 @@ services:
       - ROS_MASTER_URI=http://master:11311
     volumes:
       - .ros_logs/talker:/root/.ros/
-    build: ./
+    build: dockerfiles/turtlesim
     command: rosrun turtlesim turtlesim_node
