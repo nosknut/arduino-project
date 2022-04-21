@@ -3,8 +3,6 @@ version: '3'
 services:
   master:
     container_name: master
-    environment:
-      - ROS_HOSTNAME=master
     volumes:
       - .ros_logs/talker:/root/.ros/
     build: ./
@@ -14,16 +12,8 @@ services:
     container_name: turtlesim
     environment:
       - DISPLAY=192.168.1.190:0.0
-      - ROS_HOSTNAME=turtlesim
       - ROS_MASTER_URI=http://master:11311
     volumes:
       - .ros_logs/talker:/root/.ros/
     build: ./
     command: rosrun turtlesim turtlesim_node
-
-  listener:
-    volumes:
-      - .ros_logs/listener:/root/.ros/
-    build: ./
-    environment:
-      - "PYTHONUNBUFFERED=1"
