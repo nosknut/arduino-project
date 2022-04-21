@@ -18,3 +18,5 @@
 *.ind
 *.toc
 report.run.xml
+
+.ros_logs
