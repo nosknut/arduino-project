@@ -8,6 +8,10 @@
             "path": "./lab-1\\knut-ola"
         },
         {
+            "name": "arduino-project/knut-ola/button-class",
+            "path": "./knut-ola\\button-class"
+        },
+        {
             "name": "arduino-project/knut-ola\\lectures\\YR6018\\10_03_2022_17_00_19_00/millis-demo-2",
             "path": "./knut-ola\\lectures\\YR6018\\10_03_2022_17_00_19_00\\millis-demo-2"
         },
