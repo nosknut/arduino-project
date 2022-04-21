@@ -1,13 +1,25 @@
 version: '3'
 
 services:
-  talker:
+  master:
+    container_name: master
     environment:
-      - DISPLAY=localhost
+      - ROS_HOSTNAME=master
     volumes:
       - .ros_logs/talker:/root/.ros/
     build: ./
-    command: rosbag record -a
+    command: roscore
+
+  turtlesim:
+    container_name: turtlesim
+    environment:
+      - DISPLAY=192.168.1.190:0.0
+      - ROS_HOSTNAME=turtlesim
+      - ROS_MASTER_URI=http://master:11311
+    volumes:
+      - .ros_logs/talker:/root/.ros/
+    build: ./
+    command: rosrun turtlesim turtlesim_node
 
   listener:
     volumes:
