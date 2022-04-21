@@ -2,10 +2,12 @@ version: '3'
 
 services:
   talker:
+    environment:
+      - DISPLAY=localhost
     volumes:
       - .ros_logs/talker:/root/.ros/
     build: ./
-    command: ros2 run demo_nodes_cpp talker
+    command: rosbag record -a
 
   listener:
     volumes:
@@ -13,4 +15,3 @@ services:
     build: ./
     environment:
       - "PYTHONUNBUFFERED=1"
-    command: ros2 run demo_nodes_py listener
