@@ -47,6 +47,16 @@ source ros_entrypoint.sh
 rosrun <package_name> <package_node>
 ```
 
+### Shutting down all docker containers
+```
+docker-compose down
+```
+
+### Shutting down a specific docker container
+```
+docker-compose down <container_name>
+```
+
 ## Documentation
 https://nosknut.github.io/arduino-project/annotated.html
 
