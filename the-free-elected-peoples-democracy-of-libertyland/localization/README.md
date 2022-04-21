@@ -57,6 +57,32 @@ docker-compose down
 docker-compose down <container_name>
 ```
 
+## Controling turtlesim with keyboard
+[Video Tutorial](https://www.youtube.com/watch?v=PlS6YCu5CT4)
+
+Start docker containers
+```
+docker-compose up -d master turtlesim
+```
+
+Enter the turtlesim container and run the control package
+```
+docker exec -it turtlesim bash
+rosrun turtlesim turtle_teleop_key
+```
+
+Open another terminal to see your command messages
+```
+docker exec -it turtlesim bash
+rostopic list
+rostopic echo turtle1/cmd_vel
+```
+
+To shut everything down, close the terminals and run the following code to stop the docker containers that are running in the background
+```
+docker-compose down
+```
+
 ## Documentation
 https://nosknut.github.io/arduino-project/annotated.html
 
