@@ -1,27 +1,51 @@
 ## ROS Setup
-Starting docker container
+
+Useful links
+* [Docker Desktop](https://www.docker.com/products/docker-desktop/)
+* [Installing Docker on Raspberry PI](https://www.jfrog.com/connect/post/install-docker-compose-on-raspberry-pi/)
+
+### Starting the master ros node docker container
 ```
-docker-compose up -d
+docker-compose up -d master
+```
+You can see the container running with the following command
+```
+docker ps
 ```
 
-Rebuilding docker image
-- Use this if you made changes to [Dockerfile](Dockerfile)
+### Starting the turtlesim ros node docker container
+
+1. #### Running GUI applications in docker containers on windows
+   * This is used for the turtlesim container [Tutorial](https://jack-kawell.com/2019/09/11/setting-up-ros-in-windows-through-docker/)
+   * [VcXsrv Windows X Server Download](https://sourceforge.net/projects/vcxsrv/)
+2. Click the [config.xlaunch](config.xlaunch) file to start the display client
+
+2. Update [docker-compose.yml](docker-compose.yml) to include your computers local ip-address
+   * The ip address can not be localhost or 127.0.0.1
+   * The block below shows the path for the setting that must be change
 ```
-docker-compose up -d --build
+services:
+  turtlesim:
+    environment:
+      - DISPLAY=<your_ip_address>:0.0
+```
+After you have set your IP Address in the [docker-compose.yml](docker-compose.yml) file, start the turtlesim docker container
+```
+docker-compose up turtlesim
 ```
 
-Running commands in an active docker container
+### Rebuilding the turtlesim docker image
+- Use this if you made changes to the turtlesim [Dockerfile](dockerfiles/turtlesim/Dockerfile)
 ```
-docker exec -it localization_talker_1 /bin/bash
+docker-compose up --build turtlesim
+```
+
+### Running commands in an active docker container
+```
+docker exec -it <container_name> bash
 source ros_entrypoint.sh
-rosrun turtlesim turtlesim_node
+rosrun <package_name> <package_node>
 ```
-
-Running GUI applications in docker containers on windows
-
-* [Tutorial](https://jack-kawell.com/2019/09/11/setting-up-ros-in-windows-through-docker/)
-* [VcXsrv Windows X Server Download](https://sourceforge.net/projects/vcxsrv/)
-
 
 ## Documentation
 https://nosknut.github.io/arduino-project/annotated.html
