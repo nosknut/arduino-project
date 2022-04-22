@@ -1,18 +1,14 @@
 #include <Arduino.h>
-#include <IrPublisher.h>
+#include <MainPublisher.h>
 
-ros::NodeHandle nh;
-IrPublisher irPublisher;
+MainPublisher mainPublisher;
 
 void setup()
 {
-    nh.initNode();
-    irPublisher.setup(nh);
+    mainPublisher.setup();
 }
 
 void loop()
 {
-    irPublisher.loop(nh);
-
-    nh.spinOnce();
+    mainPublisher.loop();
 }

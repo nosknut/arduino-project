@@ -1,6 +1,7 @@
 #ifndef IrPublisher_h
 #define IrPublisher_h
 #include <Arduino.h>
+#include <Timer.h>
 #include <ros.h>
 #include <ros/time.h>
 #include <sensor_msgs/Range.h>
@@ -16,14 +17,14 @@
 class IrPublisher
 {
 private:
+    Timer timer;
+
     sensor_msgs::Range range_msg;
     ros::Publisher pub_range = ros::Publisher("range_data", &range_msg);
 
     String frameid = "/ir_ranger";
 
     Zumo32U4ProximitySensors proximity;
-
-    unsigned long range_timer;
 
 public:
     void setup(ros::NodeHandle &nh)
@@ -42,12 +43,11 @@ public:
         proximity.read();
         // publish the range value every 50 milliseconds
         //   since it takes that long for the sensor to stabilize
-        if ((millis() - range_timer) > 50)
+        if (timer.loopWait(50))
         {
             range_msg.range = proximity.countsFrontWithRightLeds();
             range_msg.header.stamp = nh.now();
             pub_range.publish(&range_msg);
-            range_timer = millis();
         }
     }
 };
