@@ -6,7 +6,6 @@
 #include <ros/time.h>
 #include <sensor_msgs/Range.h>
 #include <Zumo32U4ProximitySensors.h>
-
 /*
  * http://wiki.ros.org/rosserial_arduino/Tutorials/IR%20Ranger
  * rosserial IR Ranger Example
@@ -18,13 +17,12 @@ class IrPublisher
 {
 private:
     Timer timer;
-
-    sensor_msgs::Range range_msg;
-    ros::Publisher pub_range = ros::Publisher("range_data", &range_msg);
+    Zumo32U4ProximitySensors proximity;
 
     String frameid = "/ir_ranger";
 
-    Zumo32U4ProximitySensors proximity;
+    sensor_msgs::Range range_msg;
+    ros::Publisher pub_range = ros::Publisher("range_data", &range_msg);
 
 public:
     void setup(ros::NodeHandle &nh)
