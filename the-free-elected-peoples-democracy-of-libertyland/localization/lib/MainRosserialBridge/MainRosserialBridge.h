@@ -1,7 +1,11 @@
 #ifndef MainRosserialBridge_h
 #define MainRosserialBridge_h
 #include <Arduino.h>
-#include <RosserialPublisherBridge.h>
+#include <ros.h>
+#include <std_msgs/Int16.h>
+#include <sensor_msgs/Imu.h>
+#include <sensor_msgs/Range.h>
+#include <RosserialBridge.h>
 
 class MainRosserialBridge
 {
@@ -9,30 +13,34 @@ private:
     // Set the rosserial socket server IP address
     IPAddress server(192, 168, 1, 1);
 
-    ros::NodeHandle nh;
+    ros::NodeHandle inputNh;
+    ros::NodeHandle outputNh;
 
-    RosPublisherBridge<sensor_msgs::Imu> imuBridge("imu");
-    RosPublisherBridge<std_msgs::Int16> leftEncoderBridge("left_ticks");
-    RosPublisherBridge<std_msgs::Int16> rightEncoderBridge("right_ticks");
-    RosPublisherBridge<sensor_msgs::Range> irBridge("range_data");
+    RosserialBridge<sensor_msgs::Imu> imuBridge("imu");
+    RosserialBridge<std_msgs::Int16> leftEncoderBridge("left_ticks");
+    RosserialBridge<std_msgs::Int16> rightEncoderBridge("right_ticks");
+    RosserialBridge<sensor_msgs::Range> irBridge("range_data");
 
 public:
-    void setup(uint16_t serverPort = 11411)
+    void setup(long baudRate, uint16_t serverPort = 11411)
     {
         // Set the connection to rosserial socket server
-        nh.getHardware()->setConnection(server, serverPort);
-        nh.initNode();
+        inputNh.getHardware()->setConnection(server, serverPort);
+        inputNh.initNode();
 
-        imuBridge.setup();
-        leftEncoderBridge.setup();
-        rightEncoderBridge.setup();
-        irBridge.setup();
+        outputNh.getHardware()->setBaud(baudRate);
+        outputNh.initNode();
+
+        imuBridge.setup(inputNh, outputNh);
+        leftEncoderBridge.setup(inputNh, outputNh);
+        rightEncoderBridge.setup(inputNh, outputNh);
+        irBridge.setup(inputNh, outputNh);
     }
 
     void loop()
     {
 
-        if (nh.connected())
+        if (outputNh.connected())
         {
             // Run publishers
             // The publishers for this class
@@ -46,7 +54,8 @@ public:
         // The RosPublisherBridge has no loop function
         // Regarding the line below:
         // nh.spinOnce() is the function that updates rosserial
-        nh.spinOnce();
+        inputNh.spinOnce();
+        outputNh.spinOnce();
     }
 };
 

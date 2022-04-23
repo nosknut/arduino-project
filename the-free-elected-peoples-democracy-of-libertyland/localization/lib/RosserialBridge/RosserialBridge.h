@@ -1,5 +1,5 @@
-#ifndef RosserialPublisherBridge_h
-#define RosserialPublisherBridge_h
+#ifndef RosserialBridge_h
+#define RosserialBridge_h
 #include <Arduino.h>
 #include <ros.h>
 
@@ -23,7 +23,7 @@
  *
  */
 template <typename MessageType>
-class RosserialPublisherBridge
+class RosserialBridge
 {
 private:
     // TODO: Test if this is assigned before pub and sub are instantiated
@@ -35,15 +35,15 @@ private:
     ros::Subscriber<MessageType> sub(nodeName, pub.publish);
 
 public:
-    RosPublisherBridge(String nodeName) : nodeName(nodeName)
+    RosserialBridge(String nodeName) : nodeName(nodeName)
     {
         static_assert(std::is_base_of<ros::Msg, MessageType>::value, "MessageType type parameter of this class must derive from ros::Msg");
     }
 
-    void setup(ros::NodeHandle &nh)
+    void setup(ros::NodeHandle &inputNh, ros::NodeHandle &outputNh)
     {
-        nh.advertise(pub_imu);
-        nh.subscribe(sub);
+        outputNh.advertise(pub_imu);
+        inputNh.subscribe(sub);
     }
 };
 

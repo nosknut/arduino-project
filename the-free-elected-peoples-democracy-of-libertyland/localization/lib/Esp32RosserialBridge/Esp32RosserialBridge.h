@@ -33,7 +33,7 @@ public:
     {
         Serial.begin(baudRate);
         setupWifi();
-        mainRosserialBridge.setup(rosserialServerPort);
+        mainRosserialBridge.setup(baudRate, rosserialServerPort);
     }
 
     void loop()
