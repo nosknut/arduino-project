@@ -72,6 +72,10 @@
             "path": "./oving-3\\knut-ola"
         },
         {
+            "name": "arduino-project/the-free-elected-peoples-democracy-of-libertyland/esp32-rosserial-bridge",
+            "path": "./the-free-elected-peoples-democracy-of-libertyland\\esp32-rosserial-bridge"
+        },
+        {
             "name": "arduino-project/the-free-elected-peoples-democracy-of-libertyland/localization",
             "path": "./the-free-elected-peoples-democracy-of-libertyland\\localization"
         }
