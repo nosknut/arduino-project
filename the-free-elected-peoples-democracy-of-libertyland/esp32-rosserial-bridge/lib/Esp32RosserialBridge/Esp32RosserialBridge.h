@@ -31,8 +31,7 @@ private:
 public:
     void setup(long baudRate, String ssid, String password, uint16_t rosserialServerPort = 11411)
     {
-        Serial.begin(baudRate);
-        setupWifi();
+        setupWifi(ssid, password);
         mainRosserialBridge.setup(baudRate, rosserialServerPort);
     }
 

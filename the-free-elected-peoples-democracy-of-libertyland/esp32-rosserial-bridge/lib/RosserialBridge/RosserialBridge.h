@@ -30,9 +30,17 @@ private:
     const String nodeName;
 
     MessageType msg;
-    ros::Publisher pub(nodeName, &msg);
+    ros::Publisher pub = ros::Publisher(nodeName.c_str(), &msg);
+
+    void publish(const MessageType &cmd_msg)
+    {
+        pub.publish(&cmd_msg);
+    }
+
     // Set the publiser.publish as the subscriber event handler
-    ros::Subscriber<MessageType> sub(nodeName, pub.publish);
+    // https://stackoverflow.com/questions/68550716/pass-non-static-class-member-callback-function-to-rossubscriber
+    ros::Subscriber<MessageType, RosserialBridge> sub =
+        ros::Subscriber<MessageType, RosserialBridge>(nodeName.c_str(), &RosserialBridge::publish, this);
 
 public:
     RosserialBridge(String nodeName) : nodeName(nodeName)
@@ -42,7 +50,7 @@ public:
 
     void setup(ros::NodeHandle &inputNh, ros::NodeHandle &outputNh)
     {
-        outputNh.advertise(pub_imu);
+        outputNh.advertise(pub);
         inputNh.subscribe(sub);
     }
 };

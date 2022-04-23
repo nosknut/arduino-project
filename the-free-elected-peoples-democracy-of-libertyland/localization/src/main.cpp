@@ -6,6 +6,7 @@ MainPublisher mainPublisher;
 
 void setup()
 {
+    Serial.begin(baudRate);
     mainPublisher.setup(baudRate);
 }
 

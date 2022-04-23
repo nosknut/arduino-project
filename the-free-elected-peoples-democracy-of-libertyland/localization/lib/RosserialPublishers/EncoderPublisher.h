@@ -15,10 +15,10 @@ class EncoderPublisher
 private:
     Timer timer;
     std_msgs::Int16 right_wheel_tick_count;
-    ros::Publisher right_pub_msg("right_ticks", &right_wheel_tick_count);
+    ros::Publisher right_pub_msg = ros::Publisher("right_ticks", &right_wheel_tick_count);
 
     std_msgs::Int16 left_wheel_tick_count;
-    ros::Publisher left_pub_msg("left_ticks", &left_wheel_tick_count);
+    ros::Publisher left_pub_msg = ros::Publisher("left_ticks", &left_wheel_tick_count);
 
     Zumo32U4Encoders encoders;
 

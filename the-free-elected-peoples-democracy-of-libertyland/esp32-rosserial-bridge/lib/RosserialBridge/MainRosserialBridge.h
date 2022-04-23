@@ -2,6 +2,7 @@
 #define MainRosserialBridge_h
 #include <Arduino.h>
 #include <ros.h>
+#include <ESP8266WiFi.h>
 #include <std_msgs/Int16.h>
 #include <sensor_msgs/Imu.h>
 #include <sensor_msgs/Range.h>
@@ -11,24 +12,28 @@ class MainRosserialBridge
 {
 private:
     // Set the rosserial socket server IP address
-    IPAddress server(192, 168, 1, 1);
+    IPAddress server = IPAddress(192, 168, 1, 1);
 
     ros::NodeHandle inputNh;
     ros::NodeHandle outputNh;
 
-    RosserialBridge<sensor_msgs::Imu> imuBridge("imu");
-    RosserialBridge<std_msgs::Int16> leftEncoderBridge("left_ticks");
-    RosserialBridge<std_msgs::Int16> rightEncoderBridge("right_ticks");
-    RosserialBridge<sensor_msgs::Range> irBridge("range_data");
+    RosserialBridge<sensor_msgs::Imu> imuBridge = RosserialBridge<sensor_msgs::Imu>("imu");
+    RosserialBridge<std_msgs::Int16> leftEncoderBridge = RosserialBridge<std_msgs::Int16>("left_ticks");
+    RosserialBridge<std_msgs::Int16> rightEncoderBridge = RosserialBridge<std_msgs::Int16>("right_ticks");
+    RosserialBridge<sensor_msgs::Range> irBridge = RosserialBridge<sensor_msgs::Range>("range_data");
 
 public:
+    MainRosserialBridge()
+    {
+    }
+
     void setup(long baudRate, uint16_t serverPort = 11411)
     {
         // Set the connection to rosserial socket server
         inputNh.getHardware()->setConnection(server, serverPort);
         inputNh.initNode();
 
-        outputNh.getHardware()->setBaud(baudRate);
+        // outputNh.getHardware()->setBaud(baudRate);
         outputNh.initNode();
 
         imuBridge.setup(inputNh, outputNh);

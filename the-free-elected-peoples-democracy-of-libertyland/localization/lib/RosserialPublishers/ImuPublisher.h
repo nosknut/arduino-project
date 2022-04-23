@@ -20,7 +20,7 @@ private:
 
     // http://docs.ros.org/en/api/sensor_msgs/html/msg/Imu.html
     sensor_msgs::Imu imu_msg;
-    ros::Publisher pub_imu("imu", &imu_msg);
+    ros::Publisher pub_imu = ros::Publisher("imu", &imu_msg);
 
 public:
     void setup(ros::NodeHandle &nh)
@@ -30,9 +30,9 @@ public:
         imu_msg.header.frame_id = frameid.c_str();
 
         // TODO: Set the covariances to something reasonable
-        imu_msg.orientation_covariance = {-1, 0, 0, 0, -1, 0, 0, 0, 0};
-        imu_msg.angular_velocity_covariance = {-1, 0, 0, 0, -1, 0, 0, 0, 0};
-        imu_msg.linear_acceleration_covariance = {-1, 0, 0, 0, -1, 0, 0, 0, 0};
+        // imu_msg.orientation_covariance = {-1, 0, 0, 0, -1, 0, 0, 0, 0};
+        // imu_msg.angular_velocity_covariance = {-1, 0, 0, 0, -1, 0, 0, 0, 0};
+        // imu_msg.linear_acceleration_covariance = {-1, 0, 0, 0, -1, 0, 0, 0, 0};
     }
 
     bool updateAcc()
