@@ -14,7 +14,7 @@ private:
     // Set the rosserial socket server IP address
     IPAddress server = IPAddress(192, 168, 1, 1);
 
-    ros::NodeHandle inputNh;
+    AVR_ATmega328P_NodeHandle inputNh;
     ros::NodeHandle outputNh;
 
     RosserialBridge<sensor_msgs::Imu> imuBridge = RosserialBridge<sensor_msgs::Imu>("imu");
@@ -30,11 +30,11 @@ public:
     void setup(long baudRate, uint16_t serverPort = 11411)
     {
         // Set the connection to rosserial socket server
-        inputNh.getHardware()->setConnection(server, serverPort);
-        inputNh.initNode();
-
-        // outputNh.getHardware()->setBaud(baudRate);
+        outputNh.getHardware()->setConnection(server, serverPort);
         outputNh.initNode();
+
+        inputNh.getHardware()->setBaud(baudRate);
+        inputNh.initNode();
 
         imuBridge.setup(inputNh, outputNh);
         leftEncoderBridge.setup(inputNh, outputNh);

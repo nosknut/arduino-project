@@ -4,6 +4,16 @@
 #include <ros.h>
 
 /**
+ * TODO: Make sure this hack works
+ * Handle for AVR_ATmega328P
+ * MAX_SUBSCRIBERS=25
+ * MAX_PUBLISHERS=25
+ * INPUT_SIZE=280
+ * OUTPUT_SIZE=280
+ */
+typedef ros::NodeHandle_<ArduinoHardware, 25, 25, 280, 280, ros::FlashReadOutBuffer_> AVR_ATmega328P_NodeHandle;
+
+/**
  * A generic class that creates a sub-pub proxy
  * Useful when you have a different device generating
  * messages. This class should be run on the device
@@ -48,7 +58,7 @@ public:
         static_assert(std::is_base_of<ros::Msg, MessageType>::value, "MessageType type parameter of this class must derive from ros::Msg");
     }
 
-    void setup(ros::NodeHandle &inputNh, ros::NodeHandle &outputNh)
+    void setup(AVR_ATmega328P_NodeHandle &inputNh, ros::NodeHandle &outputNh)
     {
         outputNh.advertise(pub);
         inputNh.subscribe(sub);
