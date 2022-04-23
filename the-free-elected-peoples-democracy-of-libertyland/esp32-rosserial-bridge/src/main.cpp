@@ -1,15 +1,19 @@
 #include <Arduino.h>
-#include <MainPublisher.h>
+#include <Esp32RosserialBridge.h>
 
 long baudRate = 115200;
-MainPublisher mainPublisher;
+String ssid;
+String password;
+uint16_t rosserialServerPort = 11411;
+
+Esp32RosserialBridge bridge;
 
 void setup()
 {
-    mainPublisher.setup(baudRate);
+    bridge.setup(baudRate, ssid password, rosserialServerPort);
 }
 
 void loop()
 {
-    mainPublisher.loop();
+    bridge.loop();
 }
