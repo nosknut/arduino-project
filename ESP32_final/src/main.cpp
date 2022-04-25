@@ -2,7 +2,7 @@
 #include <ezButton.h>
 #include <Wire.h>
 #include <Adafruit_GFX.h>
-#include <Adafruit_SSD1306.h>
+//#include <Adafruit_SSD1306.h>
 #include <Adafruit_I2CDevice.h>
 #include <RunningMedian.h>
 //#include <kristianButton.h> i wish :(
