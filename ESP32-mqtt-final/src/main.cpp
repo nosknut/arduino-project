@@ -5,11 +5,11 @@
 
 // Wifi navn (ssid) og passord
 // hjemme nettverk
-// const char *ssid = "Get-2G-DC8011";
-// const char *password = "BC3A88DD73";
+const char *ssid = "Get-2G-DC8011";
+const char *password = "BC3A88DD73";
 // telefon mobilnett
-const char *ssid = "kristianIPHONE";
-const char *password = "kristian";
+// const char *ssid = "kristianIPHONE";
+// const char *password = "kristian";
 
 // Add your MQTT Broker IP address (mulig?: epstin.com)
 // const char *mqtt_server = "192.168.1.154"; får ikke ip til å fungere...
@@ -26,6 +26,9 @@ int value = 0;
 //  variabler led
 const int blueLed = 5;
 const int blueChannel = 5;
+// led for wifi og mqtt kobling
+const int mqttLed = 32;
+const int mqttChannel = 2;
 
 #define POT_METER 34
 
@@ -44,7 +47,6 @@ void setup_wifi()
     delay(500);
     Serial.print(".");
   }
-
   Serial.println("");
   Serial.println("WiFi connected");
   Serial.println("IP address: ");
@@ -103,6 +105,7 @@ void setup()
   client.setCallback(callback);
 
   setupLED(blueLed, blueChannel);
+  setupLED(mqttLed, mqttChannel);
 }
 
 // funksjon som kjører til mqtt er koblet opp
@@ -116,6 +119,7 @@ void reconnect()
     if (client.connect("ESP8266Client"))
     {
       Serial.println("connected");
+      ledcWrite(mqttChannel, 255); // indikerer mqtt og wifi tilkobling
       // Subscribe
       client.subscribe("esp32/output");
     }
@@ -142,8 +146,8 @@ void loop()
   // leser av potensiometeret og gjør om til verdi mellom 0 og 100 (brukes som testdata)
   int potMeterReading = analogRead(POT_METER);
   int battery = map(potMeterReading, 0, 4096, 0, 100);
-  // ledcWrite(blueChannel, battery); test for led
-  //  Serial.println(battery);
+  // ledcWrite(wifiChannel, battery);
+  //   Serial.println(battery);
 
   long now = millis();
   // leser av hvert sekund
