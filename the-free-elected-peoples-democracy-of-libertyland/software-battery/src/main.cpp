@@ -1,3 +1,4 @@
+// include libraries
 #include <Arduino.h>
 #include <Wire.h>
 #include <Zumo32U4.h>
@@ -7,6 +8,7 @@
 #include <Timer.h>
 #include <EEPROM.h>
 
+// define parts of libraries
 Zumo32U4Buzzer buzzer;
 Zumo32U4LCD display;
 Zumo32U4Encoders encoders;
@@ -16,8 +18,8 @@ Zumo32U4ButtonB buttonB;
 Zumo32U4ButtonC buttonC;
 Timer timer;
 
-int account_balance = 8615;
-float currentSpeed;
+int account_balance = 8615; // money avaliable for charging and batterychanges
+// unsigned longs used for timing purposes
 unsigned long distanceInterval = 0;
 unsigned long previousOneMinuteCounting = 0;
 unsigned long displayrate = 0;
@@ -26,17 +28,17 @@ unsigned long changebatteryhealthrate = 0;
 unsigned long changeAmphereRate = 0;
 unsigned long changePositiveAmphereRate = 0;
 unsigned long start10perDisplayrate = 0;
-float sTotal = 0; // value returning total distance
-byte oneMinutePattern = 0;
-float amountOfSpeedsRecorded = 0;
-float amountOfSpeedsRecordedOverSeventyPercent = 0;
-float averageSpeed;
-int timeAtHighSpeeds;
-float lastMinutesAverageSpeed = 0;
-float lastMinutesHighestSpeed = 0;
-int lastMinutestimeAtHighSpeeds = 0;
-float n;
-float highestSpeed = 0;
+float sTotal = 0;                                   // value returning total distance
+byte oneMinutePattern = 0;                          // flag indicating if one minute has passed
+float amountOfSpeedsRecorded = 0;                   // variable containing amount of speeds recorded, used in calculation of average
+float amountOfSpeedsRecordedOverSeventyPercent = 0; // variable containing amount of speeds recorded, used in calculation of time at or higher than70% speed
+float averageSpeed;                                 // variable containing averageSpeed
+int timeAtHighSpeeds;                               // variable containing time at speeds at or higher than 70%
+float lastMinutesAverageSpeed = 0;                  // variable containing the last minutes average speed
+float lastMinutesHighestSpeed = 0;                  // variable containing the last minutes Highest speed
+int lastMinutestimeAtHighSpeeds = 0;                // variable containing the last minutes time at speeds at or higher than 70%
+float totalOfSpeedsRecorded;                        // sum of speeds used in calculation of average
+float highestSpeed = 0;                             //
 float amphere = 1200;
 int percentOfBatteryLeft;
 float batteryhealth = 100;
@@ -52,7 +54,6 @@ void setup()
 {
   // put your setup code here, to run once:
   Serial.begin(9600);
-  Serial.println("it works");
   display.init();
   encoders.init();
   int value = EEPROM.read(placeInEepromWhereBatterhealtIsStored);
@@ -125,24 +126,6 @@ unsigned long countStart;
 
 void count60secondinterval(float speeds)
 {
-  /*if (speeds > 0)
-  {
-    if (countStart != 0)
-      countStart = millis();
-  }
-  else
-  {
-    countStart = 0;
-    return;
-  }
-
-  unsigned long elapsedTime = (millis() - countStart) / 1000;
-  if (elapsedTime >= (unsigned long)60)
-  {
-    oneMinutePattern = 1;
-  }
-  */
-  // adding the time it stood still to the value that wont increase?
   if (speeds > 0)
   {
 
@@ -176,12 +159,12 @@ void displayBatteryLevelAmountOfChargesBatteryHealth(int batteryLevel, int amoun
 float getAverageSpeed(float speeds)
 {
   amountOfSpeedsRecorded++;
-  n += speeds;
-  averageSpeed = n / amountOfSpeedsRecorded;
+  totalOfSpeedsRecorded += speeds;
+  averageSpeed = totalOfSpeedsRecorded / amountOfSpeedsRecorded;
   if (oneMinutePattern == 1)
   {
     lastMinutesAverageSpeed = averageSpeed;
-    n = 0;
+    totalOfSpeedsRecorded = 0;
     averageSpeed = 0;
   }
   return averageSpeed;
@@ -283,18 +266,6 @@ void batterylevelhchange(float batteryhealth)
     batterylevel = 0;
   }
 }
-
-/*
-1.Endre average, highest og max til å kun gå når klokka som kun teller når motoren går går ¨
-2. Fikse minutt klokka slik at den kun teller millis når motoren går (else med annen lokal tid som subtraheres fra hovedtiden)
-3. EEPROM lagring av batteryhealth ¨
-4. Random feil med batterhealth¨
-5. Teste charging¨
-6.ryggelading¨
-7.Bommer
-8.Speedometer¨
-9.10% and 5%¨
-*/
 
 void normalDriving()
 {
