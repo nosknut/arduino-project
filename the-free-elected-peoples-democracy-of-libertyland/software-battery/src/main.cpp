@@ -38,21 +38,20 @@ float lastMinutesAverageSpeed = 0;                  // variable containing the l
 float lastMinutesHighestSpeed = 0;                  // variable containing the last minutes Highest speed
 int lastMinutestimeAtHighSpeeds = 0;                // variable containing the last minutes time at speeds at or higher than 70%
 float totalOfSpeedsRecorded;                        // sum of speeds used in calculation of average
-float highestSpeed = 0;                             //
-float amphere = 1200;
-int percentOfBatteryLeft;
-float batteryhealth = 100;
-float chargingcycles = 0;
-float timesFivePercentReached = 0;
-int batterylevel = 2;
-float average = 0;
-int placeInEepromWhereBatterhealtIsStored = 1;
-int fivePercentFlag = 0;
-int emergencyCharging = 0;
+float highestSpeed = 0;                             // current highest speed recorded
+float amphere = 1200;                               // value containing amphere hours left on battery
+int percentOfBatteryLeft;                           // value containing amphere hours left on battery in percent
+float batteryhealth = 100;                          // healthstatus of battery
+float chargingcycles = 0;                           // amount of times battery has been charged
+float timesFivePercentReached = 0;                  // amount of times battery has reached 5% charge
+int batterylevel = 2;                               // batterylevel reperesenting batteryhealth
+float average = 0;                                  // value containing getAverageSpeed
+int placeInEepromWhereBatterhealtIsStored = 1;      // byte location used to store value in EEPROM
+int fivePercentFlag = 0;                            // flag used to increase timesFivePercentReached
+int emergencyCharging = 0;                          // flag used to enter emergencyCharging
 
 void setup()
 {
-  // put your setup code here, to run once:
   Serial.begin(9600);
   display.init();
   encoders.init();
