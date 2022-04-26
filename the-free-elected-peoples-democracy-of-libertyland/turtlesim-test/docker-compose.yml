@@ -1,0 +1,19 @@
+version: '3'
+
+services:
+  master:
+    image: ros:noetic-ros-base
+    container_name: master
+    volumes:
+      - .ros_logs/master:/root/.ros/
+    command: roscore
+
+  turtlesim:
+    container_name: turtlesim
+    environment:
+      - DISPLAY=192.168.1.190:0.0
+      - ROS_MASTER_URI=http://master:11311
+    volumes:
+      - .ros_logs/turtlesim:/root/.ros/
+    build: dockerfiles/turtlesim
+    command: rosrun turtlesim turtlesim_node
