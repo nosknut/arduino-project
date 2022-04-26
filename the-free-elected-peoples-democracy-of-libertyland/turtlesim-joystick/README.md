@@ -14,9 +14,7 @@ The following command says
    * This is the command we told docker to run inside the specified work directory
    * ```bash``` will start a shell session where you can run normal commands
 ```
-docker pull ros:noetic-ros-base
-docker run ros:noetic-ros-base
-docker run -v pwd:/pwd -w /pwd -d --name catkin ros:noetic-ros-base bash
+docker-compose up -it catkin
 ```
 By running the command above you will open an interactive shell
 session inside the ros:noetic-ros-base docker container, which is attached to
