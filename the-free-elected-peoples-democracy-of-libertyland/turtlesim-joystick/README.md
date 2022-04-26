@@ -1,6 +1,7 @@
 ## Hosting mqtt in docker
 
 If you are on windows, open the ports in the firewall
+   * NB! The following commands must be run in ```powershell```
 
 Port 1883
 
@@ -20,6 +21,12 @@ Start the docker container
 docker-compose up -d mqtt
 ```
 
+Shut down the docker container so stop hosting mqtt
+
+```
+docker-compose stop mqtt
+```
+
 ## Run catkin commands with Docker
 Navigate to the folder that contains this [docker-compose.yml](./docker-compose.yml) file
 
@@ -36,6 +43,8 @@ the directory in which you ran the command. Now you can run your
 build commands, and the file changes will be reflected in your
 actual filesystem. Once inside the Docker container, Run the
 following commands to set up a catkin workspace.
+
+NB! The following steps can be skipped.
 
 ```
 mkdir test-package
