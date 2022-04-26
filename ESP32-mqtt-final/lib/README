@@ -67,6 +67,14 @@ Kjør dashboard der du ønsker (/ui etter url fra node-red på pc)
   -Legg til /ui på slutten
 Når esp32 er koblet opp og sender og leser av topics er det bare å lese av verdier
 
+Bruke node-red på egen pc og monitorere data:
+Laste ned paletter: 
+  node-red-dashboard
+  node-red-contrib-web-worldmap
+  node-red-contrib-ui-joystick
+
+Deretter laste ned -json 
+
 
 
 
