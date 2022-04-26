@@ -266,6 +266,42 @@ void batterylevelhchange(float batteryhealth)
   }
 }
 
+void tenPercentLeft()
+{
+  ledYellow(1);
+  unsigned long current10perDisplayrate = millis();
+  batterylevelhchange(batteryhealth);
+  if (current10perDisplayrate - start10perDisplayrate >= 1000)
+  {
+    display.clear();
+    display.print("10 % ");
+    buzzer.playFrequency(2000, 5, 7);
+    start10perDisplayrate = millis();
+  }
+}
+
+void fivePercentLeft()
+{
+  if (fivePercentFlag == 0)
+  {
+    timesFivePercentReached++;
+    fivePercentFlag = 1;
+  }
+  ledYellow(0);
+  ledRed(1);
+  unsigned long current5perDisplayrate = millis();
+  batterylevelhchange(batteryhealth);
+  if (current5perDisplayrate - start10perDisplayrate >= 15000)
+  {
+    buzzer.playFrequency(4000, 5, 10);
+    buzzer.playFrequency(4000, 5, 10);
+    motors.setSpeeds(0, 0);
+    display.clear();
+    display.print("5 % ");
+    start10perDisplayrate = millis();
+  }
+}
+
 void normalDriving()
 {
   encoders.getCountsAndResetLeft();
@@ -442,42 +478,6 @@ void chargingMode()
     }
   }
   ledYellow(0);
-}
-
-void tenPercentLeft()
-{
-  ledYellow(1);
-  unsigned long current10perDisplayrate = millis();
-  batterylevelhchange(batteryhealth);
-  if (current10perDisplayrate - start10perDisplayrate >= 1000)
-  {
-    display.clear();
-    display.print("10 % ");
-    buzzer.playFrequency(2000, 5, 7);
-    start10perDisplayrate = millis();
-  }
-}
-
-void fivePercentLeft()
-{
-  if (fivePercentFlag == 0)
-  {
-    timesFivePercentReached++;
-    fivePercentFlag = 1;
-  }
-  ledYellow(0);
-  ledRed(1);
-  unsigned long current5perDisplayrate = millis();
-  batterylevelhchange(batteryhealth);
-  if (current5perDisplayrate - start10perDisplayrate >= 15000)
-  {
-    buzzer.playFrequency(4000, 5, 10);
-    buzzer.playFrequency(4000, 5, 10);
-    motors.setSpeeds(0, 0);
-    display.clear();
-    display.print("5 % ");
-    start10perDisplayrate = millis();
-  }
 }
 
 void deadbattery()
