@@ -2,265 +2,274 @@
 #include <Wire.h>
 #include <Zumo32U4.h>
 #include <PololuMenu.h>
-#include <Vector.h>
 #include <Zumo32U4Encoders.h>
 #include <Zumo32U4Motors.h>
-#include "Timer.h"
-
-// til testing av switch case og funksjoner
+#include <Timer.h>
+#include <EEPROM.h>
 
 Zumo32U4Buzzer buzzer;
 Zumo32U4LCD display;
-Zumo32U4Encoders encoder;
+Zumo32U4Encoders encoders;
 Zumo32U4Motors motors;
 Zumo32U4ButtonA buttonA;
 Zumo32U4ButtonB buttonB;
 Zumo32U4ButtonC buttonC;
 Timer timer;
 
-float account_balance = 8615; // money in the bank
-
-float amphere = 1200; // current value in battery
-// unsigned longs used for timing purposes
-unsigned long wait = 0;
-unsigned long now;
-unsigned long interval = 0;
-unsigned long count = 0;
-unsigned long pattern = 0;
-unsigned long startMillis = 0;
-unsigned long n = 0;
+int account_balance = 8615;
+float currentSpeed;
+unsigned long distanceInterval = 0;
+unsigned long previousOneMinuteCounting = 0;
 unsigned long displayrate = 0;
-unsigned long startChargingDisplayrate;
-unsigned long currentChargingDisplayrate;
-const unsigned long period = 1000;
-unsigned long startDefaultDisplayrate;
-unsigned long currentDefaultDisplayrate;
-const unsigned long showtime = 1000;
-// returned values
-float highestSpeed = 0;                    // highestspeed in 60 sec interval
-float vel = 0;                             // value returning speed calculation
-float sTotal = 0;                          // value returning total distance
-float timeAtHighSpeeds = 0;                // value returning amount of time at 70% or higher speed
-float averageSpeed = 0;                    // value returning averagespeed in 60sec interval
-const float seventypercentofmaxspeed = 70; // value defining the 70%
-float lastMinutesHighestSpeed = 0;
+unsigned long startChargingDisplayrate = 0;
+unsigned long changebatteryhealthrate = 0;
+unsigned long changeAmphereRate = 0;
+unsigned long changePositiveAmphereRate = 0;
+unsigned long start10perDisplayrate = 0;
+float sTotal = 0; // value returning total distance
+byte oneMinutePattern = 0;
+float amountOfSpeedsRecorded = 0;
+float amountOfSpeedsRecordedOverSeventyPercent = 0;
+float averageSpeed;
+int timeAtHighSpeeds;
 float lastMinutesAverageSpeed = 0;
-float lastMinutestimeAtHighSpeeds = 0;
-int amountOfNumbersInAverage = 0;
-int amountOfSpeedsRecorded = 0;
-int amountOfSpeedsRecordedOverSeventyPercent = 0;
-int percentofBatteryleft = 0;          // amount of percent left on battery
-int reversecharge = 20;                // charge in reverse charging mode
-int percents = 100;                    // value used in calculationOfBatteryLeft
-float batteryhealth = 100;             // current battery health
-int amountofchargingcycles = 0;        // amount of times battery has charged
-int timesreachedfivepercentcharge = 0; // amount of times battery has reached five percent
-const int ELEMENT_COUNT_MAX = 1;       // value used to creat vector
-float batterylevel = 1;
-byte flag = 1; // used to check amount of charges
-byte lag = 1;  // used to check emergency charging
-int amountOfMoneyUsedInCharge = 0;
-byte cleanenergy = 1;
-int costCharging = 30;
-long currentsteps = 0;
-long lastSteps = 0;
-long steps = 0;
-
-const char tenpercentsound[] PROGMEM =
-    "!af";
-
-const char fivepercentsound[] PROGMEM =
-    "!af";
+float lastMinutesHighestSpeed = 0;
+int lastMinutestimeAtHighSpeeds = 0;
+float n;
+float highestSpeed = 0;
+float amphere = 1200;
+int percentOfBatteryLeft;
+float batteryhealth = 100;
+float chargingcycles = 0;
+float timesFivePercentReached = 0;
+int batterylevel = 2;
+float average = 0;
+int placeInEepromWhereBatterhealtIsStored = 1;
+int fivePercentFlag = 0;
+int emergencyCharging = 0;
 
 void setup()
 {
   // put your setup code here, to run once:
   Serial.begin(9600);
-  randomSeed((unsigned int)millis());
+  Serial.println("it works");
   display.init();
-  encoder.init();
-  startMillis = millis();
-  startDefaultDisplayrate = millis();
-  Serial.println("In setup");
+  encoders.init();
+  int value = EEPROM.read(placeInEepromWhereBatterhealtIsStored);
+  if (value != 255)
+  {
+    batteryhealth = value;
+  }
 }
 
-// Increase refresh rate if speed
-// is too low to be detected
-int refreshRateTimesPerSec = 10;
+float getDistance(float speeds)
+{
+  unsigned long now = millis();
+  float sInterval = speeds * (now / 1000 - distanceInterval / 1000);
+  distanceInterval = millis();
+  sTotal = sTotal + sInterval;
+  if (sTotal < 0)
+  {
+    sTotal = 0;
+  }
+  return sTotal;
+}
+
+int refreshRateTimesPerSec = 7;
 long stepCounter = 0;
 long stepsPerSecond = 0;
+int totalCountsInSecond;
+unsigned long lastTime = 0;
+int reversing = 0;
+float countsLeft;
 
 long getStepsFromPoluluLib()
 {
-  // TODO: Implement this
-  
+  countsLeft = encoders.getCountsAndResetLeft();
+  if (countsLeft < 0)
+  {
+    reversing = 1;
+    countsLeft = abs(countsLeft);
+  }
+  totalCountsInSecond = totalCountsInSecond + countsLeft;
+
+  return totalCountsInSecond;
 }
 
 void updateStepsPerSecond()
 {
-  if (timer.loopWait(1000 / refreshRateTimesPerSec))
+  long currentSteps = getStepsFromPoluluLib();
+  unsigned long currentTime = millis();
+  if (currentTime - lastTime >= 1000 / refreshRateTimesPerSec)
   {
-    long currentSteps = getStepsFromPoluluLib();
     stepsPerSecond = (currentSteps - stepCounter) * refreshRateTimesPerSec;
     stepCounter = currentSteps;
+    totalCountsInSecond = 0;
+    lastTime = millis();
   }
 }
 
-float getSpeed(int refreshRate = 10)
+void displaySpeedAndDistanceInDisplay(float drive, float distance)
 {
-  updateStepsPerSecond();
 
-  return stepsPerSecond;
-
-  /*int startCounts = encoder.getCountsRight();
-  unsigned long now = millis();
-  while (millis() < now + refreshRate)
+  if (timer.loopWait(2000))
   {
-  }
-  int counts = encoder.getCountsAndResetRight() - startCounts;
-  float cm = counts / 195.0;
-  vel = (cm / refreshRate) * 1000;
-  return vel;*/
-} // end float get speed
-
-float getDistance(float speed)
-{
-  unsigned long now = millis();
-  float sInterval = speed * (now / 1000 - interval / 1000);
-  interval = millis();
-  sTotal = sTotal + sInterval;
-  return sTotal;
-}
-
-void count60secondinterval()
-{
-  int startCounts = encoder.getCountsRight();
-  if (startCounts != 0)
-  {
-    unsigned long now = millis();
-    int timeinterval = (now / 1000) - (count / 1000);
-    count = millis();
-    pattern = pattern + timeinterval;
+    display.clear();
+    display.print(drive);
+    display.setCursor(0, 1);
+    display.print(distance);
   }
 }
 
-float getMaxSpeed(float speed)
+unsigned long countStart;
+
+void count60secondinterval(float speeds)
 {
-  if (speed > highestSpeed)
+  /*if (speeds > 0)
   {
-    highestSpeed = speed;
+    if (countStart != 0)
+      countStart = millis();
   }
-
-  if (pattern >= 60)
-  {
-    lastMinutesHighestSpeed = highestSpeed;
-    highestSpeed = 0;
-    return lastMinutesHighestSpeed;
-  }
-
   else
   {
-    return highestSpeed;
+    countStart = 0;
+    return;
+  }
+
+  unsigned long elapsedTime = (millis() - countStart) / 1000;
+  if (elapsedTime >= (unsigned long)60)
+  {
+    oneMinutePattern = 1;
+  }
+  */
+  // adding the time it stood still to the value that wont increase?
+  if (speeds > 0)
+  {
+
+    unsigned long currentMinuteCounting = millis();
+    if (currentMinuteCounting - previousOneMinuteCounting >= 60000)
+    {
+      oneMinutePattern = 1;
+      previousOneMinuteCounting = millis();
+    }
   }
 }
 
-float getAverageSpeed(float speed)
+void displayBatteryLevelAmountOfChargesBatteryHealth(int batteryLevel, int amountofcharges, float batteryHealth)
 {
-  amountOfNumbersInAverage++;
-  n = n + speed;
-  averageSpeed = n / amountOfNumbersInAverage;
-  if (pattern >= 60)
+
+  unsigned long now = millis();
+  if (now - displayrate >= 10000)
+  {
+    display.clear();
+    display.print(batteryLevel);
+    display.setCursor(7, 0);
+    display.print(amountofcharges);
+    display.setCursor(2, 1);
+    display.print(batteryHealth);
+    displayrate = millis();
+    EEPROM.update(placeInEepromWhereBatterhealtIsStored, batteryhealth);
+    float value = EEPROM.read(placeInEepromWhereBatterhealtIsStored);
+  }
+}
+
+float getAverageSpeed(float speeds)
+{
+  amountOfSpeedsRecorded++;
+  n += speeds;
+  averageSpeed = n / amountOfSpeedsRecorded;
+  if (oneMinutePattern == 1)
   {
     lastMinutesAverageSpeed = averageSpeed;
     n = 0;
     averageSpeed = 0;
-    amountOfNumbersInAverage = 0;
-    return lastMinutesAverageSpeed;
   }
-  else
-  {
-    return averageSpeed;
-  }
+  return averageSpeed;
 }
 
-float getAmphere(float averageSpeed, float Distance)
+float getMaxSpeed(float speeds)
 {
-  float y = 2 * averageSpeed + 10;
-  amphere = amphere * 3600;
-  amphere = amphere - y * (Distance / 1000);
-  amphere = amphere / 3600;
-  return amphere;
-} // end void getAmphere
+  if (speeds > highestSpeed)
+  {
+    highestSpeed = speeds;
+  }
 
-float getspeedshigherthan70percent(float speed)
+  if (oneMinutePattern == 1)
+  {
+    lastMinutesHighestSpeed = highestSpeed;
+    highestSpeed = 0;
+  }
+  return highestSpeed;
+}
+
+float getspeedshigherthan70percent(float speeds)
 {
-  amountOfSpeedsRecorded++;
-  if (speed >= seventypercentofmaxspeed)
+  if (speeds >= 21)
   {
     amountOfSpeedsRecordedOverSeventyPercent++;
   }
-  timeAtHighSpeeds = (60 * (amountOfSpeedsRecordedOverSeventyPercent * 100)) / amountOfSpeedsRecorded / 100;
-  if (pattern >= 60)
+  timeAtHighSpeeds = map(amountOfSpeedsRecordedOverSeventyPercent, 0, amountOfSpeedsRecorded, 0, 60);
+  if (oneMinutePattern == 1)
   {
     lastMinutestimeAtHighSpeeds = timeAtHighSpeeds;
     amountOfSpeedsRecorded = 0;
     amountOfSpeedsRecordedOverSeventyPercent = 0;
     timeAtHighSpeeds = 0;
-    return lastMinutestimeAtHighSpeeds;
   }
-  else
-  {
-    return timeAtHighSpeeds;
-  }
+  return timeAtHighSpeeds;
 }
 
-void resultsOf60SecondInterval()
+float getAmphere(float averageSpeed, float Distance)
 {
-  count60secondinterval();
-  if (pattern >= 60)
+  unsigned long updateampheretimer = millis();
+  if (updateampheretimer - changeAmphereRate >= 2000)
   {
-    getMaxSpeed(getSpeed(10));
-    getAverageSpeed(getSpeed(10));
-    getspeedshigherthan70percent(getSpeed(10));
-    pattern = 0;
+    float y = (2 * averageSpeed + 1000) / 20;
+    amphere = amphere * 3600;
+    amphere = amphere - (y + (Distance / 10000));
+    amphere = amphere / 3600;
+    changeAmphereRate = millis();
   }
-}
+  return amphere;
+} // end void getAmphere
 
 int calculationOfBatteryLeft(float amphere)
 {
-  percentofBatteryleft = (amphere / 1200) * 100;
-  return percentofBatteryleft;
+  percentOfBatteryLeft = (amphere / 1200) * 100;
+  return percentOfBatteryLeft;
 }
 
-void chargingmode()
-{
-}
-
-void hiddencharging()
-{
-}
-
-void emergencycharge()
-{
-}
-
-void batteryhealthchange(
+float batteryhealthchange(
     float chargincycles,
     float fivepercenttimes,
     float sixtysecaverage,
     float sixtysecspeed,
     float seventypercentofmax)
 {
-  float malfunction = static_cast<float>(rand()) / (static_cast<float>(RAND_MAX / 100));
-
-  if (malfunction <= 5)
+  float randomDefect = static_cast<float>(rand()) / (static_cast<float>(RAND_MAX / 100));
+  Serial.println(randomDefect);
+  int r;
+  if (randomDefect <= 0.1)
   {
-    batteryhealth = batteryhealth - (chargincycles * 2 + fivepercenttimes * 4 + sixtysecaverage / 10000) - ((sixtysecspeed * seventypercentofmax) / 750) - ((batteryhealth * 50) / 100);
+    r = 1;
   }
-  if (malfunction > 5)
+  else
   {
-    batteryhealth = batteryhealth - (chargincycles * 2 + fivepercenttimes * 2 + sixtysecaverage / 10000) - ((sixtysecspeed * seventypercentofmax) / 75000);
+    r = 0;
   }
+  unsigned long updatebatteryhealthtimer = millis();
+  if (updatebatteryhealthtimer - changebatteryhealthrate >= 4000)
+  {
+    float y = (((chargincycles / 10 + fivepercenttimes / 10 + sixtysecaverage) * 100 + 1) / (100 + (sixtysecspeed * seventypercentofmax))) / 100;
+    batteryhealth = batteryhealth - y - r * ((batteryhealth / 100) * 50);
+    changebatteryhealthrate = millis();
+  }
+  // TODO random defect reducing battery by fifty
+  if (batteryhealth <= 0)
+  {
+    batteryhealth = 0;
+  }
+  return batteryhealth;
 }
 
 void batterylevelhchange(float batteryhealth)
@@ -275,102 +284,258 @@ void batterylevelhchange(float batteryhealth)
   }
 }
 
-void tenpercentbatteryleft()
-{
-  display.clear();                  // clearer displayet
-  display.setCursor(0, 0);          // setter linja som skriver i displayet til koordinat 0x,0y
-  display.print("10 percent left"); // printer beskjeden i displayet
-  buzzer.playFromProgramSpace(tenpercentsound);
-  ledYellow(1);
-  buzzer.stopPlaying();
-  ledYellow(0);
-}
-
-void fivepercentleft()
-{
-  ledRed(1);
-  display.clear();                 // clearer displayet
-  display.setCursor(0, 0);         // setter linja som skriver i displayet til koordinat 0x,0y
-  display.print("5 percent left"); // printer beskjeden i displayet
-  buzzer.playFromProgramSpace(fivepercentsound);
-  unsigned long currentMillis = millis();
-  if (currentMillis - startMillis >= 15000)
-  {
-    motors.setSpeeds(0, 0);
-    buzzer.playFrequency(6000, 100, 15);
-  }
-  startMillis = millis();
-}
+/*
+1.Endre average, highest og max til å kun gå når klokka som kun teller når motoren går går ¨
+2. Fikse minutt klokka slik at den kun teller millis når motoren går (else med annen lokal tid som subtraheres fra hovedtiden)
+3. EEPROM lagring av batteryhealth ¨
+4. Random feil med batterhealth¨
+5. Teste charging¨
+6.ryggelading¨
+7.Bommer
+8.Speedometer¨
+9.10% and 5%¨
+*/
 
 void normalDriving()
 {
-  count60secondinterval();
-  float drive = getSpeed(10);
+  encoders.getCountsAndResetLeft();
+  updateStepsPerSecond();
+  float drive = abs(stepsPerSecond);
+  count60secondinterval(drive);
   float distance = getDistance(drive);
-  float average = getAverageSpeed(drive);
-  float highest = getMaxSpeed(drive);
-  float timeAtHighSpeeds = getspeedshigherthan70percent(drive);
-  Serial.print("Speed");
-  Serial.println(drive);
-  Serial.print("Distance");
-  Serial.println(distance);
-  Serial.print("average");
-  Serial.println(average);
-  Serial.print("highest");
-  Serial.println(highest);
-  Serial.print("70%");
-  Serial.println(timeAtHighSpeeds);
-  Serial.println("Normal driving");
-  if (pattern >= 60)
+  if (drive > 0)
   {
-    pattern = 0;
+    average = getAverageSpeed(drive);
+    float maxSped = getMaxSpeed(drive);
+    float seventyper = getspeedshigherthan70percent(drive);
   }
-  currentDefaultDisplayrate = millis();
-  if (currentDefaultDisplayrate - startDefaultDisplayrate >= showtime)
+  getAmphere(average, distance);
+  calculationOfBatteryLeft(amphere);
+  if (percentOfBatteryLeft <= 10 && percentOfBatteryLeft > 5)
+  {
+    tenPercentLeft();
+  }
+  if (percentOfBatteryLeft <= 5)
+  {
+    fivePercentLeft();
+  }
+  batteryhealthchange(chargingcycles, timesFivePercentReached, lastMinutesAverageSpeed, lastMinutesHighestSpeed, lastMinutestimeAtHighSpeeds);
+  batterylevelhchange(batteryhealth);
+  displaySpeedAndDistanceInDisplay(drive, distance);
+  displayBatteryLevelAmountOfChargesBatteryHealth(batterylevel, chargingcycles, batteryhealth);
+  oneMinutePattern = 0;
+}
+
+float getPositiveAmphere(float averageSpeed, float Distance)
+{
+
+  unsigned long updateampheretimer = millis();
+  if (updateampheretimer - changePositiveAmphereRate >= 10)
+  {
+    float y = (2 * averageSpeed + 10) / 200;
+    amphere = amphere * 3600;
+    amphere = amphere + (y + (Distance / 5000));
+    amphere = amphere / 3600;
+    if (amphere > 1200)
+    {
+      amphere = 1200;
+    }
+    changePositiveAmphereRate = millis();
+  }
+  return amphere;
+} // end void getAmphere
+
+void charginInReverse()
+{
+  encoders.getCountsAndResetLeft();
+  updateStepsPerSecond();
+  float drive = abs(stepsPerSecond);
+  count60secondinterval(drive);
+  float distance = getDistance(drive);
+  if (drive > 0)
+  {
+    average = getAverageSpeed(drive);
+    float maxSped = getMaxSpeed(drive);
+    float seventyPer = getspeedshigherthan70percent(drive);
+  }
+
+  if (buttonC.isPressed() && emergencyCharging == 0)
+  {
+    if (reversing == 0)
+    {
+      getAmphere(average, distance);
+      reversing = 0;
+    }
+    if (reversing == 1)
+    {
+      getPositiveAmphere(10 * average, distance);
+      reversing = 0;
+    }
+    if (percentOfBatteryLeft > 20)
+    {
+      emergencyCharging = 1;
+    }
+  }
+
+  if (reversing == 0)
+  {
+    getAmphere(average, distance);
+    reversing = 0;
+  }
+  if (reversing == 1)
+  {
+    getPositiveAmphere(average, distance);
+    reversing = 0;
+  }
+  calculationOfBatteryLeft(amphere);
+  batteryhealthchange(chargingcycles, timesFivePercentReached, lastMinutesAverageSpeed, lastMinutesHighestSpeed, lastMinutestimeAtHighSpeeds);
+  batterylevelhchange(batteryhealth);
+  displaySpeedAndDistanceInDisplay(drive, distance);
+  displayBatteryLevelAmountOfChargesBatteryHealth(batterylevel, chargingcycles, batteryhealth);
+  oneMinutePattern = 0;
+}
+
+void chargingMode()
+{
+  motors.setSpeeds(0, 0);
+  ledRed(0);
+  ledYellow(0);
+  display.clear();
+  fivePercentFlag = 0;
+  int flag = 1;
+  int cleanenergy = 1;
+  int costCharging;
+  int amountOfMoneyUsedInCharge = 0;
+
+  while (account_balance >= 0 && amphere < 1200)
+  {
+    if (buttonA.getSingleDebouncedPress()) // regular charging
+    {
+      if (flag == 1)
+      {
+        chargingcycles++;
+        flag = 0;
+      }
+
+      if (cleanenergy == 1)
+      {
+        costCharging = 25;
+      }
+
+      if (cleanenergy != 1)
+      {
+        costCharging = 50;
+      }
+      amphere = amphere + 120;
+      account_balance = account_balance - costCharging;
+      amountOfMoneyUsedInCharge = amountOfMoneyUsedInCharge + costCharging;
+      if (amphere > 1200)
+      {
+        amphere = 1200;
+      }
+      ledYellow(1);
+    }
+
+    if (buttonB.getSingleDebouncedPress()) // battery service
+    {
+      batteryhealth = batteryhealth + 15;
+      if (batteryhealth >= 100)
+      {
+        batteryhealth = 100;
+      }
+      EEPROM.update(placeInEepromWhereBatterhealtIsStored, batteryhealth);
+      account_balance = account_balance - 200;
+      amountOfMoneyUsedInCharge = amountOfMoneyUsedInCharge + 200;
+    }
+    if (buttonC.getSingleDebouncedPress()) // battery change
+    {
+      batteryhealth = 100;
+      sTotal = 0;
+      EEPROM.update(placeInEepromWhereBatterhealtIsStored, batteryhealth);
+      account_balance = account_balance - 500;
+      amountOfMoneyUsedInCharge = amountOfMoneyUsedInCharge + 500;
+      sTotal = 0;
+    }
+    unsigned long currentChargingDisplayrate = millis();
+    batterylevelhchange(batteryhealth);
+    if (currentChargingDisplayrate - startChargingDisplayrate >= 500)
+    {
+      display.clear();
+      display.print(account_balance);
+      display.setCursor(5, 0);
+      display.print(amountOfMoneyUsedInCharge);
+      display.setCursor(0, 1);
+      display.print(batterylevel);
+      display.setCursor(4, 1);
+      display.print(amphere);
+      startChargingDisplayrate = millis();
+    }
+  }
+  ledYellow(0);
+}
+
+void tenPercentLeft()
+{
+  ledYellow(1);
+  unsigned long current10perDisplayrate = millis();
+  batterylevelhchange(batteryhealth);
+  if (current10perDisplayrate - start10perDisplayrate >= 1000)
   {
     display.clear();
-    display.print(drive);
-    display.setCursor(0, 1);
-    display.print(distance);
-    Serial.println("2 second passed");
+    display.print("10 % ");
+    buzzer.playFrequency(2000, 5, 7);
+    start10perDisplayrate = millis();
   }
-  float battery = getAmphere(drive, distance);
-  percents = calculationOfBatteryLeft(battery);
-  if (percents <= 10 && percents > 5)
+}
+
+void fivePercentLeft()
+{
+  if (fivePercentFlag == 0)
   {
-    tenpercentbatteryleft();
+    timesFivePercentReached++;
+    fivePercentFlag = 1;
   }
-  if (percents <= 5)
+  ledYellow(0);
+  ledRed(1);
+  unsigned long current5perDisplayrate = millis();
+  batterylevelhchange(batteryhealth);
+  if (current5perDisplayrate - start10perDisplayrate >= 15000)
   {
-    fivepercentleft();
-  }
-  batteryhealthchange(amountofchargingcycles, timesreachedfivepercentcharge, lastMinutesAverageSpeed, lastMinutesHighestSpeed, lastMinutestimeAtHighSpeeds);
-  now = millis();
-  if (now - displayrate >= 10000)
-  {
+    buzzer.playFrequency(4000, 5, 10);
+    buzzer.playFrequency(4000, 5, 10);
+    motors.setSpeeds(0, 0);
     display.clear();
-    display.print(percents);
-    display.setCursor(0, 1);
-    display.print(amountofchargingcycles);
-    display.setCursor(0, 2);
-    display.print(batteryhealth);
-    displayrate = millis();
-    Serial.println("10 second passed");
+    display.print("5 % ");
+    start10perDisplayrate = millis();
   }
+}
+
+void deadbattery()
+{
+  motors.setSpeeds(0, 0);
+  display.clear();
+  display.print("Your out of power");
+  display.setCursor(0, 1);
+  display.print("Press A");
+  buttonA.waitForButton();
+  batteryhealth = 100;
+  amphere = 1200;
+  batterylevel = 2;
+  sTotal = 0;
+  EEPROM.update(placeInEepromWhereBatterhealtIsStored, batteryhealth);
+  batterylevelhchange(batteryhealth);
+  account_balance = account_balance - 2000; // thanks for the tow :)
 }
 
 void loop()
 {
-  // put your main code here, to run repeatedly:
-  motors.setSpeeds(75, 75);
+  motors.setSpeeds(100, 100);
   int state = 0;
-  Serial.println("In switch");
-  if (buttonA.getSingleDebouncedPress())
+  if (buttonA.isPressed())
   {
-    Serial.println("in button A");
     state = 1;
   }
-  if (buttonB.getSingleDebouncedPress())
+  if (buttonB.isPressed())
   {
     state = 2;
   }
@@ -379,7 +544,7 @@ void loop()
   {
     amphere = 0;
     batterylevel = 0;
-    state = 4;
+    state = 3;
   }
 
   switch (state)
@@ -387,90 +552,20 @@ void loop()
 
   case 1: // charging mode
   {
-    display.clear();
-    display.print("Your in charging mode");
-    Serial.println("Your in charging mode");
-
-    while (account_balance >= 0 && amphere < 1200)
-    {
-      if (buttonA.getSingleDebouncedPress()) // regular charging
-      {
-        if (flag == 1)
-        {
-          amountofchargingcycles++;
-          flag = 0;
-        }
-
-        if (cleanenergy == 1)
-        {
-          costCharging = 25;
-        }
-
-        if (cleanenergy != 1)
-        {
-          costCharging = 50;
-        }
-        amphere = amphere + 120;
-        account_balance = account_balance - costCharging;
-        amountOfMoneyUsedInCharge = amountOfMoneyUsedInCharge + costCharging;
-        if (amphere > 1200)
-        {
-          amphere = 1200;
-        }
-        ledYellow(1);
-      }
-
-      if (buttonB.getSingleDebouncedPress()) // battery service
-      {
-        batterylevel = batterylevel + 1 / 100 * 15;
-        batteryhealth = batteryhealth + 100 / 100 * 15;
-        account_balance = account_balance - 200;
-        amountOfMoneyUsedInCharge = amountOfMoneyUsedInCharge + 200;
-        if (batterylevel > 1)
-        {
-          batterylevel = 1;
-        }
-      }
-      if (buttonC.getSingleDebouncedPress()) // battery change
-      {
-        batterylevel = 1;
-        account_balance = account_balance - 300;
-        amountOfMoneyUsedInCharge = amountOfMoneyUsedInCharge + 300;
-      }
-      currentChargingDisplayrate = millis();
-      if (currentChargingDisplayrate - startChargingDisplayrate >= period)
-      {
-        display.clear();
-        display.print(batterylevel);
-        display.setCursor(0, 1);
-        display.print(amountOfMoneyUsedInCharge);
-        display.setCursor(0, 2);
-        display.print(account_balance);
-        startChargingDisplayrate = millis();
-        Serial.println(amphere);
-        Serial.println(batteryhealth);
-        Serial.println(account_balance);
-        Serial.println(percentofBatteryleft);
-      }
-    }
-    flag = 1;
-    ledYellow(0);
+    chargingMode();
+    encoders.getCountsAndResetLeft();
   }
   break;
 
   case 2: // reverse charging
   {
-    display.clear();
-    display.print("Your in case 2");
+    charginInReverse();
   }
   break;
 
   case 3: // dead battery
-    ledGreen(1);
-    while (true)
-    {
-    }
-
+    deadbattery();
+    encoders.getCountsAndResetLeft();
     break;
 
   default: // driving without anything
