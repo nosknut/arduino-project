@@ -4,12 +4,13 @@
 #include <Wire.h>
 
 // Wifi navn (ssid) og passord
-const char *ssid = "ssid";
+const char *ssid = "kristianIPHONE";
 const char *password = "passord";
 
 // Add your MQTT Broker IP address (mulig?: epstin.com)
 // const char *mqtt_server = "IP_ADRESSE"; får ikke ip til å fungere...
-const char *mqtt_server = "ADRESSE.com";
+const char *mqtt_server = "epstin.com";
+const int mqtt_port = 1883;
 
 // deklarerer navn og variabler
 WiFiClient espClient;
@@ -97,7 +98,7 @@ void setup()
   Serial.begin(9600);
   // starter wifi:
   setup_wifi();
-  client.setServer(mqtt_server, 1883);
+  client.setServer(mqtt_server, mqtt_port);
   client.setCallback(callback);
 
   setupLED(blueLed, blueChannel);
