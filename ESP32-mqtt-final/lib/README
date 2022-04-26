@@ -39,46 +39,6 @@ int main (void)
 
 ```
 
-Lasta ned Mosquitto (MQTT) til rasberry pi og bruker denne som en broker
-Lastet ned node red til pc og bruker mqtt palette og dashboard palette til å vise info
-Skal bruke esp32 til å publisere (mosquitto_pub) til en topic (f.eks esp32/test)
-Dette leser node red, node red kan både sub og pub (publisere og følge topics)
-Dette gjør det mulig å sende og mota data fra node red, fungerer som et kontroll senter som gir oversikt over data i forskjellige topics
-
-Link:
-Installing and Upgrading Node-RED (node red på pc): https://nodered.org/docs/getting-started/raspberrypi eller https://nodered.org/docs/getting-started/windows
-Install Mosquitto MQTT Broker on Raspberry Pi: https://randomnerdtutorials.com/how-to-install-mosquitto-broker-on-raspberry-pi/
-Testing Mosquitto Broker and Client on Raspberry Pi: https://randomnerdtutorials.com/testing-mosquitto-broker-and-client-on-raspbbery-pi/
-ESP32 MQTT – Publish and Subscribe with Arduino IDE: https://randomnerdtutorials.com/esp32-mqtt-publish-subscribe-arduino-ide/
-
-Programmet er ekstremt lite glad i å fungere med en gang, så lykke til med det... Ellers fungerer det ved at jeg legger in ip adresse til rasberry pi
-I mitt tilfelle er rasberry hos en i gruppa (Knut Ola), men har har satt opp en lokal webside (epstin.com) som jeg bruker som adresse
-Esp32 kobler seg først opp til wifi (i mitt tilfelle mobilen) og deretter kobler seg opp til mqtt brokeren som kjøres på rasberry pi
-esp32 publiserer data på topic: "esp32/battery", dette henter jeg med node-red på pc'en, og får opp data på dashboard
-
-Hvordan bruke systemet:
-Kjør node red på pc (eller rasberry, hva som er enklest) med komando: "node-red"
-Deretter start esp32 (husk riktig wifi og ipadresse(mqtt server/broker(rasberry pi)))
-Subscribe på riktig topic (f.eks esp32/output) og på riktig ip-adresse
-Kjør dashboard der du ønsker (/ui etter url fra node-red på pc)
-  -Hvis andre ønsker å bruke dashboard:
-  -Hent ip fra "ipconfig" (pc som kjører node-red)
-  -Deretter skriv port (f.eks 1880) slik: "ip-adresse:1880"
-  -Legg til /ui på slutten
-Når esp32 er koblet opp og sender og leser av topics er det bare å lese av verdier
-
-Bruke node-red på egen pc og monitorere data:
-Laste ned paletter: 
-  node-red-dashboard
-  node-red-contrib-web-worldmap
-  node-red-contrib-ui-joystick
-
-Deretter laste ned -json 
-
-
-
-
-
 
 PlatformIO Library Dependency Finder will find automatically dependent
 libraries scanning project source files.
