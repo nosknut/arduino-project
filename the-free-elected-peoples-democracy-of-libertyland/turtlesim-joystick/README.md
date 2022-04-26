@@ -1,3 +1,40 @@
+## Run catkin commands with Docker
+The following command says
+* ```docker exec```
+   * Run the following command in a docker image
+* ```-it```
+   * interactive shell session (don't run the container in the background)
+* ```ros:noetic-ros-base```
+   * Use the ros:noetic-ros-base docker image
+* ```-v ./:/current-dir```
+   * Attach the directory ```./``` in your computer to ```/current-dir``` inside the Docker container
+* ```-w /current-dir```
+   * Open the interactive shell session at the current-dir we attached to our filesystem with ```-v```
+* ```bash```
+   * This is the command we told docker to run inside the specified work directory
+   * ```bash``` will start a shell session where you can run normal commands
+```
+docker pull ros:noetic-ros-base
+docker run ros:noetic-ros-base
+docker run -v pwd:/pwd -w /pwd -d --name catkin ros:noetic-ros-base bash
+```
+By running the command above you will open an interactive shell
+session inside the ros:noetic-ros-base docker container, which is attached to
+the directory in which you ran the command. Now you can run your
+build commands, and the file changes will be reflected in your
+actual filesystem. Once inside the Docker container, Run the
+following commands to set up a catkin workspace.
+```
+mkdir test-package
+mkdir test-package/src
+cd test-package/src
+catkin_init_workspace
+```
+Now create a package with the ```roscpp``` and ```std_msgs``` dependencies  
+```
+catkin_create_pkg test-package roscpp std_msgs
+```
+
 ## ROS Setup
 
 Useful links
