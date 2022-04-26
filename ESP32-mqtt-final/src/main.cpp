@@ -4,16 +4,12 @@
 #include <Wire.h>
 
 // Wifi navn (ssid) og passord
-// hjemme nettverk
-const char *ssid = "Get-2G-DC8011";
-const char *password = "BC3A88DD73";
-// telefon mobilnett
-// const char *ssid = "kristianIPHONE";
-// const char *password = "kristian";
+const char *ssid = "ssid";
+const char *password = "passord";
 
 // Add your MQTT Broker IP address (mulig?: epstin.com)
-// const char *mqtt_server = "192.168.1.154"; får ikke ip til å fungere...
-const char *mqtt_server = "epstin.com";
+// const char *mqtt_server = "IP_ADRESSE"; får ikke ip til å fungere...
+const char *mqtt_server = "ADRESSE.com";
 
 // deklarerer navn og variabler
 WiFiClient espClient;
