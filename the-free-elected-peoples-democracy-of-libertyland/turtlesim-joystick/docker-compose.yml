@@ -1,9 +1,40 @@
 version: '3'
 
 services:
-  catkin:
+  master:
     image: ros:noetic-ros-base
-    container_name: catkin
+    container_name: master
     volumes:
-      - ./:/working-directory
-    command: bash
+      - .ros_logs/master:/root/.ros/
+    command: roscore
+
+  mqtt:
+    image: eclipse-mosquitto
+    container_name: mqtt
+    ports:
+      - "1883:1883"
+      - "1901:1901"
+    volumes:
+      - ./mqtt-config:/mosquitto/config
+      - .mqtt/data:/mosquitto/data
+      - .mqtt/log:/mosquitto/log
+
+  turtlesim:
+    container_name: turtlesim
+    environment:
+      - DISPLAY=10.24.3.237:0.0
+      - ROS_MASTER_URI=http://master:11311
+    volumes:
+      - .ros_logs/turtlesim:/root/.ros/
+    build: dockerfiles/turtlesim
+    command: rosrun turtlesim turtlesim_node
+
+  joystick:
+    container_name: joystick
+    environment:
+      - ROS_MASTER_URI=http://master:11311
+    volumes:
+      - .ros_logs/joystick:/root/.ros/
+    build: dockerfiles/joystick
+    command: rosrun package_name    
+    
