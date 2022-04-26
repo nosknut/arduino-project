@@ -1,0 +1,158 @@
+#include <ezButton.h>
+
+// variabler
+int redLED = 10;    // RGB-rød
+int greenLED = 9;   // RGB-grønn
+int buzzerPin = 11; // Buzzer
+
+int LED1 = 6;     // Spiller 1 - LED
+int LED2 = 7;     // Spiller 2	- LED
+ezButton SW1 = 3; // Spiller 1 - knapp
+ezButton SW2 = 4; // Spiller 2 - knapp
+
+// random variabler
+long randomTall;
+const int seedPin = A0;
+long currentTime = 0; // tidsvariabel
+
+bool lag = false; // variabel for å forsikre at begge ikke kan vinne
+
+void setup()
+{
+    // starter serial og definerer LED som OUTPUT
+    Serial.begin(9600);
+    pinMode(redLED, OUTPUT);
+    pinMode(greenLED, OUTPUT);
+    pinMode(LED1, OUTPUT);
+    pinMode(LED2, OUTPUT);
+
+    // random seed og tall
+    randomSeed(analogRead(seedPin));
+    randomTall = random(3, 7);
+}
+
+// funksjon for vinnerlyd, tar inn LED-pinne variabel
+void vinnerFanfaren(int ledPin)
+{
+    if (ledPin != 0)
+    {
+        for (int i = 1; i < 10; i++)
+        {
+            tone(buzzerPin, 750 * i);
+            if (i % 2 == 0)
+            {
+                digitalWrite(greenLED, HIGH);
+                digitalWrite(ledPin, LOW);
+            }
+            else
+            {
+                digitalWrite(greenLED, LOW);
+                digitalWrite(ledPin, HIGH);
+            }
+            delay(100);
+        }
+        digitalWrite(greenLED, LOW);
+        digitalWrite(ledPin, LOW);
+        delay(500);
+        noTone(buzzerPin);
+    }
+}
+
+// feil lyd funksjon, tar inn LED-pinne
+void feilLyd(int ledPin)
+{
+    // hvis ledPin = 0 er ingen knapp trykket
+    if (ledPin != 0)
+    {
+        for (int i = 10; i > 1; i--)
+        {
+            tone(buzzerPin, 750 * i);
+            if (i % 2 == 0)
+            {
+                digitalWrite(redLED, HIGH);
+                digitalWrite(ledPin, LOW);
+            }
+            else
+            {
+                digitalWrite(redLED, LOW);
+                digitalWrite(ledPin, HIGH);
+            }
+            delay(100);
+        }
+        digitalWrite(redLED, LOW);
+        digitalWrite(ledPin, LOW);
+        delay(500);
+        noTone(buzzerPin);
+    }
+}
+
+int knappeTrykk(ezButton knapp_1, ezButton knapp_2)
+{
+    if (knapp_1.isPressed())
+    {
+        return LED1;
+    }
+    if (knapp_2.isPressed())
+    {
+        return LED2;
+    }
+    else
+    {
+        return 0;
+    }
+}
+
+void resetFunksjon()
+{
+    digitalWrite(redLED, LOW);
+    digitalWrite(greenLED, LOW);
+    randomTall = random(1, 7);
+    currentTime = millis();
+    lag = false;
+}
+
+// starter button-loops og setter debounce
+void buttonStart()
+{
+    SW1.loop();
+    SW2.loop();
+
+    SW1.setDebounceTime(50);
+    SW2.setDebounceTime(50);
+}
+
+void loop()
+{
+    buttonStart();
+    // modifiserer tidsvariabelen "time" med variabel "currentTime"
+    long time = millis() - currentTime;
+    // definerer tiden for rød og grønn LED
+    const long timeRedLed = (randomTall * 1000);
+    const long timeGreenLed = timeRedLed + 1000;
+
+    // tester om noen trykker mens tiden er mindre enn "timeRedLed"
+    if (time < timeRedLed)
+    {
+        digitalWrite(redLED, HIGH);  // setter greenLed high
+        digitalWrite(greenLED, LOW); // setter redLed low
+        Serial.println("RedLedLyser");
+        // hvis noen trykker i løkken, kjøres feilLyd til LED 1 eller 2
+        feilLyd(knappeTrykk(SW1, SW2));
+    }
+    // hvis tid er større enn redled men mindre enn green led
+    //  sett farge til grønn og se etter knappetrykk
+    if (time >= timeRedLed && time <= timeGreenLed)
+    {
+        digitalWrite(redLED, LOW);
+        digitalWrite(greenLED, HIGH);
+        Serial.print("GreenLedLyser");
+        // hvis noen trykker i løkken, kjøres vinnerlyd til LED 1 eller 2
+        vinnerFanfaren(knappeTrykk(SW1, SW2));
+    }
+    // resetter tid og lager nytt randomTall
+    if (time > timeGreenLed)
+    {
+        resetFunksjon();
+        delay(1000);
+    }
+}

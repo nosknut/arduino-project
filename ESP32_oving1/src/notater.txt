@@ -1,0 +1,17 @@
+// 4 sentrale funksjoner
+/* "analogWrite()" på ESP32
+ledcSetup(PWM-kanal(0-15), PWM.frekvens, PWM-oppløsning(i bit) );
+ledcAttachPin(pinne(som støtter PWM), PWM-kanal);
+ledcWrite(PWM-kanal, DutyCycle(f.eks 0-255));
+ledcWriteTone(PWM-kanal, tone-frekvens); - kun for buzzer bruk
+
+Burde bare bruke grunnfunksjoner til ESP32
+  -> kan bli "kollisjoner"
+
+det er 16(8-par) mulige "kanaler" for PWM signaler på en ESP32(0-15)
+disse kan sendes til ønsket PWM-pin, men har begrensninger
+PWM-opp
+
+er begrensninger på forskjellige kanaler, kan skape problemer
+
+*/

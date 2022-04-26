@@ -1,6 +1,6 @@
 {
-    "board": "arduino:avr:uno",
-    "sketch": "main.ino",
+    "board": "pololu-a-star:avr:a-star32U4",
+    "sketch": "..\\..\\OneDrive - NTNU\\Documents\\PlatformIO\\Projects\\Zumo lab 4\\src\\main.cpp",
     "port": "COM3",
     "programmer": "arduino:arduinoisp"
 }
