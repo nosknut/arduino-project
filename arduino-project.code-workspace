@@ -8,6 +8,38 @@
             "path": "./lab-1\\knut-ola"
         },
         {
+            "name": "arduino-project//ESP32-mqtt-final",
+            "path": "./ESP32-mqtt-final"
+        },
+        {
+            "name": "arduino-project//ESP32_final",
+            "path": "./ESP32_final"
+        },
+        {
+            "name": "arduino-project//ESP32_forelesning_2",
+            "path": "./ESP32_forelesning_2"
+        },
+        {
+            "name": "arduino-project//ESP32_MQTT_test",
+            "path": "./ESP32_MQTT_test"
+        },
+        {
+            "name": "arduino-project//ESP32_OLED",
+            "path": "./ESP32_OLED"
+        },
+        {
+            "name": "arduino-project//ESP32_oving1",
+            "path": "./ESP32_oving1"
+        },
+        {
+            "name": "arduino-project//ESP32_oving1_v2",
+            "path": "./ESP32_oving1_v2"
+        },
+        {
+            "name": "arduino-project//ESP32_wifi_Hotspot",
+            "path": "./ESP32_wifi_Hotspot"
+        },
+        {
             "name": "arduino-project/knut-ola/button-class",
             "path": "./knut-ola\\button-class"
         },
@@ -70,6 +102,14 @@
         {
             "name": "arduino-project/oving-3/knut-ola",
             "path": "./oving-3\\knut-ola"
+        },
+        {
+            "name": "arduino-project//Zumo lab 4",
+            "path": "./Zumo lab 4"
+        },
+        {
+            "name": "arduino-project//Zumo speedometer og batteri",
+            "path": "./Zumo speedometer og batteri"
         }
     ],
     "settings": {}
