@@ -21,29 +21,17 @@ docker-compose up -d mqtt
 ```
 
 ## Run catkin commands with Docker
+Navigate to the folder that contains this [docker-compose.yml](./docker-compose.yml) file
 
-The following command says
+It contains a service called "catkin". You will use this service to run catkin commands in your current directory.
 
-- `docker exec`
-  - Run the following command in a docker image
-- `-it`
-  - interactive shell session (don't run the container in the background)
-- `ros:noetic-ros-base`
-  - Use the ros:noetic-ros-base docker image
-- `-v ./:/current-dir`
-  - Attach the directory `./` in your computer to `/current-dir` inside the Docker container
-- `-w /current-dir`
-  - Open the interactive shell session at the current-dir we attached to our filesystem with `-v`
-- `bash`
-  - This is the command we told docker to run inside the specified work directory
-  - `bash` will start a shell session where you can run normal commands
-
+Run the following command to start and enter the catkin docker container.
 ```
-docker-compose up -it catkin
+docker-compose run catkin
 ```
 
 By running the command above you will open an interactive shell
-session inside the ros:noetic-ros-base docker container, which is attached to
+session inside the catkin docker-compose service, which is attached to
 the directory in which you ran the command. Now you can run your
 build commands, and the file changes will be reflected in your
 actual filesystem. Once inside the Docker container, Run the
@@ -61,6 +49,14 @@ Now create a package with the `roscpp` and `std_msgs` dependencies
 ```
 catkin_create_pkg test-package roscpp std_msgs
 ```
+Enter the following command to list the files that have been created.
+```
+ls
+```
+
+If you look at the directory from which you started the catkin docker-compose service, you will see the new folder, containing the newly created package files.
+
+The catkin service uses the ```ros:noetic-ros-base``` docker image. This means all of the commands and features in this image will be available to you. In other words, this container will not only run catkin, but most ROS commands.
 
 ## ROS Setup
 
