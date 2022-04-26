@@ -56,6 +56,17 @@ I mitt tilfelle er rasberry hos en i gruppa (Knut Ola), men har har satt opp en 
 Esp32 kobler seg først opp til wifi (i mitt tilfelle mobilen) og deretter kobler seg opp til mqtt brokeren som kjøres på rasberry pi
 esp32 publiserer data på topic: "esp32/battery", dette henter jeg med node-red på pc'en, og får opp data på dashboard
 
+Hvordan bruke systemet:
+Kjør node red på pc (eller rasberry, hva som er enklest) med komando: "node-red"
+Deretter start esp32 (husk riktig wifi og ipadresse(mqtt server/broker(rasberry pi)))
+Subscribe på riktig topic (f.eks esp32/output) og på riktig ip-adresse
+Kjør dashboard der du ønsker (/ui etter url fra node-red på pc)
+  -Hvis andre ønsker å bruke dashboard:
+  -Hent ip fra "ipconfig" (pc som kjører node-red)
+  -Deretter skriv port (f.eks 1880) slik: "ip-adresse:1880"
+  -Legg til /ui på slutten
+Når esp32 er koblet opp og sender og leser av topics er det bare å lese av verdier
+
 
 
 
