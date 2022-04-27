@@ -46,5 +46,6 @@ services:
       - ROS_MASTER_URI=http://master:11311
     volumes:
       - .ros_logs/joystick:/root/.ros/
+      - ./mqtt_bridge:/mqtt_bridge
     build: dockerfiles/joystick
-    command: rosrun package_name
+    command: roslaunch /mqtt_bridge/mqtt_bridge.launch
