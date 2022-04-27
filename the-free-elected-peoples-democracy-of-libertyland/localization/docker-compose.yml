@@ -4,6 +4,8 @@ services:
   master:
     image: ros:noetic-ros-base
     container_name: master
+    ports:
+      - "11311:11311"
     volumes:
       - .ros_logs/master:/root/.ros/
     command: roscore
