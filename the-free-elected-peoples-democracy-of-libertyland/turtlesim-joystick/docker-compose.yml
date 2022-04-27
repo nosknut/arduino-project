@@ -47,6 +47,14 @@ services:
     volumes:
       - .ros_logs/joystick:/root/.ros/
       - ./mqtt-bridge-configs:/mqtt-bridge-configs
+    # because this container depends on mqtt
+    # we add restart to the config so we dont
+    # have to manually time deployment
+    deploy:
+      restart_policy:
+        condition: any
+        # delay: 5s
+        # max_attempts: 10
     build:
       # context must be specified so that the Dockerfile gets access to the
       # top level directory that contains the mqtt-bridge-configs directory
