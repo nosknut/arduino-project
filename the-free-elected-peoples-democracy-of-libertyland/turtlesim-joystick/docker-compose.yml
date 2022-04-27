@@ -47,5 +47,10 @@ services:
     volumes:
       - .ros_logs/joystick:/root/.ros/
       - ./mqtt-bridge-configs:/mqtt-bridge-configs
-    build: dockerfiles/joystick
+    build:
+      # context must be specified so that the Dockerfile gets access to the
+      # top level directory that contains the mqtt-bridge-configs directory
+      # https://stackoverflow.com/questions/47785706/docker-using-copy-when-the-dockerfile-is-located-in-a-subdirectory
+      context: ./
+      dockerfile: dockerfiles/joystick/Dockerfile
     command: roslaunch /mqtt-bridge-configs/mqtt_bridge.launch
