@@ -1,3 +1,29 @@
+## Starting the entire stack
+Run ```ipconfig``` in a terminal to find your ip address, and update the
+existing ip address at the following path in [docker-compose.yml](docker-compose.yml)
+```
+services:
+  turtlesim:
+    environment:
+      - DISPLAY=your_local_ip_address:0.0
+```
+On Windows
+- Install [VcXsrv Windows X Server Download](https://sourceforge.net/projects/vcxsrv/) and double click [config.xlaunch](config.xlaunch) while in file explorer to run it. You can open file explorer by typing ```start .``` (include the period) in your terminal
+
+Now run the following command. You should see a blue window with a turtle a few seconds after all the docker images have started.
+```
+docker-compose up -d master mqtt mqtt-ros-bridge turtlesim node-red
+```
+Node-RED will be hosted on http://localhost:1880 and the Node-RED UI will be hosted on http://localhost:1880/ui
+
+You can now control the blue turtlesim simulation window with the Node-RED website.
+
+Run the following command to shut everything down
+```
+docker-compose down
+```
+---
+
 ## Hosting mqtt in docker
 
 If you are on windows, open the ports in the firewall

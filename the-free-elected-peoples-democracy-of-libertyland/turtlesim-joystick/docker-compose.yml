@@ -40,12 +40,12 @@ services:
     build: dockerfiles/turtlesim
     command: rosrun turtlesim turtlesim_node
 
-  joystick:
-    container_name: joystick
+  mqtt-ros-bridge:
+    container_name: mqtt-ros-bridge
     environment:
       - ROS_MASTER_URI=http://master:11311
     volumes:
-      - .ros_logs/joystick:/root/.ros/
+      - .ros_logs/mqtt-ros-bridge:/root/.ros/
       - ./mqtt-bridge-configs:/mqtt-bridge-configs
     # because this container depends on mqtt
     # we add restart to the config so we dont
@@ -60,7 +60,7 @@ services:
       # top level directory that contains the mqtt-bridge-configs directory
       # https://stackoverflow.com/questions/47785706/docker-using-copy-when-the-dockerfile-is-located-in-a-subdirectory
       context: ./
-      dockerfile: dockerfiles/joystick/Dockerfile
+      dockerfile: dockerfiles/mqtt-ros-bridge/Dockerfile
     command: roslaunch /mqtt-bridge-configs/mqtt_bridge.launch
 
   node-red:
