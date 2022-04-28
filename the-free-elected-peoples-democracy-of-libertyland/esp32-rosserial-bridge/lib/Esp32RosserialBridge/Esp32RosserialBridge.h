@@ -2,7 +2,7 @@
 #define Esp32RosserialBridge_h
 #include <Arduino.h>
 #include <MainRosserialBridge.h>
-#include <ESP8266WiFi.h>
+#include <WiFi.h>
 
 class Esp32RosserialBridge
 {
@@ -16,7 +16,7 @@ private:
         Serial.println(ssid);
 
         // Connect the ESP8266 the the wifi AP
-        WiFi.begin(ssid, password);
+        WiFi.begin(ssid.c_str(), password.c_str());
         while (WiFi.status() != WL_CONNECTED)
         {
             delay(500);
@@ -29,10 +29,10 @@ private:
     }
 
 public:
-    void setup(long baudRate, String ssid, String password, uint16_t rosserialServerPort = 11411)
+    void setup(IPAddress serverIpAddress, long baudRate, String ssid, String password, uint16_t rosserialServerPort = 11411)
     {
         setupWifi(ssid, password);
-        mainRosserialBridge.setup(baudRate, rosserialServerPort);
+        mainRosserialBridge.setup(serverIpAddress, baudRate, rosserialServerPort);
     }
 
     void loop()
