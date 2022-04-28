@@ -14,6 +14,8 @@ typedef ros::NodeHandle_<Esp32WiFiHardware> WiFi_NodeHandle;
 class MainRosserialBridge
 {
 private:
+    bool wasConnected = false;
+
     Serial_NodeHandle inputNh;
     WiFi_NodeHandle outputNh;
 
@@ -50,11 +52,24 @@ public:
             // Run publishers
             // The publishers for this class
             // are bridges created in setup()
+            if (!wasConnected)
+            {
+                Serial.println("Connected!");
+                wasConnected = true;
+            }
         }
         else
         {
-            Serial.println("Not Connected");
-            delay(100);
+            if (wasConnected)
+            {
+                Serial.println("Disconnected");
+                wasConnected = false;
+            }
+            else
+            {
+                Serial.println("Not Connected");
+                delay(1000);
+            }
         }
         // The RosPublisherBridge has no loop function
         // Regarding the line below:
