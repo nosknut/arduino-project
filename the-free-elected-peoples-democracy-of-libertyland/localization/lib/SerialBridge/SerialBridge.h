@@ -1,28 +1,24 @@
 #ifndef SerialBridge_h
 #define SerialBridge_h
 #include <Arduino.h>
-#include <ArduinoIncludes.h>
-
-#ifndef TOPIC_NAME_SIZE
-#define TOPIC_NAME_SIZE 20
-#endif
+#include <ros/time.h>
 
 #ifndef TERMINATING_CHARACTER
 #define TERMINATING_CHARACTER ';'
 #endif
-
-template <typename MessageType>
-class SerialPublisher;
+#ifndef TOPIC_NAME_SIZE
+#define TOPIC_NAME_SIZE 20
+#endif
 
 class SerialConnection
 {
 private:
-    SERIAL_CLASS *iostream;
+    HardwareSerial *iostream;
     bool isReadingMessage = false;
     char newestTopic[TOPIC_NAME_SIZE];
 
 public:
-    SerialConnection(SERIAL_CLASS *iostream)
+    SerialConnection(HardwareSerial *iostream)
     {
         this->iostream = iostream;
     }
@@ -38,29 +34,31 @@ public:
     }
 
     template <typename MessageType>
-    void publish(char *topic[TOPIC_NAME_SIZE], MessageType &message)
+    void publish(String topic, MessageType *message)
     {
-        Serial.print(String(topic));
-        Serial.print(message);
-        Serial.print(TERMINATING_CHARACTER);
+        char topicName[TOPIC_NAME_SIZE];
+        topic.toCharArray(topicName, TOPIC_NAME_SIZE);
+        iostream->print(topicName);
+        iostream->write((const char *)message, sizeof(MessageType));
+        iostream->print(TERMINATING_CHARACTER);
     }
 
     template <typename MessageType>
-    void readMessage(char *topic[TOPIC_NAME_SIZE], MessageType &message)
+    bool readMessage(String topic, MessageType &message)
     {
         if (!isReadingMessage)
         {
-            if (Serial.available() >= TOPIC_NAME_SIZE)
+            if (iostream->available() >= TOPIC_NAME_SIZE)
             {
                 for (int i = 0; i < TOPIC_NAME_SIZE; i++)
                 {
-                    char value = Serial.read();
+                    char value = iostream->read();
                     // Exit if we see the terminating character
                     // It will be treated as a hard reset, in case the library gets out of sync
                     if (value == TERMINATING_CHARACTER)
                     {
                         isReadingMessage = false;
-                        return;
+                        return false;
                     }
                     newestTopic[i] = value;
                 }
@@ -69,19 +67,16 @@ public:
         }
         if (isReadingMessage)
         {
-            if (String(topic) == String(newestTopic))
+            if (topic == String(newestTopic))
             {
                 uint8_t *buffer;
-                Serial.readBytes(buffer, sizeof(message));
+                iostream->readBytes(buffer, sizeof(message));
                 message = *(MessageType *)buffer;
                 isReadingMessage = false;
+                return true;
             }
         }
-    }
-
-    template <typename MessageType>
-    void advertise(SerialPublisher<MessageType> &serialPublisher)
-    {
+        return false;
     }
 
     void initNode()
@@ -93,124 +88,28 @@ public:
         return this;
     }
 
+    bool connected()
+    {
+        return true;
+    }
+
     void spinOnce()
     {
     }
-};
 
-template <typename MessageType>
-class SerialPublisher
-{
-private:
-    SerialConnection *serialConnection;
-    char topic[TOPIC_NAME_SIZE];
-
-public:
-    SerialPublisher(char topic[TOPIC_NAME_SIZE], SerialConnection *serialConnection)
+    unsigned long time()
     {
-        this->serialConnection = serialConnection;
-        strcpy(this->topic, topic);
+        return millis();
     }
 
-    void publish(MessageType &message)
+    ros::Time now()
     {
-        serialConnection->publish(topic, message);
-    }
-
-    void readMessage(MessageType &message)
-    {
-        serialConnection->readMessage(topic, message);
+        uint32_t ms = time();
+        ros::Time current_time;
+        current_time.sec = ms / 1000;
+        current_time.nsec = (ms % 1000) * 1000000UL;
+        return current_time;
     }
 };
-
-/*
-template <typename MessageType>
-class SerialSubscriber
-{
-private:
-    typedef void (ObjT::*CallbackT)(const MsgT &);
-    SerialConnection *serialConnection;
-    char topic[TOPIC_NAME_SIZE];
-
-public:
-    SerialSubscriber(char topic[TOPIC_NAME_SIZE], SerialConnection *serialConnection)
-    {
-        this->serialConnection = serialConnection;
-        strcpy(this->topic, topic);
-    }
-
-    void publish(MessageType &message)
-    {
-        serialConnection->publish(topic, message);
-    }
-
-    void readMessage(MessageType &message)
-    {
-        serialConnection->readMessage(topic, message);
-    }
-};
-*/
-
-/* Base class for objects subscribers. */
-class SerialSubscriber_
-{
-public:
-    virtual void callback(unsigned char *data) = 0;
-    const char *topic_;
-};
-
-/* Bound function subscriber. */
-template <typename MsgT, typename ObjT = void>
-class SerialSubscriber : public SerialSubscriber_
-{
-public:
-    typedef void (ObjT::*CallbackT)(const MsgT &);
-    MsgT msg;
-
-    SerialSubscriber(const char *topic_name, CallbackT cb, ObjT *obj) : cb_(cb), obj_(obj)
-    {
-        topic_ = topic_name;
-    };
-
-    virtual void callback(unsigned char *data)
-    {
-        (obj_->*cb_)(msg);
-    }
-
-private:
-    CallbackT cb_;
-    ObjT *obj_;
-};
-
-/* Standalone function subscriber. */
-template <typename MsgT>
-class SerialSubscriber<MsgT, void> : public SerialSubscriber_
-{
-public:
-    typedef void (*CallbackT)(const MsgT &);
-    MsgT msg;
-
-    SerialSubscriber(const char *topic_name, CallbackT cb) : cb_(cb)
-    {
-        topic_ = topic_name;
-    };
-
-    SerialSubscriber(const __FlashStringHelper *topic_name, CallbackT cb) : cb_(cb)
-    {
-        topic_ = reinterpret_cast<const char *>(topic_name);
-    };
-
-    virtual void callback(unsigned char *data)
-    {
-        this->cb_(msg);
-    }
-
-private:
-    CallbackT cb_;
-};
-
-typedef SerialConnection NodeHandleClass;
-#define PublisherClass SerialPublisher
-#define SubscriberClass SerialSubscriber
 
 #endif

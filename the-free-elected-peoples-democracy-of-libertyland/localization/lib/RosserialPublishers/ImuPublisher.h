@@ -20,12 +20,12 @@ private:
 
     // http://docs.ros.org/en/api/sensor_msgs/html/msg/Imu.html
     sensor_msgs::Imu imu_msg;
-    ros::Publisher pub_imu = ros::Publisher("imu", &imu_msg);
+    // ros::Publisher pub_imu = ros::Publisher("imu", &imu_msg);
 
 public:
-    void setup(ros::NodeHandle &nh)
+    void setup(SerialConnection &nh)
     {
-        nh.advertise(pub_imu);
+        // nh.advertise(pub_imu);
 
         imu_msg.header.frame_id = frameid.c_str();
 
@@ -83,9 +83,9 @@ public:
         return false;
     }
 
-    void loop(ros::NodeHandle &nh)
+    void loop(SerialConnection &nh)
     {
-        if (timer.loopWait(1))
+        if (timer.loopWait(100))
         {
             // TODO: Research best-practice for publishing this message
             // with partially updated values.
@@ -99,7 +99,8 @@ public:
             if (updatedAcc || updatedGyro || updatedMag)
             {
                 imu_msg.header.stamp = nh.now();
-                pub_imu.publish(&imu_msg);
+                // pub_imu.publish(&imu_msg);
+                nh.publish("imu", &imu_msg);
             }
         }
     }

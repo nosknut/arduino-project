@@ -23,12 +23,12 @@ private:
     String frameid = "/ir_ranger";
 
     sensor_msgs::Range range_msg;
-    PublisherClass pub_range = PublisherClass("range_data", &range_msg);
+    // PublisherClass pub_range = PublisherClass("range_data", &range_msg);
 
 public:
-    void setup(NodeHandleClass &nh)
+    void setup(SerialConnection &nh)
     {
-        nh.advertise(pub_range);
+        // nh.advertise(pub_range);
 
         range_msg.radiation_type = sensor_msgs::Range::INFRARED;
         range_msg.header.frame_id = frameid.c_str();
@@ -37,16 +37,17 @@ public:
         range_msg.max_range = 0.4;  // For GP2D120XJ00F only. Adjust for other IR rangers
     }
 
-    void loop(NodeHandleClass &nh)
+    void loop(SerialConnection &nh)
     {
         proximity.read();
         // publish the range value every 50 milliseconds
         //   since it takes that long for the sensor to stabilize
-        if (timer.loopWait(50))
+        if (timer.loopWait(10))
         {
             range_msg.range = proximity.countsFrontWithRightLeds();
             range_msg.header.stamp = nh.now();
-            pub_range.publish(&range_msg);
+            // pub_range.publish(&range_msg);
+            nh.publish("range_data", &range_msg);
         }
     }
 };

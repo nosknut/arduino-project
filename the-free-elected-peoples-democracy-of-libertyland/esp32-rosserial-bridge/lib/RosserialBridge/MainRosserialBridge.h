@@ -10,7 +10,6 @@
 #include <SerialBridge.h>
 
 // typedef ros::NodeHandle_<Esp32SerialHardware> Serial_NodeHandle;
-typedef SerialNodeHandle Serial_NodeHandle;
 typedef ros::NodeHandle_<Esp32WiFiHardware> WiFi_NodeHandle;
 
 class MainRosserialBridge
@@ -18,7 +17,7 @@ class MainRosserialBridge
 private:
     bool wasConnected = false;
 
-    Serial_NodeHandle inputNh;
+    SerialConnection inputNh;
     WiFi_NodeHandle outputNh;
 
     RosserialBridge<sensor_msgs::Imu> imuBridge = RosserialBridge<sensor_msgs::Imu>("imu");
@@ -27,7 +26,7 @@ private:
     RosserialBridge<sensor_msgs::Range> irBridge = RosserialBridge<sensor_msgs::Range>("range_data");
 
 public:
-    MainRosserialBridge()
+    MainRosserialBridge() : inputNh(&Serial)
     {
     }
 
@@ -59,6 +58,11 @@ public:
                 Serial.println("Connected!");
                 wasConnected = true;
             }
+
+            imuBridge.loop(inputNh, outputNh);
+            leftEncoderBridge.loop(inputNh, outputNh);
+            rightEncoderBridge.loop(inputNh, outputNh);
+            irBridge.loop(inputNh, outputNh);
         }
         else
         {

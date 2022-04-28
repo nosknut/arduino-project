@@ -4,6 +4,7 @@
 #include <ros/node_handle.h>
 #include <ros/publisher.h>
 #include <ros/subscriber.h>
+#include <SerialBridge.h>
 
 /**
  * A generic class that creates a sub-pub proxy
@@ -35,15 +36,15 @@ private:
     MessageType msg;
     ros::Publisher pub = ros::Publisher(nodeName.c_str(), &msg);
 
-    void publish(const MessageType &cmd_msg)
-    {
-        pub.publish(&cmd_msg);
-    }
+    // void publish(const MessageType &cmd_msg)
+    //{
+    //     pub.publish(&cmd_msg);
+    // }
 
     // Set the publiser.publish as the subscriber event handler
     // https://stackoverflow.com/questions/68550716/pass-non-static-class-member-callback-function-to-rossubscriber
-    SerialSubscriber<MessageType, RosserialBridge> sub =
-        SerialSubscriber<MessageType, RosserialBridge>(nodeName.c_str(), &RosserialBridge::publish, this);
+    // SerialSubscriber<MessageType, RosserialBridge> sub =
+    //    SerialSubscriber<MessageType, RosserialBridge>(nodeName.c_str(), &RosserialBridge::publish, this);
 
 public:
     RosserialBridge(String nodeName) : nodeName(nodeName)
@@ -51,11 +52,20 @@ public:
         static_assert(std::is_base_of<ros::Msg, MessageType>::value, "MessageType type parameter of this class must derive from ros::Msg");
     }
 
-    template <typename InputHardware, typename OutputHardware>
-    void setup(SerialNodeHandle &inputNh, ros::NodeHandle_<OutputHardware> &outputNh)
+    template <typename OutputNodeHandle>
+    void setup(SerialConnection &inputNh, OutputNodeHandle &outputNh)
     {
         outputNh.advertise(pub);
-        inputNh.subscribe(sub);
+        // inputNh.subscribe(sub);
+    }
+
+    template <typename OutputNodeHandle>
+    void loop(SerialConnection &inputNh, OutputNodeHandle &outputNh)
+    {
+        if (inputNh.readMessage(nodeName, msg))
+        {
+            pub.publish(&msg);
+        }
     }
 };
 

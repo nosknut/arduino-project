@@ -10,7 +10,7 @@ class MainPublisher
 private:
     bool wasConnected = false;
 
-    ros::NodeHandle nh;
+    SerialConnection nh = SerialConnection(&Serial1);
 
     IrPublisher irPublisher;
     EncoderPublisher encoderPublisher;
