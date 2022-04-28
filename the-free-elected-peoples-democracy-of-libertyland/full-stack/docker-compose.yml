@@ -88,7 +88,7 @@ services:
     environment:
       - ROS_MASTER_URI=http://master:11311
     ports:
-      - "11000:11311"
+      - "11411:11411"
     volumes:
       - .ros_logs/rosserial:/root/.ros/
       - ./rosserial-configs:/rosserial-configs
