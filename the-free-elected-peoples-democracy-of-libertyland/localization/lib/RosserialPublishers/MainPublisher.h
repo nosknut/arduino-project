@@ -8,6 +8,8 @@
 class MainPublisher
 {
 private:
+    bool wasConnected = false;
+
     ros::NodeHandle nh;
 
     IrPublisher irPublisher;
@@ -30,6 +32,31 @@ public:
         irPublisher.loop(nh);
         encoderPublisher.loop(nh);
         imuPublisher.loop(nh);
+
+        if (nh.connected())
+        {
+            // Run publishers
+            // The publishers for this class
+            // are bridges created in setup()
+            if (!wasConnected)
+            {
+                Serial.println("Connected!");
+                wasConnected = true;
+            }
+        }
+        else
+        {
+            if (wasConnected)
+            {
+                Serial.println("Disconnected");
+                wasConnected = false;
+            }
+            else
+            {
+                Serial.println("Not Connected");
+                delay(1000);
+            }
+        }
 
         nh.spinOnce();
     }
