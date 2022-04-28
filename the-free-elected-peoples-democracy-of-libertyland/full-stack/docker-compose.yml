@@ -82,3 +82,15 @@ services:
       - "1880:1880"
     volumes:
       - ./node-red-data/data:/data
+
+  rosserial:
+    container_name: rosserial
+    environment:
+      - ROS_MASTER_URI=http://master:11311
+    ports:
+      - "11000:11311"
+    volumes:
+      - .ros_logs/rosserial:/root/.ros/
+      - ./rosserial-configs:/rosserial-configs
+    build: dockerfiles/rosserial
+    command: roslaunch /rosserial-configs/rosserial.launch
