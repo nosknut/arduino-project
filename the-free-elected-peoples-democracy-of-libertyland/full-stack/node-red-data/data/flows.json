@@ -1,0 +1,214 @@
+[
+    {
+        "id": "519f41f181c369f6",
+        "type": "tab",
+        "label": "Flow 1",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "ac9023fa9aff9274",
+        "type": "mqtt-broker",
+        "name": "docker mqtt",
+        "broker": "mqtt",
+        "port": "1883",
+        "clientid": "",
+        "autoConnect": true,
+        "usetls": false,
+        "protocolVersion": "4",
+        "keepalive": "60",
+        "cleansession": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closeQos": "0",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willPayload": "",
+        "willMsg": {},
+        "sessionExpiry": ""
+    },
+    {
+        "id": "77a8be2.16f914",
+        "type": "ui_tab",
+        "name": "Joystick",
+        "icon": "dashboard",
+        "disabled": false,
+        "hidden": false
+    },
+    {
+        "id": "4367558e83e0f8a4",
+        "type": "ui_base",
+        "theme": {
+            "name": "theme-light",
+            "lightTheme": {
+                "default": "#0094CE",
+                "baseColor": "#0094CE",
+                "baseFont": "-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen-Sans,Ubuntu,Cantarell,Helvetica Neue,sans-serif",
+                "edited": true,
+                "reset": false
+            },
+            "darkTheme": {
+                "default": "#097479",
+                "baseColor": "#097479",
+                "baseFont": "-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen-Sans,Ubuntu,Cantarell,Helvetica Neue,sans-serif",
+                "edited": false
+            },
+            "customTheme": {
+                "name": "Untitled Theme 1",
+                "default": "#4B7930",
+                "baseColor": "#4B7930",
+                "baseFont": "-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen-Sans,Ubuntu,Cantarell,Helvetica Neue,sans-serif"
+            },
+            "themeState": {
+                "base-color": {
+                    "default": "#0094CE",
+                    "value": "#0094CE",
+                    "edited": false
+                },
+                "page-titlebar-backgroundColor": {
+                    "value": "#0094CE",
+                    "edited": false
+                },
+                "page-backgroundColor": {
+                    "value": "#fafafa",
+                    "edited": false
+                },
+                "page-sidebar-backgroundColor": {
+                    "value": "#ffffff",
+                    "edited": false
+                },
+                "group-textColor": {
+                    "value": "#1bbfff",
+                    "edited": false
+                },
+                "group-borderColor": {
+                    "value": "#ffffff",
+                    "edited": false
+                },
+                "group-backgroundColor": {
+                    "value": "#ffffff",
+                    "edited": false
+                },
+                "widget-textColor": {
+                    "value": "#111111",
+                    "edited": false
+                },
+                "widget-backgroundColor": {
+                    "value": "#0094ce",
+                    "edited": false
+                },
+                "widget-borderColor": {
+                    "value": "#ffffff",
+                    "edited": false
+                },
+                "base-font": {
+                    "value": "-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen-Sans,Ubuntu,Cantarell,Helvetica Neue,sans-serif"
+                }
+            },
+            "angularTheme": {
+                "primary": "indigo",
+                "accents": "blue",
+                "warn": "red",
+                "background": "grey",
+                "palette": "light"
+            }
+        },
+        "site": {
+            "name": "Node-RED Dashboard",
+            "hideToolbar": "false",
+            "allowSwipe": "false",
+            "lockMenu": "false",
+            "allowTempTheme": "true",
+            "dateFormat": "DD/MM/YYYY",
+            "sizes": {
+                "sx": 48,
+                "sy": 48,
+                "gx": 6,
+                "gy": 6,
+                "cx": 6,
+                "cy": 6,
+                "px": 0,
+                "py": 0
+            }
+        }
+    },
+    {
+        "id": "dc631fea2571b0b4",
+        "type": "ui_group",
+        "name": "Default",
+        "tab": "77a8be2.16f914",
+        "order": 2,
+        "disp": true,
+        "width": "6",
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "c245092ec9f39d52",
+        "type": "mqtt out",
+        "z": "519f41f181c369f6",
+        "name": "",
+        "topic": "/turtle1/cmd_vel",
+        "qos": "",
+        "retain": "",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "ac9023fa9aff9274",
+        "x": 940,
+        "y": 360,
+        "wires": []
+    },
+    {
+        "id": "bb672158a0c0a2a4",
+        "type": "function",
+        "z": "519f41f181c369f6",
+        "name": "",
+        "func": "nextMsg = {\n    linear: {\n        x: 0,\n        y: 0,\n        z: 0\n    },\n    angular: {\n        x: 0,\n        y: 0,\n        z: 0\n    }\n}\n\nif(msg.payload.distance > 0){\n    speed = msg.payload.vector.y * 10\n    turningSpeed = msg.payload.vector.x * 5\n    nextMsg.angular.z = -turningSpeed\n    nextMsg.linear.x = speed\n}\n\nreturn {\n    payload: nextMsg\n};",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 720,
+        "y": 360,
+        "wires": [
+            [
+                "c245092ec9f39d52"
+            ]
+        ]
+    },
+    {
+        "id": "7ff7b88e973c6fa2",
+        "type": "ui_joystick",
+        "z": "519f41f181c369f6",
+        "name": "",
+        "group": "dc631fea2571b0b4",
+        "order": 0,
+        "width": 3,
+        "height": 3,
+        "trigger": "all",
+        "timeInterval": "100",
+        "useThemeColor": true,
+        "color": "#000000",
+        "threshold": 0.1,
+        "directions": "all",
+        "shape": "squere",
+        "centerAtRelease": true,
+        "x": 510,
+        "y": 360,
+        "wires": [
+            [
+                "bb672158a0c0a2a4"
+            ]
+        ]
+    }
+]

@@ -1,0 +1,84 @@
+version: '3'
+
+services:
+  catkin:
+    image: ros:noetic-ros-base
+    tty: true
+    container_name: catkin
+    volumes:
+      - ./:/working-directory
+    working_dir: /working-directory
+    command: /bin/bash
+
+  mqtt:
+    image: eclipse-mosquitto
+    container_name: mqtt
+    ports:
+      - "1883:1883"
+      - "1901:1901"
+    volumes:
+      - ./mqtt-config:/mosquitto/config
+      - .mqtt/data:/mosquitto/data
+      - .mqtt/log:/mosquitto/log
+
+  master:
+    image: ros:noetic-ros-base
+    container_name: master
+    ports:
+      - "11311:11311"
+    volumes:
+      - .ros_logs/master:/root/.ros/
+    command: roscore
+
+  turtlesim:
+    container_name: turtlesim
+    environment:
+      - DISPLAY=172.21.208.1:0.0
+      - ROS_MASTER_URI=http://master:11311
+    volumes:
+      - .ros_logs/turtlesim:/root/.ros/
+    build: dockerfiles/turtlesim
+    command: rosrun turtlesim turtlesim_node
+
+  mqtt-ros-bridge:
+    container_name: mqtt-ros-bridge
+    environment:
+      - ROS_MASTER_URI=http://master:11311
+    volumes:
+      - .ros_logs/mqtt-ros-bridge:/root/.ros/
+      - ./mqtt-bridge-configs:/mqtt-bridge-configs
+    # because this container depends on mqtt
+    # we add restart to the config so we dont
+    # have to manually time deployment
+    deploy:
+      restart_policy:
+        condition: any
+        # delay: 5s
+        # max_attempts: 10
+    build:
+      # context must be specified so that the Dockerfile gets access to the
+      # top level directory that contains the mqtt-bridge-configs directory
+      # https://stackoverflow.com/questions/47785706/docker-using-copy-when-the-dockerfile-is-located-in-a-subdirectory
+      context: ./
+      dockerfile: dockerfiles/mqtt-ros-bridge/Dockerfile
+    command: roslaunch /mqtt-bridge-configs/mqtt_bridge.launch
+
+  # Required to install npm dependencies for the node-red container
+  # The folder mounted here is shared between them
+  # This container should be run before the node-red container
+  install-node-red:
+    image: node:latest
+    volumes:
+      - ./node-red-data/data:/data
+    working_dir: /data
+    command: npm install
+
+  node-red:
+    container_name: node-red
+    image: nodered/node-red:latest
+    environment:
+      - TZ=Europe/Amsterdam
+    ports:
+      - "1880:1880"
+    volumes:
+      - ./node-red-data/data:/data

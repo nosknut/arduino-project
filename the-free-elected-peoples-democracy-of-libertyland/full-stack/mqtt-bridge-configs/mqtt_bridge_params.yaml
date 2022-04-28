@@ -1,0 +1,42 @@
+mqtt:
+  client:
+    protocol: 4 # MQTTv311
+  connection:
+    host: mqtt
+    port: 1883
+    keepalive: 60
+  private_path: device/001
+serializer: json:dumps
+deserializer: json:loads
+bridge:
+  - factory: mqtt_bridge.bridge:MqttToRosBridge
+    msg_type: geometry_msgs.msg:Twist
+    topic_from: /turtle1/cmd_vel
+    topic_to: /turtle1/cmd_vel
+  # ping pong
+  - factory: mqtt_bridge.bridge:RosToMqttBridge
+    msg_type: std_msgs.msg:Bool
+    topic_from: /ping
+    topic_to: ping
+  - factory: mqtt_bridge.bridge:MqttToRosBridge
+    msg_type: std_msgs.msg:Bool
+    topic_from: ping
+    topic_to: /pong
+  # echo back
+  - factory: mqtt_bridge.bridge:RosToMqttBridge
+    msg_type: std_msgs.msg:String
+    topic_from: /echo
+    topic_to: echo
+  - factory: mqtt_bridge.bridge:MqttToRosBridge
+    msg_type: std_msgs.msg:String
+    topic_from: echo
+    topic_to: /back
+  # private path
+  - factory: mqtt_bridge.bridge:RosToMqttBridge
+    msg_type: std_msgs.msg:String
+    topic_from: /private/echo
+    topic_to: ~/echo
+  - factory: mqtt_bridge.bridge:MqttToRosBridge
+    msg_type: std_msgs.msg:String
+    topic_from: ~/echo
+    topic_to: /private/back
