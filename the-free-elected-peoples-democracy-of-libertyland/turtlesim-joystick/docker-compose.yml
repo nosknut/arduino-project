@@ -33,7 +33,7 @@ services:
   turtlesim:
     container_name: turtlesim
     environment:
-      - DISPLAY=10.24.3.237:0.0
+      - DISPLAY=172.21.208.1:0.0
       - ROS_MASTER_URI=http://master:11311
     volumes:
       - .ros_logs/turtlesim:/root/.ros/
@@ -62,3 +62,13 @@ services:
       context: ./
       dockerfile: dockerfiles/joystick/Dockerfile
     command: roslaunch /mqtt-bridge-configs/mqtt_bridge.launch
+
+  node-red:
+    container_name: node-red
+    image: nodered/node-red:latest
+    environment:
+      - TZ=Europe/Amsterdam
+    ports:
+      - "1880:1880"
+    volumes:
+      - ./node-red-data/data:/data

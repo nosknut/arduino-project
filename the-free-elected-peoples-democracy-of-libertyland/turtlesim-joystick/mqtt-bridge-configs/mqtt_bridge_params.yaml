@@ -6,9 +6,13 @@ mqtt:
     port: 1883
     keepalive: 60
   private_path: device/001
-#serializer: json:dumps
-#deserializer: json:loads
+serializer: json:dumps
+deserializer: json:loads
 bridge:
+  - factory: mqtt_bridge.bridge:MqttToRosBridge
+    msg_type: geometry_msgs.msg:Twist
+    topic_from: /turtle1/cmd_vel
+    topic_to: /turtle1/cmd_vel
   # ping pong
   - factory: mqtt_bridge.bridge:RosToMqttBridge
     msg_type: std_msgs.msg:Bool
