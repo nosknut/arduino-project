@@ -3,8 +3,8 @@
 #include <Esp32RosserialBridge.h>
 
 long baudRate = 115200;
-String ssid = "";
-String password = "";
+String ssid = "Telenor1959bak";
+String password = "yzefbjbqzgxqu";
 uint16_t rosserialServerPort = 11411;
 // IP address to the rosserial socket server
 IPAddress serverIp = IPAddress(192, 168, 1, 190);

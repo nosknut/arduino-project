@@ -7,8 +7,10 @@
 #include <RosserialBridge.h>
 #include <Esp32WiFiHardware.h>
 #include <Esp32SerialHardware.h>
+#include <SerialBridge.h>
 
-typedef ros::NodeHandle_<Esp32SerialHardware> Serial_NodeHandle;
+// typedef ros::NodeHandle_<Esp32SerialHardware> Serial_NodeHandle;
+typedef SerialNodeHandle Serial_NodeHandle;
 typedef ros::NodeHandle_<Esp32WiFiHardware> WiFi_NodeHandle;
 
 class MainRosserialBridge

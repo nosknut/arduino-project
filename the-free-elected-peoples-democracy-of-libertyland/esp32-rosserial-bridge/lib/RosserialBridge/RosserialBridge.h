@@ -42,8 +42,8 @@ private:
 
     // Set the publiser.publish as the subscriber event handler
     // https://stackoverflow.com/questions/68550716/pass-non-static-class-member-callback-function-to-rossubscriber
-    ros::Subscriber<MessageType, RosserialBridge> sub =
-        ros::Subscriber<MessageType, RosserialBridge>(nodeName.c_str(), &RosserialBridge::publish, this);
+    SerialSubscriber<MessageType, RosserialBridge> sub =
+        SerialSubscriber<MessageType, RosserialBridge>(nodeName.c_str(), &RosserialBridge::publish, this);
 
 public:
     RosserialBridge(String nodeName) : nodeName(nodeName)
@@ -52,7 +52,7 @@ public:
     }
 
     template <typename InputHardware, typename OutputHardware>
-    void setup(ros::NodeHandle_<InputHardware> &inputNh, ros::NodeHandle_<OutputHardware> &outputNh)
+    void setup(SerialNodeHandle &inputNh, ros::NodeHandle_<OutputHardware> &outputNh)
     {
         outputNh.advertise(pub);
         inputNh.subscribe(sub);

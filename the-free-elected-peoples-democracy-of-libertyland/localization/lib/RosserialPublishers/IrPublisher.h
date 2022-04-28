@@ -6,6 +6,7 @@
 #include <ros/time.h>
 #include <sensor_msgs/Range.h>
 #include <Zumo32U4ProximitySensors.h>
+#include <SerialBridge.h>
 /*
  * http://wiki.ros.org/rosserial_arduino/Tutorials/IR%20Ranger
  * rosserial IR Ranger Example
@@ -22,10 +23,10 @@ private:
     String frameid = "/ir_ranger";
 
     sensor_msgs::Range range_msg;
-    ros::Publisher pub_range = ros::Publisher("range_data", &range_msg);
+    PublisherClass pub_range = PublisherClass("range_data", &range_msg);
 
 public:
-    void setup(ros::NodeHandle &nh)
+    void setup(NodeHandleClass &nh)
     {
         nh.advertise(pub_range);
 
@@ -36,7 +37,7 @@ public:
         range_msg.max_range = 0.4;  // For GP2D120XJ00F only. Adjust for other IR rangers
     }
 
-    void loop(ros::NodeHandle &nh)
+    void loop(NodeHandleClass &nh)
     {
         proximity.read();
         // publish the range value every 50 milliseconds
