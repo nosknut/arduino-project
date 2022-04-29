@@ -112,17 +112,20 @@ public:
             // are bridges created in setup()
             if (!wasConnected)
             {
-                // Serial.println("Connected!");
+                Serial.println("Connected!");
                 wasConnected = true;
             }
 
             if (inputStream.available())
             {
+                Serial.println("Received data");
                 // Read the JSON document from the "link" serial port
                 DeserializationError err = deserializeJson(inputDoc, inputStream);
-
+                Serial.println("Deserialized JSON");
                 if (err == DeserializationError::Ok)
                 {
+                    Serial.println(inputDoc["topic"].as<String>());
+
                     imuBridge.loop(inputDoc, outputNh);
 
                     leftEncoderBridge.loop(inputDoc, outputNh);
@@ -142,21 +145,27 @@ public:
                     // Flush all bytes in the inputStream serial port buffer
                     while (inputStream.available() > 0)
                     {
-                        inputStream.read();
+                        Serial.println("Flushing inputStream");
+                        delay(100);
+                        inputStream.flush(false);
                     }
                 }
+            }
+            else
+            {
+                Serial.println("No data");
             }
         }
         else
         {
             if (wasConnected)
             {
-                // Serial.println("Disconnected");
+                Serial.println("Disconnected");
                 wasConnected = false;
             }
             else
             {
-                // Serial.println("Not Connected");
+                Serial.println("Not Connected");
                 delay(1000);
             }
         }

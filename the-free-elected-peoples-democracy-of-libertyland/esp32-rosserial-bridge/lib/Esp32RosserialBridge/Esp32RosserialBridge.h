@@ -11,23 +11,21 @@ private:
 
     void setupWifi(String ssid, String password)
     {
-        // NB! Uncommenting the serial prints will disturb the serial communications
-
-        // Serial.println();
-        // Serial.print("Connecting to ");
-        // Serial.println(ssid);
+        Serial.println();
+        Serial.print("Connecting to ");
+        Serial.println(ssid);
 
         // Connect the ESP8266 the the wifi AP
         WiFi.begin(ssid.c_str(), password.c_str());
         while (WiFi.status() != WL_CONNECTED)
         {
             delay(500);
-            // Serial.print(".");
+            Serial.print(".");
         }
-        // Serial.println("");
-        // Serial.println("WiFi connected");
-        // Serial.println("IP address: ");
-        // Serial.println(WiFi.localIP());
+        Serial.println("");
+        Serial.println("WiFi connected");
+        Serial.println("IP address: ");
+        Serial.println(WiFi.localIP());
     }
 
 public:
