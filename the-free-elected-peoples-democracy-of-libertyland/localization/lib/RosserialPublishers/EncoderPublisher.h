@@ -14,22 +14,29 @@ class EncoderPublisher
 {
 private:
     Timer timer;
-    DynamicJsonDocument leftOutputDocument = DynamicJsonDocument(4);
-    DynamicJsonDocument rightOutputDocument = DynamicJsonDocument(4);
+    DynamicJsonDocument leftOutputDocument = DynamicJsonDocument(200);
+    DynamicJsonDocument rightOutputDocument = DynamicJsonDocument(200);
 
     Zumo32U4Encoders encoders;
 
 public:
+    EncoderPublisher()
+    {
+        rightOutputDocument["topic"] = "right_ticks";
+        rightOutputDocument["data"] = (int16_t)0;
+        rightOutputDocument.shrinkToFit();
+
+        leftOutputDocument["topic"] = "left_ticks";
+        leftOutputDocument["data"] = (int16_t)0;
+        leftOutputDocument.shrinkToFit();
+    }
+
     void setup()
     {
-        leftOutputDocument["topic"] = "left_ticks";
-        rightOutputDocument["topic"] = "right_ticks";
     }
 
     void loop()
     {
-        // publish the range value every 50 milliseconds
-        //   since it takes that long for the sensor to stabilize
         if (timer.loopWait(10))
         {
             int16_t rightTicks = encoders.getCountsRight();

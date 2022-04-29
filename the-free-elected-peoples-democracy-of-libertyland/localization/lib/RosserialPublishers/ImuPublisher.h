@@ -16,22 +16,37 @@ private:
     Timer timer;
     Zumo32U4IMU imu;
 
-    DynamicJsonDocument outputDocument = DynamicJsonDocument(100);
+    DynamicJsonDocument outputDocument = DynamicJsonDocument(200);
 
     // http://docs.ros.org/en/api/sensor_msgs/html/msg/Imu.html
     sensor_msgs::Imu imu_msg;
     // ros::Publisher pub_imu = ros::Publisher("imu", &imu_msg);
 
 public:
+    ImuPublisher()
+    {
+    }
+
     void setup()
     {
         outputDocument["topic"] = "imu";
-        outputDocument["header"]["frame_id"] = "/imu";
+        outputDocument["la"]["x"] = (int16_t)0;
+        outputDocument["la"]["y"] = (int16_t)0;
+        outputDocument["la"]["z"] = (int16_t)0;
+        outputDocument["av"]["x"] = (int16_t)0;
+        outputDocument["av"]["y"] = (int16_t)0;
+        outputDocument["av"]["z"] = (int16_t)0;
+        outputDocument["o"]["x"] = (int16_t)0;
+        outputDocument["o"]["y"] = (int16_t)0;
+        outputDocument["o"]["z"] = (int16_t)0;
+        outputDocument["o"]["w"] = (int16_t)0;
 
         // TODO: Set the covariances to something reasonable
         // imu_msg.orientation_covariance = {-1, 0, 0, 0, -1, 0, 0, 0, 0};
         // imu_msg.angular_velocity_covariance = {-1, 0, 0, 0, -1, 0, 0, 0, 0};
         // imu_msg.linear_acceleration_covariance = {-1, 0, 0, 0, -1, 0, 0, 0, 0};
+
+        outputDocument.shrinkToFit();
     }
 
     bool updateAcc()
@@ -39,9 +54,9 @@ public:
         if (imu.accDataReady())
         {
             imu.readAcc();
-            outputDocument["linear_acceleration"]["x"] = imu.a.x;
-            outputDocument["linear_acceleration"]["y"] = imu.a.y;
-            outputDocument["linear_acceleration"]["z"] = imu.a.z;
+            outputDocument["la"]["x"] = imu.a.x;
+            outputDocument["la"]["y"] = imu.a.y;
+            outputDocument["la"]["z"] = imu.a.z;
             return true;
         }
         return false;
@@ -52,9 +67,9 @@ public:
         if (imu.gyroDataReady())
         {
             imu.readGyro();
-            outputDocument["angular_velocity"]["x"] = imu.g.x;
-            outputDocument["angular_velocity"]["y"] = imu.g.y;
-            outputDocument["angular_velocity"]["z"] = imu.g.z;
+            outputDocument["av"]["x"] = imu.g.x;
+            outputDocument["av"]["y"] = imu.g.y;
+            outputDocument["av"]["z"] = imu.g.z;
             return true;
         }
         return false;
@@ -62,7 +77,7 @@ public:
 
     // From GithubCopilot. I have no idea what this function does.
     // TODO: Find out what this function does
-    float calculateQuaternionWValueFromMagnetometerData(float x, float y, float z)
+    int16_t calculateQuaternionWValueFromMagnetometerData(int16_t x, int16_t y, int16_t z)
     {
         float w = sqrt(1.0 + x + y + z) / 2.0;
         return w;
@@ -73,10 +88,10 @@ public:
         if (imu.magDataReady())
         {
             imu.readMag();
-            outputDocument["orientation"]["x"] = imu.m.x;
-            outputDocument["orientation"]["y"] = imu.m.y;
-            outputDocument["orientation"]["z"] = imu.m.z;
-            outputDocument["orientation"]["w"] = calculateQuaternionWValueFromMagnetometerData(imu.m.x, imu.m.y, imu.m.z);
+            outputDocument["o"]["x"] = imu.m.x;
+            outputDocument["o"]["y"] = imu.m.y;
+            outputDocument["o"]["z"] = imu.m.z;
+            outputDocument["o"]["w"] = calculateQuaternionWValueFromMagnetometerData(imu.m.x, imu.m.y, imu.m.z);
             return true;
         }
         return false;
@@ -97,8 +112,8 @@ public:
 
             if (updatedAcc || updatedGyro || updatedMag)
             {
-                serializeJson(outputDocument, SERIAL_CLASS);
             }
+            serializeJson(outputDocument, SERIAL_CLASS);
         }
     }
 };

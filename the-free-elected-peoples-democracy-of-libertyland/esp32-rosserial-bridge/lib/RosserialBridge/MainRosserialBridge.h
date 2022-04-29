@@ -20,16 +20,16 @@ public:
     void mapMessages(JsonDocument &inDoc, sensor_msgs::Imu &outMsg)
     {
         // TODO: Add covariances
-        outMsg.orientation.x = inDoc["orientation"]["x"];
-        outMsg.orientation.y = inDoc["orientation"]["y"];
-        outMsg.orientation.z = inDoc["orientation"]["z"];
-        outMsg.orientation.w = inDoc["orientation"]["w"];
-        outMsg.angular_velocity.x = inDoc["angular_velocity"]["x"];
-        outMsg.angular_velocity.y = inDoc["angular_velocity"]["y"];
-        outMsg.angular_velocity.z = inDoc["angular_velocity"]["z"];
-        outMsg.linear_acceleration.x = inDoc["linear_acceleration"]["x"];
-        outMsg.linear_acceleration.y = inDoc["linear_acceleration"]["y"];
-        outMsg.linear_acceleration.z = inDoc["linear_acceleration"]["z"];
+        outMsg.orientation.x = inDoc["o"]["x"];
+        outMsg.orientation.y = inDoc["o"]["y"];
+        outMsg.orientation.z = inDoc["o"]["z"];
+        outMsg.orientation.w = inDoc["o"]["w"];
+        outMsg.angular_velocity.x = inDoc["av"]["x"];
+        outMsg.angular_velocity.y = inDoc["av"]["y"];
+        outMsg.angular_velocity.z = inDoc["av"]["z"];
+        outMsg.linear_acceleration.x = inDoc["la"]["x"];
+        outMsg.linear_acceleration.y = inDoc["la"]["y"];
+        outMsg.linear_acceleration.z = inDoc["la"]["z"];
     }
 };
 
@@ -40,10 +40,10 @@ public:
 
     void mapMessages(JsonDocument &inDoc, sensor_msgs::Range &outMsg)
     {
-        outMsg.radiation_type = inDoc["radiation_type"];
-        outMsg.field_of_view = inDoc["field_of_view"];
-        outMsg.min_range = inDoc["min_range"];
-        outMsg.max_range = inDoc["max_range"];
+        outMsg.radiation_type = sensor_msgs::Range::INFRARED;
+        outMsg.field_of_view = 0.001;
+        outMsg.min_range = 0.03;
+        outMsg.max_range = 0.4;
         outMsg.range = inDoc["range"];
     }
 };

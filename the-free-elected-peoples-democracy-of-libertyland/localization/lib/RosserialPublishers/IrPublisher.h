@@ -22,28 +22,27 @@ private:
     Timer timer;
     Zumo32U4ProximitySensors proximity;
 
-    DynamicJsonDocument outputDocument = DynamicJsonDocument(30);
+    DynamicJsonDocument outputDocument = DynamicJsonDocument(200);
 
 public:
     void setup()
     {
         outputDocument["topic"] = "range_data";
-        outputDocument["header"]["frame_id"] = "/ir_ranger";
-        outputDocument["radiation_type"] = sensor_msgs::Range::INFRARED;
-        outputDocument["field_of_view"] = 0.01;
-        outputDocument["min_range"] = 0.03; // For GP2D120XJ00F only. Adjust for other IR rangers
-        outputDocument["max_range"] = 0.4;  // For GP2D120XJ00F only. Adjust for other IR rangers
+        outputDocument["range"] = (uint8_t)0;
+
+        outputDocument.shrinkToFit();
     }
 
     void loop()
     {
         proximity.read();
-        // publish the range value every 50 milliseconds
+        // publish the range value every >= 50 milliseconds
         //   since it takes that long for the sensor to stabilize
         if (timer.loopWait(100))
         {
-            auto currentRange = proximity.countsFrontWithRightLeds();
-            if (currentRange != outputDocument["range"])
+            uint8_t currentRange = proximity.countsFrontWithRightLeds();
+            uint8_t prevRange = outputDocument["range"];
+            if (abs(currentRange - prevRange) > 10)
             {
                 outputDocument["range"] = currentRange;
                 serializeJson(outputDocument, SERIAL_CLASS);
