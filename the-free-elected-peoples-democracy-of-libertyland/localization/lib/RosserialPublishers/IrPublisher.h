@@ -6,7 +6,9 @@
 #include <ros/time.h>
 #include <sensor_msgs/Range.h>
 #include <Zumo32U4ProximitySensors.h>
-#include <SerialBridge.h>
+#include <SerialClass.h>
+#include <ArduinoJson.h>
+
 /*
  * http://wiki.ros.org/rosserial_arduino/Tutorials/IR%20Ranger
  * rosserial IR Ranger Example
@@ -20,24 +22,20 @@ private:
     Timer timer;
     Zumo32U4ProximitySensors proximity;
 
-    String frameid = "/ir_ranger";
-
-    sensor_msgs::Range range_msg;
-    // PublisherClass pub_range = PublisherClass("range_data", &range_msg);
+    DynamicJsonDocument outputDocument = DynamicJsonDocument(30);
 
 public:
-    void setup(SerialConnection &nh)
+    void setup()
     {
-        // nh.advertise(pub_range);
-
-        range_msg.radiation_type = sensor_msgs::Range::INFRARED;
-        range_msg.header.frame_id = frameid.c_str();
-        range_msg.field_of_view = 0.01;
-        range_msg.min_range = 0.03; // For GP2D120XJ00F only. Adjust for other IR rangers
-        range_msg.max_range = 0.4;  // For GP2D120XJ00F only. Adjust for other IR rangers
+        outputDocument["topic"] = "range_data";
+        outputDocument["header"]["frame_id"] = "/ir_ranger";
+        outputDocument["radiation_type"] = sensor_msgs::Range::INFRARED;
+        outputDocument["field_of_view"] = 0.01;
+        outputDocument["min_range"] = 0.03; // For GP2D120XJ00F only. Adjust for other IR rangers
+        outputDocument["max_range"] = 0.4;  // For GP2D120XJ00F only. Adjust for other IR rangers
     }
 
-    void loop(SerialConnection &nh)
+    void loop()
     {
         proximity.read();
         // publish the range value every 50 milliseconds
@@ -45,11 +43,10 @@ public:
         if (timer.loopWait(100))
         {
             auto currentRange = proximity.countsFrontWithRightLeds();
-            if (currentRange != range_msg.range)
+            if (currentRange != outputDocument["range"])
             {
-                range_msg.range = currentRange;
-                range_msg.header.stamp = nh.now();
-                nh.publish("range_data", &range_msg);
+                outputDocument["range"] = currentRange;
+                serializeJson(outputDocument, SERIAL_CLASS);
             }
         }
     }

@@ -4,7 +4,7 @@
 #include <ros/node_handle.h>
 #include <ros/publisher.h>
 #include <ros/subscriber.h>
-#include <SerialBridge.h>
+#include <ArduinoJson.h>
 
 /**
  * A generic class that creates a sub-pub proxy
@@ -34,7 +34,6 @@ private:
     const String nodeName;
 
     MessageType msg;
-    MessageType inMsg;
     ros::Publisher pub = ros::Publisher(nodeName.c_str(), &msg);
 
     // void publish(const MessageType &cmd_msg)
@@ -54,19 +53,19 @@ public:
     }
 
     template <typename OutputNodeHandle>
-    void setup(SerialConnection &inputNh, OutputNodeHandle &outputNh)
+    void setup(OutputNodeHandle &outputNh)
     {
         outputNh.advertise(pub);
     }
 
-    virtual void mapMessages(MessageType &inMsg, MessageType &outMsg) = 0;
+    virtual void mapMessages(JsonDocument &inDoc, MessageType &outMsg) = 0;
 
     template <typename OutputNodeHandle>
-    void loop(SerialConnection &inputNh, OutputNodeHandle &outputNh)
+    void loop(JsonDocument &inputDoc, OutputNodeHandle &outputNh)
     {
-        if (inputNh.readMessage(nodeName, inMsg))
+        if (inputDoc["topic"] == nodeName)
         {
-            mapMessages(inMsg, msg);
+            mapMessages(inputDoc, msg);
             pub.publish(&msg);
         }
     }

@@ -14,41 +14,38 @@ class EncoderPublisher
 {
 private:
     Timer timer;
-    std_msgs::Int16 right_wheel_tick_count;
-    // ros::Publisher right_pub_msg = ros::Publisher("right_ticks", &right_wheel_tick_count);
-
-    std_msgs::Int16 left_wheel_tick_count;
-    // ros::Publisher left_pub_msg = ros::Publisher("left_ticks", &left_wheel_tick_count);
+    DynamicJsonDocument leftOutputDocument = DynamicJsonDocument(4);
+    DynamicJsonDocument rightOutputDocument = DynamicJsonDocument(4);
 
     Zumo32U4Encoders encoders;
 
 public:
-    void setup(SerialConnection &nh)
+    void setup()
     {
-        // nh.advertise(right_pub_msg);
-        // nh.advertise(left_pub_msg);
+        leftOutputDocument["topic"] = "left_ticks";
+        rightOutputDocument["topic"] = "right_ticks";
     }
 
-    void loop(SerialConnection &nh)
+    void loop()
     {
         // publish the range value every 50 milliseconds
         //   since it takes that long for the sensor to stabilize
         if (timer.loopWait(10))
         {
-            int16_t right_ticks = encoders.getCountsRight();
-            int16_t left_ticks = encoders.getCountsLeft();
-            auto old_right_ticks = right_wheel_tick_count.data;
-            auto old_left_ticks = left_wheel_tick_count.data;
-            if (right_ticks != old_right_ticks)
+            int16_t rightTicks = encoders.getCountsRight();
+            int16_t leftTicks = encoders.getCountsLeft();
+            auto prevRightTicks = rightOutputDocument["data"];
+            auto prevLeftTicks = leftOutputDocument["data"];
+            if (rightTicks != prevRightTicks)
             {
-                right_wheel_tick_count.data = right_ticks;
-                nh.publish("right_ticks", &right_wheel_tick_count);
+                rightOutputDocument["data"] = rightTicks;
+                serializeJson(rightOutputDocument, SERIAL_CLASS);
             }
 
-            if (left_ticks != old_left_ticks)
+            if (leftTicks != prevLeftTicks)
             {
-                left_wheel_tick_count.data = left_ticks;
-                nh.publish("left_ticks", &left_wheel_tick_count);
+                leftOutputDocument["data"] = leftTicks;
+                serializeJson(leftOutputDocument, SERIAL_CLASS);
             }
         }
     }

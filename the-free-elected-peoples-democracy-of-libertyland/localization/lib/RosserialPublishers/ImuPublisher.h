@@ -16,18 +16,17 @@ private:
     Timer timer;
     Zumo32U4IMU imu;
 
-    String frameid = "/imu";
+    DynamicJsonDocument outputDocument = DynamicJsonDocument(100);
 
     // http://docs.ros.org/en/api/sensor_msgs/html/msg/Imu.html
     sensor_msgs::Imu imu_msg;
     // ros::Publisher pub_imu = ros::Publisher("imu", &imu_msg);
 
 public:
-    void setup(SerialConnection &nh)
+    void setup()
     {
-        // nh.advertise(pub_imu);
-
-        imu_msg.header.frame_id = frameid.c_str();
+        outputDocument["topic"] = "imu";
+        outputDocument["header"]["frame_id"] = "/imu";
 
         // TODO: Set the covariances to something reasonable
         // imu_msg.orientation_covariance = {-1, 0, 0, 0, -1, 0, 0, 0, 0};
@@ -40,9 +39,9 @@ public:
         if (imu.accDataReady())
         {
             imu.readAcc();
-            imu_msg.linear_acceleration.x = imu.a.x;
-            imu_msg.linear_acceleration.y = imu.a.y;
-            imu_msg.linear_acceleration.z = imu.a.z;
+            outputDocument["linear_acceleration"]["x"] = imu.a.x;
+            outputDocument["linear_acceleration"]["y"] = imu.a.y;
+            outputDocument["linear_acceleration"]["z"] = imu.a.z;
             return true;
         }
         return false;
@@ -53,9 +52,9 @@ public:
         if (imu.gyroDataReady())
         {
             imu.readGyro();
-            imu_msg.angular_velocity.x = imu.g.x;
-            imu_msg.angular_velocity.y = imu.g.y;
-            imu_msg.angular_velocity.z = imu.g.z;
+            outputDocument["angular_velocity"]["x"] = imu.g.x;
+            outputDocument["angular_velocity"]["y"] = imu.g.y;
+            outputDocument["angular_velocity"]["z"] = imu.g.z;
             return true;
         }
         return false;
@@ -74,16 +73,16 @@ public:
         if (imu.magDataReady())
         {
             imu.readMag();
-            imu_msg.orientation.x = imu.m.x;
-            imu_msg.orientation.y = imu.m.y;
-            imu_msg.orientation.z = imu.m.z;
-            imu_msg.orientation.w = calculateQuaternionWValueFromMagnetometerData(imu.m.x, imu.m.y, imu.m.z);
+            outputDocument["orientation"]["x"] = imu.m.x;
+            outputDocument["orientation"]["y"] = imu.m.y;
+            outputDocument["orientation"]["z"] = imu.m.z;
+            outputDocument["orientation"]["w"] = calculateQuaternionWValueFromMagnetometerData(imu.m.x, imu.m.y, imu.m.z);
             return true;
         }
         return false;
     }
 
-    void loop(SerialConnection &nh)
+    void loop()
     {
         if (timer.loopWait(100))
         {
@@ -98,9 +97,7 @@ public:
 
             if (updatedAcc || updatedGyro || updatedMag)
             {
-                imu_msg.header.stamp = nh.now();
-                // pub_imu.publish(&imu_msg);
-                nh.publish("imu", &imu_msg);
+                serializeJson(outputDocument, SERIAL_CLASS);
             }
         }
     }
