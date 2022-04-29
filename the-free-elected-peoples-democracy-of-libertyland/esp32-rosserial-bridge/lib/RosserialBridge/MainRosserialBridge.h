@@ -44,7 +44,7 @@ public:
         outMsg.field_of_view = 0.001;
         outMsg.min_range = 0.03;
         outMsg.max_range = 0.4;
-        outMsg.range = inDoc["range"];
+        outMsg.range = inDoc["r"];
     }
 };
 
@@ -69,9 +69,14 @@ private:
     WiFi_NodeHandle outputNh;
 
     ImuBridge imuBridge = ImuBridge("imu");
+
     Int16Bridge leftEncoderBridge = Int16Bridge("left_ticks");
     Int16Bridge rightEncoderBridge = Int16Bridge("right_ticks");
-    RangeBridge irBridge = RangeBridge("range_data");
+
+    RangeBridge flRangeBridge = RangeBridge("fl_range");
+    RangeBridge frRangeBridge = RangeBridge("fr_range");
+    RangeBridge lRangeBridge = RangeBridge("l_range");
+    RangeBridge rRangeBridge = RangeBridge("r_range");
 
 public:
     MainRosserialBridge()
@@ -87,9 +92,14 @@ public:
         inputStream.begin(baudRate);
 
         imuBridge.setup(outputNh);
+
         leftEncoderBridge.setup(outputNh);
         rightEncoderBridge.setup(outputNh);
-        irBridge.setup(outputNh);
+
+        flRangeBridge.setup(outputNh);
+        frRangeBridge.setup(outputNh);
+        lRangeBridge.setup(outputNh);
+        rRangeBridge.setup(outputNh);
     }
 
     void loop()
@@ -114,9 +124,14 @@ public:
                 if (err == DeserializationError::Ok)
                 {
                     imuBridge.loop(inputDoc, outputNh);
+
                     leftEncoderBridge.loop(inputDoc, outputNh);
                     rightEncoderBridge.loop(inputDoc, outputNh);
-                    irBridge.loop(inputDoc, outputNh);
+
+                    flRangeBridge.loop(inputDoc, outputNh);
+                    frRangeBridge.loop(inputDoc, outputNh);
+                    lRangeBridge.loop(inputDoc, outputNh);
+                    rRangeBridge.loop(inputDoc, outputNh);
                 }
                 else
                 {

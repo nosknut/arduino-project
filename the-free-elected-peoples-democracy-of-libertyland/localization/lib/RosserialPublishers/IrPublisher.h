@@ -22,15 +22,41 @@ private:
     Timer timer;
     Zumo32U4ProximitySensors proximity;
 
-    DynamicJsonDocument outputDocument = DynamicJsonDocument(200);
+    DynamicJsonDocument leftOutDoc = DynamicJsonDocument(200);
+    DynamicJsonDocument rightOutDoc = DynamicJsonDocument(200);
+    DynamicJsonDocument frontLeftOutDoc = DynamicJsonDocument(200);
+    DynamicJsonDocument frontRightOutDoc = DynamicJsonDocument(200);
 
 public:
     void setup()
     {
-        outputDocument["topic"] = "range_data";
-        outputDocument["range"] = (uint8_t)0;
+        leftOutDoc["topic"] = "l_range";
+        leftOutDoc["r"] = (uint8_t)0;
+        leftOutDoc.shrinkToFit();
 
-        outputDocument.shrinkToFit();
+        rightOutDoc["topic"] = "r_range";
+        rightOutDoc["r"] = (uint8_t)0;
+        rightOutDoc.shrinkToFit();
+
+        frontLeftOutDoc["topic"] = "fl_range";
+        frontLeftOutDoc["r"] = (uint8_t)0;
+        frontLeftOutDoc.shrinkToFit();
+
+        frontRightOutDoc["topic"] = "fr_range";
+        frontRightOutDoc["r"] = (uint8_t)0;
+        frontRightOutDoc.shrinkToFit();
+
+        proximity.initThreeSensors();
+    }
+
+    void printRangeFor(DynamicJsonDocument &outDoc, uint8_t counts)
+    {
+        uint8_t prevCounts = outDoc["r"];
+        if (counts != prevCounts)
+        {
+            outDoc["r"] = counts;
+            serializeJson(outDoc, DATA_SERIAL_CLASS);
+        }
     }
 
     void loop()
@@ -40,13 +66,10 @@ public:
         //   since it takes that long for the sensor to stabilize
         if (timer.loopWait(100))
         {
-            uint8_t currentRange = proximity.countsFrontWithRightLeds();
-            uint8_t prevRange = outputDocument["range"];
-            if (abs(currentRange - prevRange) > 10)
-            {
-                outputDocument["range"] = currentRange;
-                serializeJson(outputDocument, DATA_SERIAL_CLASS);
-            }
+            printRangeFor(leftOutDoc, proximity.countsLeftWithLeftLeds());
+            printRangeFor(rightOutDoc, proximity.countsRightWithRightLeds());
+            printRangeFor(frontLeftOutDoc, proximity.countsFrontWithLeftLeds());
+            printRangeFor(frontRightOutDoc, proximity.countsFrontWithRightLeds());
         }
     }
 };
