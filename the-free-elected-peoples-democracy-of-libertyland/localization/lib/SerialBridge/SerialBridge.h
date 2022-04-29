@@ -7,6 +7,9 @@
 #ifndef TERMINATING_CHARACTER
 #define TERMINATING_CHARACTER ';'
 #endif
+#ifndef STARTING_CHARACTER
+#define STARTING_CHARACTER ':'
+#endif
 #ifndef TOPIC_NAME_SIZE
 #define TOPIC_NAME_SIZE 20
 #endif
@@ -15,6 +18,7 @@ class SerialConnection
 {
 private:
     SerialClass *iostream;
+    int numLoopsWithoutData = 0;
     bool isReadingMessage = false;
     char newestTopic[TOPIC_NAME_SIZE];
 
@@ -39,6 +43,7 @@ public:
     {
         char topicName[TOPIC_NAME_SIZE];
         topic.toCharArray(topicName, TOPIC_NAME_SIZE);
+        iostream->print(STARTING_CHARACTER);
         iostream->print(topicName);
         iostream->write((const char *)message, sizeof(MessageType));
         iostream->print(TERMINATING_CHARACTER);
@@ -51,28 +56,46 @@ public:
         {
             if (iostream->available() >= TOPIC_NAME_SIZE)
             {
-                for (int i = 0; i < TOPIC_NAME_SIZE; i++)
+                if (iostream->read() == STARTING_CHARACTER)
                 {
-                    char value = iostream->read();
-                    // Exit if we see the terminating character
-                    // It will be treated as a hard reset, in case the library gets out of sync
-                    if (value == TERMINATING_CHARACTER)
+                    for (int i = 0; i < TOPIC_NAME_SIZE; i++)
                     {
-                        isReadingMessage = false;
-                        return false;
+                        char value = iostream->read();
+                        // Exit if we see the terminating character
+                        // It will be treated as a hard reset, in case the library gets out of sync
+                        if (value == TERMINATING_CHARACTER)
+                        {
+                            isReadingMessage = false;
+                            return false;
+                        }
+                        newestTopic[i] = value;
                     }
-                    newestTopic[i] = value;
+                    isReadingMessage = true;
                 }
-                isReadingMessage = true;
             }
         }
         if (isReadingMessage)
         {
-            if (topic == String(newestTopic))
+            Serial.println(topic);
+            Serial.println(newestTopic);
+            // https://www.cplusplus.com/reference/cstring/strcmp/
+            if (topic == String(newestTopic).substring(0, topic.length()))
             {
-                uint8_t *buffer;
-                iostream->readBytes(buffer, sizeof(message));
-                message = *(MessageType *)buffer;
+                Serial.println("Match!");
+                int size = sizeof(MessageType);
+                char buffer[size];
+                int i = 0;
+                while (i < size)
+                {
+                    if (!iostream->available())
+                    {
+                        delay(1);
+                        continue;
+                    }
+                    buffer[i] = (char)iostream->read();
+                    i++;
+                }
+                memcpy(&message, buffer, size);
                 isReadingMessage = false;
                 return true;
             }
@@ -96,6 +119,15 @@ public:
 
     void spinOnce()
     {
+        if (isReadingMessage)
+        {
+            numLoopsWithoutData++;
+        }
+        if (numLoopsWithoutData > 2)
+        {
+            isReadingMessage = false;
+            numLoopsWithoutData = 0;
+        }
     }
 
     unsigned long time()

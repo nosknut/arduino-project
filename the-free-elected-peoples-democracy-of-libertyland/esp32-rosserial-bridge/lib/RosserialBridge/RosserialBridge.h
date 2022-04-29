@@ -64,7 +64,9 @@ public:
     {
         if (inputNh.readMessage(nodeName, msg))
         {
+            Serial.println("Publishing ...");
             pub.publish(&msg);
+            Serial.println("Published!");
         }
     }
 };
