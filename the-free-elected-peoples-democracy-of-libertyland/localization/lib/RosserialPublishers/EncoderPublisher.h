@@ -35,14 +35,21 @@ public:
         //   since it takes that long for the sensor to stabilize
         if (timer.loopWait(10))
         {
-            right_wheel_tick_count.data = encoders.getCountsLeft();
-            left_wheel_tick_count.data = encoders.getCountsRight();
+            int16_t right_ticks = encoders.getCountsRight();
+            int16_t left_ticks = encoders.getCountsLeft();
+            auto old_right_ticks = right_wheel_tick_count.data;
+            auto old_left_ticks = left_wheel_tick_count.data;
+            if (right_ticks != old_right_ticks)
+            {
+                right_wheel_tick_count.data = right_ticks;
+                nh.publish("right_ticks", &right_wheel_tick_count);
+            }
 
-            // right_pub_msg.publish(&right_wheel_tick_count);
-            // left_pub_msg.publish(&left_wheel_tick_count);
-
-            nh.publish("right_ticks", &right_wheel_tick_count);
-            nh.publish("left_ticks", &left_wheel_tick_count);
+            if (left_ticks != old_left_ticks)
+            {
+                left_wheel_tick_count.data = left_ticks;
+                nh.publish("left_ticks", &left_wheel_tick_count);
+            }
         }
     }
 };

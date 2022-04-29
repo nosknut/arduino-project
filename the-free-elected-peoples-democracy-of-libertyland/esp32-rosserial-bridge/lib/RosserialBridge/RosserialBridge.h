@@ -34,6 +34,7 @@ private:
     const String nodeName;
 
     MessageType msg;
+    MessageType inMsg;
     ros::Publisher pub = ros::Publisher(nodeName.c_str(), &msg);
 
     // void publish(const MessageType &cmd_msg)
@@ -56,17 +57,17 @@ public:
     void setup(SerialConnection &inputNh, OutputNodeHandle &outputNh)
     {
         outputNh.advertise(pub);
-        // inputNh.subscribe(sub);
     }
+
+    virtual void mapMessages(MessageType &inMsg, MessageType &outMsg) = 0;
 
     template <typename OutputNodeHandle>
     void loop(SerialConnection &inputNh, OutputNodeHandle &outputNh)
     {
-        if (inputNh.readMessage(nodeName, msg))
+        if (inputNh.readMessage(nodeName, inMsg))
         {
-            Serial.println("Publishing ...");
+            mapMessages(inMsg, msg);
             pub.publish(&msg);
-            Serial.println("Published!");
         }
     }
 };

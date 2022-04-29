@@ -42,12 +42,15 @@ public:
         proximity.read();
         // publish the range value every 50 milliseconds
         //   since it takes that long for the sensor to stabilize
-        if (timer.loopWait(10))
+        if (timer.loopWait(100))
         {
-            range_msg.range = proximity.countsFrontWithRightLeds();
-            range_msg.header.stamp = nh.now();
-            // pub_range.publish(&range_msg);
-            nh.publish("range_data", &range_msg);
+            auto currentRange = proximity.countsFrontWithRightLeds();
+            if (currentRange != range_msg.range)
+            {
+                range_msg.range = currentRange;
+                range_msg.header.stamp = nh.now();
+                nh.publish("range_data", &range_msg);
+            }
         }
     }
 };

@@ -12,6 +12,55 @@
 // typedef ros::NodeHandle_<Esp32SerialHardware> Serial_NodeHandle;
 typedef ros::NodeHandle_<Esp32WiFiHardware> WiFi_NodeHandle;
 
+class ImuBridge : public RosserialBridge<sensor_msgs::Imu>
+{
+public:
+    ImuBridge(String nodeName) : RosserialBridge<sensor_msgs::Imu>(nodeName) {}
+
+    void mapMessages(sensor_msgs::Imu &inMsg, sensor_msgs::Imu &outMsg)
+    {
+        outMsg.header.stamp = inMsg.header.stamp;
+        outMsg.orientation.x = inMsg.orientation.x;
+        outMsg.orientation.y = inMsg.orientation.y;
+        outMsg.orientation.z = inMsg.orientation.z;
+        outMsg.orientation.w = inMsg.orientation.w;
+        outMsg.angular_velocity.x = inMsg.angular_velocity.x;
+        outMsg.angular_velocity.y = inMsg.angular_velocity.y;
+        outMsg.angular_velocity.z = inMsg.angular_velocity.z;
+        outMsg.linear_acceleration.x = inMsg.linear_acceleration.x;
+        outMsg.linear_acceleration.y = inMsg.linear_acceleration.y;
+        outMsg.linear_acceleration.z = inMsg.linear_acceleration.z;
+    }
+};
+
+class RangeBridge : public RosserialBridge<sensor_msgs::Range>
+{
+public:
+    RangeBridge(String nodeName) : RosserialBridge<sensor_msgs::Range>(nodeName) {}
+
+    void mapMessages(sensor_msgs::Range &inMsg, sensor_msgs::Range &outMsg)
+    {
+        outMsg.header.stamp = inMsg.header.stamp;
+        outMsg.radiation_type = inMsg.radiation_type;
+        outMsg.field_of_view = inMsg.field_of_view;
+        outMsg.min_range = inMsg.min_range;
+        outMsg.max_range = inMsg.max_range;
+        outMsg.range = inMsg.range;
+    }
+};
+
+class Int16Bridge : public RosserialBridge<std_msgs::Int16>
+{
+public:
+    Int16Bridge(String nodeName) : RosserialBridge<std_msgs::Int16>(nodeName) {}
+
+    void mapMessages(std_msgs::Int16 &inMsg, std_msgs::Int16 &outMsg)
+    {
+        outMsg.data = inMsg.data;
+        Serial.println(String(outMsg.data) + "   " + String(inMsg.data));
+    }
+};
+
 class MainRosserialBridge
 {
 private:
@@ -20,10 +69,10 @@ private:
     SerialConnection inputNh;
     WiFi_NodeHandle outputNh;
 
-    RosserialBridge<sensor_msgs::Imu> imuBridge = RosserialBridge<sensor_msgs::Imu>("imu");
-    RosserialBridge<std_msgs::Int16> leftEncoderBridge = RosserialBridge<std_msgs::Int16>("left_ticks");
-    RosserialBridge<std_msgs::Int16> rightEncoderBridge = RosserialBridge<std_msgs::Int16>("right_ticks");
-    RosserialBridge<sensor_msgs::Range> irBridge = RosserialBridge<sensor_msgs::Range>("range_data");
+    ImuBridge imuBridge = ImuBridge("imu");
+    Int16Bridge leftEncoderBridge = Int16Bridge("left_ticks");
+    Int16Bridge rightEncoderBridge = Int16Bridge("right_ticks");
+    RangeBridge irBridge = RangeBridge("range_data");
 
 public:
     MainRosserialBridge() : inputNh(&Serial)
