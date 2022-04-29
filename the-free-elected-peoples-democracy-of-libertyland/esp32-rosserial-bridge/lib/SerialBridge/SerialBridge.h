@@ -2,6 +2,7 @@
 #define SerialBridge_h
 #include <Arduino.h>
 #include <ros/time.h>
+#include <SerialClass.h>
 
 #ifndef TERMINATING_CHARACTER
 #define TERMINATING_CHARACTER ';'
@@ -13,12 +14,12 @@
 class SerialConnection
 {
 private:
-    HardwareSerial *iostream;
+    SerialClass *iostream;
     bool isReadingMessage = false;
     char newestTopic[TOPIC_NAME_SIZE];
 
 public:
-    SerialConnection(HardwareSerial *iostream)
+    SerialConnection(SerialClass *iostream)
     {
         this->iostream = iostream;
     }
