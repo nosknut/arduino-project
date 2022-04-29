@@ -2,7 +2,7 @@
 #define SerialClass_h
 #include <Arduino.h>
 
-#define SERIAL_CLASS Serial
+#define DATA_SERIAL_CLASS Serial
 typedef HardwareSerial SerialClass;
 
 #endif

@@ -65,7 +65,7 @@ private:
     bool wasConnected = false;
 
     DynamicJsonDocument inputDoc = DynamicJsonDocument(255);
-    SerialClass inputStream = SERIAL_CLASS;
+    SerialClass inputStream = DATA_SERIAL_CLASS;
     WiFi_NodeHandle outputNh;
 
     ImuBridge imuBridge = ImuBridge("imu");

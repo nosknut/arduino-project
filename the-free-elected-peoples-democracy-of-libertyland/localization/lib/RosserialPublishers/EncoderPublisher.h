@@ -6,6 +6,7 @@
 #include <ros/time.h>
 #include <std_msgs/Int16.h>
 #include <Zumo32U4Encoders.h>
+#include <SerialClass.h>
 
 /*
  * https://automaticaddison.com/how-to-publish-wheel-encoder-tick-data-using-ros-and-arduino/
@@ -46,13 +47,13 @@ public:
             if (rightTicks != prevRightTicks)
             {
                 rightOutputDocument["data"] = rightTicks;
-                serializeJson(rightOutputDocument, SERIAL_CLASS);
+                serializeJson(rightOutputDocument, DATA_SERIAL_CLASS);
             }
 
             if (leftTicks != prevLeftTicks)
             {
                 leftOutputDocument["data"] = leftTicks;
-                serializeJson(leftOutputDocument, SERIAL_CLASS);
+                serializeJson(leftOutputDocument, DATA_SERIAL_CLASS);
             }
         }
     }

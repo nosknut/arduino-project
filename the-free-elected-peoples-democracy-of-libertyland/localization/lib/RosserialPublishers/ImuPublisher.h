@@ -51,9 +51,9 @@ public:
 
     bool updateAcc()
     {
+        imu.readAcc();
         if (imu.accDataReady())
         {
-            imu.readAcc();
             outputDocument["la"]["x"] = imu.a.x;
             outputDocument["la"]["y"] = imu.a.y;
             outputDocument["la"]["z"] = imu.a.z;
@@ -64,9 +64,9 @@ public:
 
     bool updateGyro()
     {
+        imu.readGyro();
         if (imu.gyroDataReady())
         {
-            imu.readGyro();
             outputDocument["av"]["x"] = imu.g.x;
             outputDocument["av"]["y"] = imu.g.y;
             outputDocument["av"]["z"] = imu.g.z;
@@ -85,9 +85,9 @@ public:
 
     bool updateMag()
     {
+        imu.readMag();
         if (imu.magDataReady())
         {
-            imu.readMag();
             outputDocument["o"]["x"] = imu.m.x;
             outputDocument["o"]["y"] = imu.m.y;
             outputDocument["o"]["z"] = imu.m.z;
@@ -112,8 +112,8 @@ public:
 
             if (updatedAcc || updatedGyro || updatedMag)
             {
+                serializeJson(outputDocument, DATA_SERIAL_CLASS);
             }
-            serializeJson(outputDocument, SERIAL_CLASS);
         }
     }
 };

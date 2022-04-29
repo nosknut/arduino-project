@@ -45,7 +45,7 @@ public:
             if (abs(currentRange - prevRange) > 10)
             {
                 outputDocument["range"] = currentRange;
-                serializeJson(outputDocument, SERIAL_CLASS);
+                serializeJson(outputDocument, DATA_SERIAL_CLASS);
             }
         }
     }

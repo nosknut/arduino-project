@@ -3,10 +3,10 @@
 #include <Arduino.h>
 
 #ifdef DEBUG_ZUMO
-#define SERIAL_CLASS Serial
+#define DATA_SERIAL_CLASS Serial
 typedef Serial_ SerialClass;
 #else
-#define SERIAL_CLASS Serial1
+#define DATA_SERIAL_CLASS Serial1
 typedef HardwareSerial SerialClass;
 #endif
 
