@@ -93,4 +93,7 @@ services:
       - .ros_logs/rosserial:/root/.ros/
       - ./rosserial-configs:/rosserial-configs
     build: dockerfiles/rosserial
+    deploy:
+      restart_policy:
+        condition: any
     command: roslaunch /rosserial-configs/rosserial.launch
