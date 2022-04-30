@@ -6,6 +6,7 @@
 #include <ros/time.h>
 #include <sensor_msgs/Imu.h>
 #include <Zumo32U4IMU.h>
+#include <Wire.h>
 
 /*
  * https://atadiat.com/en/e-ros-imu-and-arduino-how-to-send-to-ros/
@@ -47,6 +48,10 @@ public:
         // imu_msg.linear_acceleration_covariance = {-1, 0, 0, 0, -1, 0, 0, 0, 0};
 
         outputDocument.shrinkToFit();
+
+        Wire.begin();
+        imu.init();
+        imu.enableDefault();
     }
 
     bool updateAcc()
@@ -99,7 +104,7 @@ public:
 
     void loop()
     {
-        if (timer.loopWait(100))
+        if (timer.loopWait(1))
         {
             // TODO: Research best-practice for publishing this message
             // with partially updated values.
