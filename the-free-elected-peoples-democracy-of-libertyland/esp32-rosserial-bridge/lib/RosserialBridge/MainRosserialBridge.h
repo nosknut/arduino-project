@@ -1,6 +1,7 @@
 #ifndef MainRosserialBridge_h
 #define MainRosserialBridge_h
 #include <Arduino.h>
+#include <ros/node_handle.h>
 #include <std_msgs/Int16.h>
 #include <sensor_msgs/Imu.h>
 #include <sensor_msgs/Range.h>
@@ -12,14 +13,18 @@
 // typedef ros::NodeHandle_<Esp32SerialHardware> Serial_NodeHandle;
 typedef ros::NodeHandle_<Esp32WiFiHardware> WiFi_NodeHandle;
 
-class ImuBridge : public RosserialBridge<sensor_msgs::Imu>
+class ImuBridge : public RosserialBridge<sensor_msgs::Imu, WiFi_NodeHandle>
 {
 public:
-    ImuBridge(String nodeName) : RosserialBridge<sensor_msgs::Imu>(nodeName) {}
+    ImuBridge(String nodeName, String frameId) : RosserialBridge<sensor_msgs::Imu, WiFi_NodeHandle>(nodeName)
+    {
+        this->msg.header.frame_id = frameId.c_str();
+    }
 
-    void mapMessages(JsonDocument &inDoc, sensor_msgs::Imu &outMsg)
+    void mapMessages(WiFi_NodeHandle &nh, JsonDocument &inDoc, sensor_msgs::Imu &outMsg)
     {
         // TODO: Add covariances
+        outMsg.header.stamp = nh.now();
         outMsg.orientation.x = inDoc["o"]["x"];
         outMsg.orientation.y = inDoc["o"]["y"];
         outMsg.orientation.z = inDoc["o"]["z"];
@@ -33,13 +38,17 @@ public:
     }
 };
 
-class RangeBridge : public RosserialBridge<sensor_msgs::Range>
+class RangeBridge : public RosserialBridge<sensor_msgs::Range, WiFi_NodeHandle>
 {
 public:
-    RangeBridge(String nodeName) : RosserialBridge<sensor_msgs::Range>(nodeName) {}
-
-    void mapMessages(JsonDocument &inDoc, sensor_msgs::Range &outMsg)
+    RangeBridge(String nodeName, String frameId) : RosserialBridge<sensor_msgs::Range, WiFi_NodeHandle>(nodeName)
     {
+        this->msg.header.frame_id = frameId.c_str();
+    }
+
+    void mapMessages(WiFi_NodeHandle &nh, JsonDocument &inDoc, sensor_msgs::Range &outMsg)
+    {
+        outMsg.header.stamp = nh.now();
         outMsg.radiation_type = sensor_msgs::Range::INFRARED;
         outMsg.field_of_view = 0.001;
         outMsg.min_range = 0.03;
@@ -48,12 +57,12 @@ public:
     }
 };
 
-class Int16Bridge : public RosserialBridge<std_msgs::Int16>
+class Int16Bridge : public RosserialBridge<std_msgs::Int16, WiFi_NodeHandle>
 {
 public:
-    Int16Bridge(String nodeName) : RosserialBridge<std_msgs::Int16>(nodeName) {}
+    Int16Bridge(String nodeName) : RosserialBridge<std_msgs::Int16, WiFi_NodeHandle>(nodeName) {}
 
-    void mapMessages(JsonDocument &inDoc, std_msgs::Int16 &outMsg)
+    void mapMessages(WiFi_NodeHandle &nh, JsonDocument &inDoc, std_msgs::Int16 &outMsg)
     {
         outMsg.data = inDoc["data"];
     }
@@ -66,20 +75,20 @@ private:
 
     DynamicJsonDocument inputDoc = DynamicJsonDocument(255);
     SerialClass inputStream = DATA_SERIAL_CLASS;
-    WiFi_NodeHandle outputNh;
+    WiFi_NodeHandle &outputNh;
 
-    ImuBridge imuBridge = ImuBridge("imu");
+    ImuBridge imuBridge = ImuBridge("imu", "imu_link");
 
     Int16Bridge leftEncoderBridge = Int16Bridge("left_ticks");
     Int16Bridge rightEncoderBridge = Int16Bridge("right_ticks");
 
-    RangeBridge flRangeBridge = RangeBridge("fl_range");
-    RangeBridge frRangeBridge = RangeBridge("fr_range");
-    RangeBridge lRangeBridge = RangeBridge("l_range");
-    RangeBridge rRangeBridge = RangeBridge("r_range");
+    RangeBridge flRangeBridge = RangeBridge("fl_range", "fl_range_link");
+    RangeBridge frRangeBridge = RangeBridge("fr_range", "fr_range_link");
+    RangeBridge lRangeBridge = RangeBridge("l_range", "l_range_link");
+    RangeBridge rRangeBridge = RangeBridge("r_range", "r_range_link");
 
 public:
-    MainRosserialBridge()
+    MainRosserialBridge(WiFi_NodeHandle &outputNh) : outputNh(outputNh)
     {
     }
 

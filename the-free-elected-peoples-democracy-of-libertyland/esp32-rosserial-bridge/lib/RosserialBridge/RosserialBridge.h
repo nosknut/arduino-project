@@ -26,14 +26,16 @@
  *
  */
 
-template <typename MessageType>
+template <typename MessageType, typename OutputNodeHandle>
 class RosserialBridge
 {
+protected:
+    MessageType msg;
+
 private:
     // TODO: Test if this is assigned before pub and sub are instantiated
     const String nodeName;
 
-    MessageType msg;
     ros::Publisher pub = ros::Publisher(nodeName.c_str(), &msg);
 
     // void publish(const MessageType &cmd_msg)
@@ -52,20 +54,18 @@ public:
         static_assert(std::is_base_of<ros::Msg, MessageType>::value, "MessageType type parameter of this class must derive from ros::Msg");
     }
 
-    template <typename OutputNodeHandle>
     void setup(OutputNodeHandle &outputNh)
     {
         outputNh.advertise(pub);
     }
 
-    virtual void mapMessages(JsonDocument &inDoc, MessageType &outMsg) = 0;
+    virtual void mapMessages(OutputNodeHandle &nh, JsonDocument &inDoc, MessageType &outMsg) = 0;
 
-    template <typename OutputNodeHandle>
     void loop(JsonDocument &inputDoc, OutputNodeHandle &outputNh)
     {
         if (inputDoc["topic"] == nodeName)
         {
-            mapMessages(inputDoc, msg);
+            mapMessages(outputNh, inputDoc, msg);
             pub.publish(&msg);
         }
     }
