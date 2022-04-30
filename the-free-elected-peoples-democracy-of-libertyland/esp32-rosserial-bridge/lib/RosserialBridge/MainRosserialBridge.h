@@ -113,6 +113,7 @@ public:
             if (!wasConnected)
             {
                 Serial.println("Connected!");
+                outputNh.loginfo("Connected to rosserial!");
                 wasConnected = true;
             }
 
@@ -135,15 +136,9 @@ public:
                 }
                 else
                 {
-                    // Print error to the "debug" serial port
-                    Serial.print("deserializeJson() returned ");
-                    Serial.println(err.c_str());
-
-                    // Flush all bytes in the inputStream serial port buffer
-                    while (inputStream.available() > 0)
-                    {
-                        inputStream.flush(false);
-                    }
+                    String errorMessage = String("Deserialization error: " + String(err.c_str()));
+                    // NB! Passing a string directly to this logger will cause compilation errors
+                    outputNh.logdebug(errorMessage.c_str());
                 }
             }
         }
@@ -152,6 +147,7 @@ public:
             if (wasConnected)
             {
                 Serial.println("Disconnected");
+                outputNh.logerror("Disconnected from rosserial");
                 wasConnected = false;
             }
             else
