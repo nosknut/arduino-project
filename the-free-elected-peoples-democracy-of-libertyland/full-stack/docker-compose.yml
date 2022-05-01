@@ -98,6 +98,17 @@ services:
         condition: any
     command: roslaunch /rosserial-configs/rosserial.launch
 
+  ros-groovy:
+    container_name: ros-groovy
+    tty: true
+    build:
+      context: ./dockerfiles/ros-groovy
+      args:
+        - BASE_IMAGE_NAME=ubuntu
+        - BASE_IMAGE_TAG=bionic
+        - VCS_REF=replace_with_commit_id
+        - ROS_DISTRO=groovy
+
   differential-drive:
     container_name: differential-drive
     environment:
