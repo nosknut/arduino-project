@@ -3,6 +3,7 @@
 #include <Arduino.h>
 #include <ros/node_handle.h>
 #include <std_msgs/Int16.h>
+#include <std_msgs/Float32.h>
 #include <sensor_msgs/Imu.h>
 #include <sensor_msgs/Range.h>
 #include <RosserialSubscriberBridge.h>
@@ -80,17 +81,18 @@ public:
     }
 };
 
-class Int16PublisherBridge : public RosserialPublisherBridge<std_msgs::Int16, WiFi_NodeHandle>
+class Float32PublisherBridge : public RosserialPublisherBridge<std_msgs::Float32, WiFi_NodeHandle>
 {
 public:
-    Int16PublisherBridge(String nodeName) : RosserialPublisherBridge<std_msgs::Int16, WiFi_NodeHandle>(nodeName)
+    Float32PublisherBridge(String nodeName) : RosserialPublisherBridge<std_msgs::Float32, WiFi_NodeHandle>(nodeName)
     {
         this->outputDocument["topic"] = nodeName;
+        this->outputDocument["data"] = (int16_t)0;
     }
 
-    void mapMessages(const std_msgs::Int16 &inMsg, JsonDocument &outDoc)
+    void mapMessages(const std_msgs::Float32 &inMsg, JsonDocument &outDoc)
     {
-        outDoc["data"] = inMsg.data;
+        outDoc["data"] = (int16_t)inMsg.data;
     }
 };
 
@@ -113,8 +115,8 @@ private:
     RangeBridge lRangeBridge = RangeBridge("l_range", "l_range_link");
     RangeBridge rRangeBridge = RangeBridge("r_range", "r_range_link");
 
-    Int16PublisherBridge leftMotorBridge = Int16PublisherBridge("lmotor_cmd");
-    Int16PublisherBridge rightMotorBridge = Int16PublisherBridge("rmotor_cmd");
+    Float32PublisherBridge leftMotorBridge = Float32PublisherBridge("lmotor_cmd");
+    Float32PublisherBridge rightMotorBridge = Float32PublisherBridge("rmotor_cmd");
 
 public:
     MainRosserialBridge(WiFi_NodeHandle &outputNh) : outputNh(outputNh)
