@@ -154,7 +154,7 @@
         "type": "mqtt out",
         "z": "519f41f181c369f6",
         "name": "",
-        "topic": "/turtle1/cmd_vel",
+        "topic": "/zumo/cmd_vel",
         "qos": "",
         "retain": "",
         "respTopic": "",

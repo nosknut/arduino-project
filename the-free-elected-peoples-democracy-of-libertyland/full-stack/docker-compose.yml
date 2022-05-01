@@ -113,13 +113,18 @@ services:
     container_name: differential-drive
     environment:
       - ROS_MASTER_URI=http://master:11311
-    ports:
-      - "11411:11411"
+    tty: true
     volumes:
       - .ros_logs/differential-drive:/root/.ros/
       - ./differential-drive-configs:/differential-drive-configs
-    build: dockerfiles/differential-drive
+    # image: ros:noetic-ros-base
+    build:
+      # context must be specified so that the Dockerfile gets access to the
+      # top level directory that contains the mqtt-bridge-configs directory
+      # https://stackoverflow.com/questions/47785706/docker-using-copy-when-the-dockerfile-is-located-in-a-subdirectory
+      context: ./
+      dockerfile: dockerfiles/differential-drive/Dockerfile
+    # build: dockerfiles/differential-drive
     deploy:
       restart_policy:
         condition: any
-    command: roslaunch /differential-drive-configs/differential_drive.launch

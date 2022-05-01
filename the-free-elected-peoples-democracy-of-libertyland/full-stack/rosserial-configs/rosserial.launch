@@ -3,7 +3,7 @@
     <param name="port" value="tcp"/>
     <param name="tcp_port" value="11411"/>
     
-    <remap from="r_motor_speed" to="differential_drive/rmotor_cmd"/>
-    <remap from="l_motor_speed" to="differential_drive/lmotor_cmd"/>
+    <remap from="r_motor_speed" to="/zumo/differential_drive/rmotor_cmd"/>
+    <remap from="l_motor_speed" to="/zumo/differential_drive/lmotor_cmd"/>
   </node>
 </launch>
