@@ -12,14 +12,12 @@
 class MainPublisher
 {
 private:
-    bool wasConnected = false;
-
     IrPublisher irPublisher;
     EncoderPublisher encoderPublisher;
     ImuPublisher imuPublisher;
 
 public:
-    void setup(long baudRate)
+    void setup()
     {
         irPublisher.setup();
         encoderPublisher.setup();
