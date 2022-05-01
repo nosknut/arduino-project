@@ -97,3 +97,18 @@ services:
       restart_policy:
         condition: any
     command: roslaunch /rosserial-configs/rosserial.launch
+
+  differential-drive:
+    container_name: differential-drive
+    environment:
+      - ROS_MASTER_URI=http://master:11311
+    ports:
+      - "11411:11411"
+    volumes:
+      - .ros_logs/differential-drive:/root/.ros/
+      - ./differential-drive-configs:/differential-drive-configs
+    build: dockerfiles/differential-drive
+    deploy:
+      restart_policy:
+        condition: any
+    command: roslaunch /differential-drive-configs/differential_drive.launch

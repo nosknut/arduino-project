@@ -1,6 +1,9 @@
 <launch>
-  <node pkg="rosserial_python" type="serial_node.py" name="serial_node">
+  <node pkg="rosserial_python" type="serial_node.py" name="serial_node" ns="zumo">
     <param name="port" value="tcp"/>
     <param name="tcp_port" value="11411"/>
+    
+    <remap from="r_motor_speed" to="differential_drive/rmotor_cmd"/>
+    <remap from="l_motor_speed" to="differential_drive/lmotor_cmd"/>
   </node>
 </launch>
