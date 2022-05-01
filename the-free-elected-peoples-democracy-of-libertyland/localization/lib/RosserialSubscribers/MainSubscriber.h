@@ -10,8 +10,8 @@ class MainSubscriber
 private:
     MotorSubscriber motorSubscriber;
 
-    DynamicJsonDocument inputDoc = DynamicJsonDocument(255);
-    SerialClass inputStream = DATA_SERIAL_CLASS;
+    DynamicJsonDocument inputDoc = DynamicJsonDocument(80);
+    SerialClass &inputStream = DATA_SERIAL_CLASS;
 
 public:
     void loop()
@@ -26,11 +26,13 @@ public:
             {
                 motorSubscriber.loop(inputDoc);
             }
-            else
-            {
-                Serial.println("Deserialization error: " + String(err.c_str()));
-            }
+            // else
+            // {
+            //     Serial.println("Deserialization error: " + String(err.c_str()));
+            //     inputStream.read();
+            // }
         }
+        motorSubscriber.securityLoop();
     }
 };
 

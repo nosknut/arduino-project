@@ -38,7 +38,7 @@ public:
 
     void loop()
     {
-        if (timer.loopWait(10))
+        if (timer.loopWait(100))
         {
             int16_t rightTicks = encoders.getCountsRight();
             int16_t leftTicks = encoders.getCountsLeft();

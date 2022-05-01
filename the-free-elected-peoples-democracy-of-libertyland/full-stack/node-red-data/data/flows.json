@@ -172,7 +172,7 @@
         "type": "function",
         "z": "519f41f181c369f6",
         "name": "",
-        "func": "nextMsg = {\n    linear: {\n        x: 0,\n        y: 0,\n        z: 0\n    },\n    angular: {\n        x: 0,\n        y: 0,\n        z: 0\n    }\n}\n\nif(msg.payload.distance > 0){\n    speed = msg.payload.vector.y * 10\n    turningSpeed = msg.payload.vector.x * 5\n    nextMsg.angular.z = -turningSpeed\n    nextMsg.linear.x = speed\n}\n\nreturn {\n    payload: nextMsg\n};",
+        "func": "nextMsg = {\n    linear: {\n        x: 0,\n        y: 0,\n        z: 0\n    },\n    angular: {\n        x: 0,\n        y: 0,\n        z: 0\n    }\n}\n\nif(msg.payload.distance > 0){\n    speed = msg.payload.vector.y * 1\n    turningSpeed = msg.payload.vector.x * 3.1415 * 1\n    nextMsg.angular.z = -turningSpeed\n    nextMsg.linear.x = speed\n}\n\nreturn {\n    payload: nextMsg\n};",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
@@ -182,7 +182,8 @@
         "y": 360,
         "wires": [
             [
-                "c245092ec9f39d52"
+                "c245092ec9f39d52",
+                "cb863f7285b7476e"
             ]
         ]
     },
@@ -193,8 +194,8 @@
         "name": "",
         "group": "dc631fea2571b0b4",
         "order": 0,
-        "width": 3,
-        "height": 3,
+        "width": "6",
+        "height": "12",
         "trigger": "all",
         "timeInterval": "100",
         "useThemeColor": true,
@@ -210,5 +211,21 @@
                 "bb672158a0c0a2a4"
             ]
         ]
+    },
+    {
+        "id": "cb863f7285b7476e",
+        "type": "debug",
+        "z": "519f41f181c369f6",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 970,
+        "y": 460,
+        "wires": []
     }
 ]

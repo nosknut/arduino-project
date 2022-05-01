@@ -24,17 +24,22 @@ public:
         if (inputDoc["topic"] == "rmotor_cmd")
         {
             timeSinceReceived.reset();
-            motors.setRightSpeed(inputDoc["data"]);
+            int16_t left = inputDoc["data"];
+            motors.setRightSpeed(left);
         }
 
         if (inputDoc["topic"] == "lmotor_cmd")
         {
             timeSinceReceived.reset();
-            motors.setLeftSpeed(inputDoc["data"]);
+            int16_t right = inputDoc["data"];
+            motors.setLeftSpeed(right);
         }
+    }
 
+    void securityLoop()
+    {
         // Kill the motors if we haven't received a message in a while
-        if (timeSinceReceived.isFinished(motorCommandTimeout))
+        if (timeSinceReceived.loopWait(motorCommandTimeout))
         {
             motors.setSpeeds(0, 0);
         }

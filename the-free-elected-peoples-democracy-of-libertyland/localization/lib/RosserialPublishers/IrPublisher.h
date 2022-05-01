@@ -64,7 +64,7 @@ public:
         proximity.read();
         // publish the range value every >= 50 milliseconds
         //   since it takes that long for the sensor to stabilize
-        if (timer.loopWait(100))
+        if (timer.loopWait(200))
         {
             printRangeFor(leftOutDoc, proximity.countsLeftWithLeftLeds());
             printRangeFor(rightOutDoc, proximity.countsRightWithRightLeds());

@@ -104,7 +104,7 @@ public:
 
     void loop()
     {
-        if (timer.loopWait(1))
+        if (timer.loopWait(100))
         {
             // TODO: Research best-practice for publishing this message
             // with partially updated values.
