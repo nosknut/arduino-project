@@ -12,21 +12,21 @@
 class MainPublisher
 {
 private:
-    IrPublisher irPublisher;
+    // IrPublisher irPublisher;
     EncoderPublisher encoderPublisher;
     ImuPublisher imuPublisher;
 
 public:
     void setup()
     {
-        irPublisher.setup();
+        // irPublisher.setup();
         encoderPublisher.setup();
         imuPublisher.setup();
     }
 
     void loop()
     {
-        irPublisher.loop();
+        // irPublisher.loop();
         encoderPublisher.loop();
         imuPublisher.loop();
     }
