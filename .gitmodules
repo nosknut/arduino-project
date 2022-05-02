@@ -1,0 +1,3 @@
+[submodule "the-free-elected-peoples-democracy-of-libertyland/full-stack/dockerfiles/differential-drive/differential-drive"]
+	path = the-free-elected-peoples-democracy-of-libertyland/full-stack/dockerfiles/differential-drive/differential-drive
+	url = https://github.com/nosknut/differential-drive.git
