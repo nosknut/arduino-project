@@ -26,7 +26,7 @@ docker-compose down
 
 ##  Calibrating PID controllers
 ```
-docker-compose up -d rqt-gui
+docker-compose up -d rqt
 ```
 ---
 
