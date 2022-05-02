@@ -1,0 +1,39 @@
+!!python/object/new:dynamic_reconfigure.encoding.Config
+dictitems:
+  Kd: 1.0e-05
+  Ki: 1.0e-05
+  Kp: 839.9999971999999
+  encoder_max: 32768
+  encoder_min: -32768
+  groups: !!python/object/new:dynamic_reconfigure.encoding.Config
+    dictitems:
+      Kd: 1.0e-05
+      Ki: 1.0e-05
+      Kp: 839.9999971999999
+      encoder_max: 32768
+      encoder_min: -32768
+      groups: !!python/object/new:dynamic_reconfigure.encoding.Config
+        state: []
+      id: 0
+      name: Default
+      out_max: 400.0
+      out_min: -400.0
+      parameters: !!python/object/new:dynamic_reconfigure.encoding.Config
+        state: []
+      parent: 0
+      rate: 5
+      rolling_pts: 5
+      state: true
+      ticks_meter: 8000.0
+      timeout_ticks: 4
+      type: ''
+      vel_threshold: 0.0
+    state: []
+  out_max: 400.0
+  out_min: -400.0
+  rate: 5
+  rolling_pts: 5
+  ticks_meter: 8000.0
+  timeout_ticks: 4
+  vel_threshold: 0.0
+state: []
