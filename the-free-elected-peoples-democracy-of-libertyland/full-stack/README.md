@@ -23,6 +23,11 @@ Run the following command to shut everything down
 ```
 docker-compose down
 ```
+
+##  Calibrating PID controllers
+```
+docker-compose up -d rqt-gui
+```
 ---
 
 ## Hosting mqtt in docker

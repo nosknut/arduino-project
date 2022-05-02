@@ -40,6 +40,17 @@ services:
     build: dockerfiles/turtlesim
     command: rosrun turtlesim turtlesim_node
 
+  rqt-gui:
+    container_name: rqt-gui
+    environment:
+      - DISPLAY=192.168.1.190:0.0
+      - ROS_MASTER_URI=http://master:11311
+    volumes:
+      - .ros_logs/rqt-gui:/root/.ros/
+      - ./differential-drive-configs/rqt-configs:/root/rqt-configs
+    build: dockerfiles/rqt-gui
+    command: rosrun rqt_gui rqt_gui -s reconfigure
+
   mqtt-ros-bridge:
     container_name: mqtt-ros-bridge
     environment:
