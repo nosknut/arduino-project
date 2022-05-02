@@ -1,6 +1,4 @@
 <launch>
-  <rosparam param="ticks_meter">8000</rosparam>
-
   <node pkg="differential_drive" type="pid_velocity.py" name="lpid_velocity" ns="zumo/differential_drive" required="true">
       <remap from="wheel" to="/zumo/left_ticks"/>
       <remap from="motor_cmd" to="lmotor_cmd"/>
@@ -11,11 +9,12 @@
       <rosparam param="Kp">200</rosparam>
       <rosparam param="Ki">200</rosparam>
       <rosparam param="Kd">0</rosparam>
-      <rosparam param="out_min">-255</rosparam>
-      <rosparam param="out_max">255</rosparam>
+      <rosparam param="out_min">-400</rosparam>
+      <rosparam param="out_max">400</rosparam>
       <rosparam param="rate">5</rosparam>
       <rosparam param="timeout_ticks">4</rosparam>
       <rosparam param="rolling_pts">5</rosparam>
+      <rosparam param="ticks_meter">8000</rosparam>
   </node>
   
   <node pkg="differential_drive" type="pid_velocity.py" name="rpid_velocity" ns="zumo/differential_drive" required="true">
@@ -28,11 +27,12 @@
       <rosparam param="Kp">200</rosparam>
       <rosparam param="Ki">200</rosparam>
       <rosparam param="Kd">0</rosparam>
-      <rosparam param="out_min">-255</rosparam>
-      <rosparam param="out_max">255</rosparam>
+      <rosparam param="out_min">-400</rosparam>
+      <rosparam param="out_max">400</rosparam>
       <rosparam param="rate">5</rosparam>
       <rosparam param="timeout_ticks">4</rosparam>
       <rosparam param="rolling_pts">5</rosparam>
+      <rosparam param="ticks_meter">8000</rosparam>
   </node>
 
   <node pkg="differential_drive" type="twist_to_motors.py" name="twist_to_motors" output="screen" ns="zumo/differential_drive" required="true">
