@@ -172,7 +172,7 @@
         "type": "function",
         "z": "519f41f181c369f6",
         "name": "",
-        "func": "nextMsg = {\n    linear: {\n        x: 0,\n        y: 0,\n        z: 0\n    },\n    angular: {\n        x: 0,\n        y: 0,\n        z: 0\n    }\n}\n\nif(msg.payload.distance > 0){\n    speed = msg.payload.vector.y * 1\n    turningSpeed = msg.payload.vector.x * 3.1415 * 1\n    nextMsg.angular.z = -turningSpeed\n    nextMsg.linear.x = speed\n}\n\nreturn {\n    // payload: nextMsg\n    payload: msg.payload.vector.y * 100\n};",
+        "func": "nextMsg = {\n    linear: {\n        x: 0,\n        y: 0,\n        z: 0\n    },\n    angular: {\n        x: 0,\n        y: 0,\n        z: 0\n    }\n}\n\nif(msg.payload.distance > 0){\n    speed = msg.payload.vector.y * 0.2\n    turningSpeed = msg.payload.vector.x * 3.1415 * 1\n    nextMsg.angular.z = -turningSpeed\n    nextMsg.linear.x = speed\n}\n\nreturn {\n    payload: nextMsg\n};",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
@@ -201,7 +201,7 @@
         "useThemeColor": true,
         "color": "#000000",
         "threshold": 0.1,
-        "directions": "all",
+        "directions": "ver",
         "shape": "squere",
         "centerAtRelease": true,
         "x": 450,
@@ -227,90 +227,5 @@
         "x": 970,
         "y": 460,
         "wires": []
-    },
-    {
-        "id": "f0f211f5400b220a",
-        "type": "function",
-        "z": "519f41f181c369f6",
-        "name": "",
-        "func": "let current = global.get(\"val3\")\nif(isNaN(current)){\n    current = 0;\n}\nconst val = current + msg.payload\nglobal.set(\"val3\", val)\nmsg.payload = val\nreturn msg;",
-        "outputs": 1,
-        "noerr": 0,
-        "initialize": "// Code added here will be run once\n// whenever the node is started.\nglobal.set(\"val3\", 0)",
-        "finalize": "",
-        "libs": [],
-        "x": 680,
-        "y": 180,
-        "wires": [
-            [
-                "695db63beac5d29f"
-            ]
-        ]
-    },
-    {
-        "id": "235bca053248567a",
-        "type": "inject",
-        "z": "519f41f181c369f6",
-        "name": "",
-        "props": [
-            {
-                "p": "payload"
-            }
-        ],
-        "repeat": "",
-        "crontab": "",
-        "once": false,
-        "onceDelay": 0.1,
-        "topic": "",
-        "payload": "-100",
-        "payloadType": "num",
-        "x": 490,
-        "y": 180,
-        "wires": [
-            [
-                "f0f211f5400b220a"
-            ]
-        ]
-    },
-    {
-        "id": "695db63beac5d29f",
-        "type": "debug",
-        "z": "519f41f181c369f6",
-        "name": "",
-        "active": true,
-        "tosidebar": true,
-        "console": false,
-        "tostatus": false,
-        "complete": "false",
-        "statusVal": "",
-        "statusType": "auto",
-        "x": 910,
-        "y": 180,
-        "wires": []
-    },
-    {
-        "id": "d310f63f734f4e69",
-        "type": "inject",
-        "z": "519f41f181c369f6",
-        "name": "",
-        "props": [
-            {
-                "p": "payload"
-            }
-        ],
-        "repeat": "",
-        "crontab": "",
-        "once": false,
-        "onceDelay": 0.1,
-        "topic": "",
-        "payload": "100",
-        "payloadType": "num",
-        "x": 470,
-        "y": 140,
-        "wires": [
-            [
-                "f0f211f5400b220a"
-            ]
-        ]
     }
 ]
