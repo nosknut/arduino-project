@@ -4,12 +4,12 @@
 #include <Wire.h>
 
 // Wifi navn (ssid) og passord
-const char *ssid = "esp";
-const char *password = "12345678";
+const char *ssid = "Get-2G-DC8011";
+const char *password = "BC3A88DD73";
 
 // Add your MQTT Broker IP address (mulig?: epstin.com)
 // const char *mqtt_server = "IP_ADRESSE"; får ikke ip til å fungere...
-const char *mqtt_server = "10.24.3.237";
+const char *mqtt_server = "192.168.0.125";
 const int mqtt_port = 1883;
 
 // deklarerer navn og variabler
@@ -28,6 +28,8 @@ const int mqttLed = 32;
 const int mqttChannel = 2;
 
 #define POT_METER 34
+int lastBattery = 0;
+int time_reconnect = 0;
 
 void setup_wifi()
 {
@@ -41,8 +43,19 @@ void setup_wifi()
 
   while (WiFi.status() != WL_CONNECTED)
   {
-    delay(500);
-    Serial.print(".");
+    long now = millis();
+    // leser av hvert sekund
+    if ((now - lastMsg > 500))
+    {
+      lastMsg = now;
+      Serial.print(".");
+    }
+    if ((now - time_reconnect > 5000))
+    {
+      Serial.print("Restarter esp32");
+      time_reconnect = now;
+      ESP.restart();
+    }
   }
   Serial.println("");
   Serial.println("WiFi connected");
@@ -136,8 +149,8 @@ void loop()
   // hvis clienten ikke er tilkoblet, kjør "reconnect"
   if (!client.connected())
   {
-    reconnect();
     ledcWrite(mqttChannel, 0); // ikke oppkoblet
+    reconnect();
   }
   client.loop();
 
@@ -149,7 +162,7 @@ void loop()
 
   long now = millis();
   // leser av hvert sekund
-  if (now - lastMsg > 1000)
+  if ((now - lastMsg > 1000) || ((battery > lastBattery + 5) || (battery < lastBattery - 5)))
   {
     lastMsg = now;
 
@@ -164,5 +177,7 @@ void loop()
     Serial.print(battery);
     Serial.println("%");
     client.publish("esp32/battery", char_array);
+
+    lastBattery = battery;
   }
 }
