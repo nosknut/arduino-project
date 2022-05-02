@@ -59,6 +59,20 @@ Shut down the docker container so stop hosting mqtt
 docker-compose stop mqtt
 ```
 
+## Bridge topics
+```
+docker-compose up -d master
+docker exec -it master /bin/bash
+source /ros_entrypoint.sh
+rostopic list
+rosrun topic_tools relay in_topic out_topic
+```
+
+## Plot topics
+```
+docker-compose up -d rqt-plot 
+```
+
 ## Run catkin commands with Docker
 Navigate to the folder that contains this [docker-compose.yml](./docker-compose.yml) file
 

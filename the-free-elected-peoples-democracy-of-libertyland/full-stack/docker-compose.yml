@@ -51,6 +51,16 @@ services:
     build: dockerfiles/rqt-gui
     command: rosrun rqt_gui rqt_gui -s reconfigure
 
+  rqt-plot:
+    container_name: rqt-plot
+    environment:
+      - DISPLAY=192.168.1.190:0.0
+      - ROS_MASTER_URI=http://master:11311
+    volumes:
+      - .ros_logs/rqt-plot:/root/.ros/
+    build: dockerfiles/rqt-plot
+    command: rqt_plot
+
   mqtt-ros-bridge:
     container_name: mqtt-ros-bridge
     environment:
