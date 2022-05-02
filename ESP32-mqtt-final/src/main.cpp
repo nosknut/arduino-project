@@ -4,12 +4,14 @@
 #include <Wire.h>
 
 // Wifi navn (ssid) og passord
-const char *ssid = "Get-2G-DC8011";
-const char *password = "BC3A88DD73";
+// const char *ssid = "Get-2G-DC8011";
+// const char *password = "BC3A88DD73";
+const char *ssid = "zenbook-kristian";
+const char *password = "hansen123";
 
 // Add your MQTT Broker IP address (mulig?: epstin.com)
 // const char *mqtt_server = "IP_ADRESSE"; får ikke ip til å fungere...
-const char *mqtt_server = "192.168.0.125";
+const char *mqtt_server = "10.22.230.151";
 const int mqtt_port = 1883;
 
 // deklarerer navn og variabler
@@ -176,8 +178,8 @@ void loop()
     Serial.print("Batteriprosent: ");
     Serial.print(battery);
     Serial.println("%");
-    client.publish("esp32/battery", char_array);
-
+    String jsonOut = "{\"owner\": \"esp\", \"amount\": " + String(battery) + "}";
+    client.publish("esp32/battery", jsonOut.c_str());
     lastBattery = battery;
   }
 }
