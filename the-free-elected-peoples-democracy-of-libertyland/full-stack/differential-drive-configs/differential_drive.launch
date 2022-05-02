@@ -6,9 +6,9 @@
       <remap from="wheel_vel" to="lwheel_vel"/>
   </node>
   <node name="left_pid_dynparam" pkg="dynamic_reconfigure" type="dynparam" args="set_from_parameters lpid_velocity" ns="zumo/differential_drive">
-      <rosparam param="Kp">200</rosparam>
-      <rosparam param="Ki">200</rosparam>
-      <rosparam param="Kd">0</rosparam>
+      <rosparam param="Kp">359</rosparam>
+      <rosparam param="Ki">659</rosparam>
+      <rosparam param="Kd">2</rosparam>
       <rosparam param="out_min">-400</rosparam>
       <rosparam param="out_max">400</rosparam>
       <rosparam param="rate">5</rosparam>
@@ -24,9 +24,9 @@
       <remap from="wheel_vel" to="rwheel_vel"/>
   </node>
   <node name="right_pid_dynparam" pkg="dynamic_reconfigure" type="dynparam" args="set_from_parameters rpid_velocity" ns="zumo/differential_drive">
-      <rosparam param="Kp">200</rosparam>
-      <rosparam param="Ki">200</rosparam>
-      <rosparam param="Kd">0</rosparam>
+      <rosparam param="Kp">359</rosparam>
+      <rosparam param="Ki">659</rosparam>
+      <rosparam param="Kd">2</rosparam>
       <rosparam param="out_min">-400</rosparam>
       <rosparam param="out_max">400</rosparam>
       <rosparam param="rate">5</rosparam>
