@@ -1,5 +1,5 @@
 <launch>
-  <rosparam param="ticks_meter">70</rosparam>
+  <rosparam param="ticks_meter">8000</rosparam>
 
   <node pkg="differential_drive" type="pid_velocity.py" name="lpid_velocity" ns="zumo/differential_drive" required="true">
       <remap from="wheel" to="/zumo/left_ticks"/>
@@ -37,6 +37,6 @@
 
   <node pkg="differential_drive" type="twist_to_motors.py" name="twist_to_motors" output="screen" ns="zumo/differential_drive" required="true">
     <remap from="twist" to="cmd_vel"/>
-    <rosparam param="base_width">0.245</rosparam>
+    <rosparam param="base_width">0.085</rosparam>
   </node>
 </launch>
