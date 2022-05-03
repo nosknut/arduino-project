@@ -86,6 +86,20 @@ services:
     build: dockerfiles/rqt-plot
     command: rqt
 
+  webviz:
+    container_name: webviz
+    environment:
+      - ROS_MASTER_URI=http://master:11311
+    ports:
+      - "9090:9090"
+    volumes:
+      - .ros_logs/webviz:/root/.ros/
+      - .webviz-data:/root/
+    build: dockerfiles/webviz
+    # https://webviz.io/
+    # http://wiki.ros.org/rosbridge_suite/Tutorials/RunningRosbridge
+    command: roslaunch rosbridge_server rosbridge_websocket.launch
+
   mqtt-ros-bridge:
     container_name: mqtt-ros-bridge
     environment:
