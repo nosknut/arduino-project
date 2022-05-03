@@ -39,4 +39,17 @@
     <remap from="twist" to="cmd_vel" />
     <rosparam param="base_width">0.085</rosparam>
   </node>
+
+  <node pkg="differential_drive" type="diff_tf.py" name="diff_tf" ns="zumo/differential_drive">
+    <rosparam param="rate">5</rosparam>
+    <rosparam param="base_width">0.085</rosparam>
+    <rosparam param="ticks_meter">8000</rosparam>
+    <remap from="rwheel" to="/zumo/right_ticks" />
+    <remap from="lwheel" to="/zumo/left_ticks" />
+  </node>
+
+  <param name="robot_description" textfile="/differential-drive-configs/description.urdf" />
+  <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher">
+    <param name="publish_frequency" value="5.0" />
+  </node>
 </launch>

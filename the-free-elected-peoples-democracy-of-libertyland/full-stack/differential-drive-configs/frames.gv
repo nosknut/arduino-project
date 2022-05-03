@@ -1,0 +1,7 @@
+digraph G {
+"odom" -> "base_link"[label=" Broadcaster: /zumo/differential_drive/diff_tf\nAverage rate: 5.208\nBuffer length: 4.8\nMost recent transform: 1651579687.838\nOldest transform: 1651579683.038\n"];
+edge [style=invis];
+ subgraph cluster_legend { style=bold; color=black; label ="view_frames Result";
+"Recorded at time: 1651579687.919717"[ shape=plaintext ] ;
+}->"odom";
+}
