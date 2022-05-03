@@ -1,6 +1,17 @@
 version: '3'
 
 services:
+  nav:
+    # Starts the navigation stack
+    image: ros:noetic-ros-base
+    depends_on:
+      - master
+      - mqtt
+      - mqtt-ros-bridge
+      - rosserial
+      - differential-drive
+      - node-red
+
   catkin:
     image: ros:noetic-ros-base
     tty: true
