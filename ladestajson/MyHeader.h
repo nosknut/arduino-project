@@ -4,11 +4,11 @@
 #define _MyHeader_H
 
 // WiFi credentials
-const char* ssid = "zenbook-kristian";
-const char* password = "hansen123";
+const char* ssid = "ssid";
+const char* password = "password";
 
 // Personal API key
-String openWeatherMapApiKey = "a31488dd7bd838dba6511d11cc0112aa";
+String openWeatherMapApiKey = "apiKey";
 
 // Country code and city
 String city = "Trondheim";
