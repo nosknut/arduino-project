@@ -214,3 +214,8 @@ To shut everything down, close the terminals and run the following code to stop 
 ```
 docker-compose down
 ```
+
+## Removing everything
+```
+docker system prune --volumes
+```
