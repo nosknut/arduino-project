@@ -219,3 +219,64 @@ docker-compose down
 ```
 docker system prune --volumes
 ```
+
+# Installing on raspberry pi
+NB! If you use sudo to clone, all future
+commands will have to be run by sudo
+
+First clone the repository
+```
+git clone --recursive https://github.com/nosknut/arduino-project.git
+git submodule update
+```
+
+Now enter the cloned repo and checkout the ```develop``` branch.
+```develop``` is the branch where raspberry pi deployments are made
+```
+cd arduino-project
+git fetch
+git checkout develop
+```
+
+Now navigate into the directory with the [docker-compose.yml](./docker-compose.yml) file
+```
+cd the-free-elected-peoples-democracy-of-libertyland/full-stack/
+```
+
+Run the following to install the node-red dependencies
+```
+sudo docker-compose run install-node-red
+```
+
+Now start the stack
+
+Unless you have made changes to the code,
+this is the conly command you need to
+start the project after a reboot
+```
+sudo docker-compose up -d nav
+```
+
+Run this if you want to shut down the stack
+```
+sudo docker-compose down
+```
+
+Run this if you have made updates to the develop branch
+```
+git reset origin/develop --hard
+```
+
+When the reset is done, run the following to bring up the stack.
+
+NB! Rerunning ```install-node-red``` is important if you have added
+nodes to node-red since you last synced with the develop branch 
+```
+sudo docker-compose run install-node-red
+sudo docker-compose up -d nav
+```
+
+Run the following to delete everything
+```
+sudo docker system prune --volumes
+```
