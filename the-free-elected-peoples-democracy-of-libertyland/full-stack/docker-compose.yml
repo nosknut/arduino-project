@@ -86,6 +86,17 @@ services:
     build: dockerfiles/rqt-plot
     command: rqt
 
+  rviz:
+    container_name: rviz
+    environment:
+      - DISPLAY=192.168.1.190:0.0
+      - ROS_MASTER_URI=http://master:11311
+    volumes:
+      - .ros_logs/rviz:/root/.ros/
+      - .rviz-data:/root/
+    build: dockerfiles/rviz
+    command: rviz
+
   webviz:
     container_name: webviz
     environment:
