@@ -11,6 +11,7 @@ services:
       - rosserial
       - differential-drive
       - node-red
+      - webviz
 
   catkin:
     image: ros:noetic-ros-base
