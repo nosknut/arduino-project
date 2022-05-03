@@ -39,6 +39,9 @@ services:
       - "11311:11311"
     volumes:
       - .ros_logs/master:/root/.ros/
+    deploy:
+      restart_policy:
+        condition: any
     command: roscore
 
   turtlesim:
@@ -104,7 +107,7 @@ services:
       # https://stackoverflow.com/questions/47785706/docker-using-copy-when-the-dockerfile-is-located-in-a-subdirectory
       context: ./
       dockerfile: dockerfiles/mqtt-ros-bridge/Dockerfile
-    command: roslaunch /mqtt-bridge-configs/mqtt_bridge.launch
+    command: roslaunch /mqtt-bridge-configs/mqtt_bridge.launch --wait
 
   # Required to install npm dependencies for the node-red container
   # The folder mounted here is shared between them
@@ -139,7 +142,7 @@ services:
     deploy:
       restart_policy:
         condition: any
-    command: roslaunch /rosserial-configs/rosserial.launch
+    command: roslaunch /rosserial-configs/rosserial.launch --wait
 
   ros-groovy:
     container_name: ros-groovy

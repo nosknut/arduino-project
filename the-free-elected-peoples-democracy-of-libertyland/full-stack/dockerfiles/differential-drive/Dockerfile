@@ -16,4 +16,4 @@ COPY ./dockerfiles/differential-drive/differential-drive ./src/differential-driv
 RUN . devel/setup.sh && catkin_make
 
 
-CMD /bin/bash -c "source devel/setup.bash && roslaunch /differential-drive-configs/differential_drive.launch"
+CMD /bin/bash -c "source devel/setup.bash && roslaunch /differential-drive-configs/differential_drive.launch --wait"
