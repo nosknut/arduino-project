@@ -1,9 +1,20 @@
 <launch>
-  <node pkg="rosserial_python" type="serial_node.py" name="serial_node" ns="zumo" required="true">
-    <param name="port" value="tcp"/>
-    <param name="tcp_port" value="11411"/>
-    
-    <remap from="rmotor_cmd" to="/zumo/differential_drive/rmotor_cmd"/>
-    <remap from="lmotor_cmd" to="/zumo/differential_drive/lmotor_cmd"/>
+  <arg name="robot_name" value="zumo" />
+  <arg name="port" value="tcp" />
+  <arg name="tcp_port" value="11411" />
+
+  <node pkg="rosserial_python" type="serial_node.py" name="serial_node" ns="$(arg robot_name)" required="true">
+    <param name="port" value="$(arg port)" />
+    <param name="tcp_port" value="$(arg tcp_port)" />
+
+    <remap from="rmotor_cmd" to="/$(arg robot_name)/wheels/right/motor/cmd_effort" />
+    <remap from="lmotor_cmd" to="/$(arg robot_name)/wheels/left/motor/cmd_effort" />
+
+    <remap from="right_ticks" to="/$(arg robot_name)/wheels/right/encoder/ticks" />
+    <remap from="left_ticks" to="/$(arg robot_name)/wheels/left/encoder/ticks" />
+    <remap from="fr_range" to="/$(arg robot_name)/range/front/right/infrared" />
+    <remap from="fl_range" to="/$(arg robot_name)/range/front/left/infrared" />
+    <remap from="r_range" to="/$(arg robot_name)/range/right/infrared" />
+    <remap from="l_range" to="/$(arg robot_name)/range/left/infrared" />
   </node>
 </launch>
