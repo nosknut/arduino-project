@@ -1,0 +1,2528 @@
+[
+    {
+        "id": "290674bad5d75c28",
+        "type": "tab",
+        "label": "Dasboard-prosjekt",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "eb7979a31ca6fdab",
+        "type": "tab",
+        "label": "Demo",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "403154b9dbad052b",
+        "type": "tab",
+        "label": "Kart",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "637d6cd14b3b778f",
+        "type": "tab",
+        "label": "weather",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "213feba8b3519970",
+        "type": "tab",
+        "label": "saldo",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "670415cffd96c617",
+        "type": "tab",
+        "label": "parkering",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "66c7331b3b4ab98e",
+        "type": "ui_tab",
+        "name": "Home",
+        "icon": "dashboard",
+        "order": 3,
+        "disabled": false,
+        "hidden": false
+    },
+    {
+        "id": "89b789c18af956f7",
+        "type": "ui_base",
+        "theme": {
+            "name": "theme-custom",
+            "lightTheme": {
+                "default": "#0094CE",
+                "baseColor": "#0094CE",
+                "baseFont": "-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen-Sans,Ubuntu,Cantarell,Helvetica Neue,sans-serif",
+                "edited": true,
+                "reset": false
+            },
+            "darkTheme": {
+                "default": "#097479",
+                "baseColor": "#097479",
+                "baseFont": "-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen-Sans,Ubuntu,Cantarell,Helvetica Neue,sans-serif",
+                "edited": true,
+                "reset": false
+            },
+            "customTheme": {
+                "name": "foodora",
+                "default": "#4B7930",
+                "baseColor": "#db0ab5",
+                "baseFont": "-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen-Sans,Ubuntu,Cantarell,Helvetica Neue,sans-serif",
+                "reset": false
+            },
+            "themeState": {
+                "base-color": {
+                    "default": "#db0ab5",
+                    "value": "#db0ab5",
+                    "edited": true
+                },
+                "page-titlebar-backgroundColor": {
+                    "value": "#db0ab5",
+                    "edited": false
+                },
+                "page-backgroundColor": {
+                    "value": "#fafafa",
+                    "edited": true
+                },
+                "page-sidebar-backgroundColor": {
+                    "value": "#ffffff",
+                    "edited": true
+                },
+                "group-textColor": {
+                    "value": "#f63bd4",
+                    "edited": false
+                },
+                "group-borderColor": {
+                    "value": "#ffffff",
+                    "edited": true
+                },
+                "group-backgroundColor": {
+                    "value": "#ffffff",
+                    "edited": true
+                },
+                "widget-textColor": {
+                    "value": "#111111",
+                    "edited": true
+                },
+                "widget-backgroundColor": {
+                    "value": "#db0ab5",
+                    "edited": false
+                },
+                "widget-borderColor": {
+                    "value": "#ffffff",
+                    "edited": true
+                },
+                "base-font": {
+                    "value": "-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen-Sans,Ubuntu,Cantarell,Helvetica Neue,sans-serif"
+                }
+            },
+            "angularTheme": {
+                "primary": "indigo",
+                "accents": "blue",
+                "warn": "red",
+                "background": "grey",
+                "palette": "light"
+            }
+        },
+        "site": {
+            "name": "Node-RED Dashboard",
+            "hideToolbar": "false",
+            "allowSwipe": "false",
+            "lockMenu": "false",
+            "allowTempTheme": "true",
+            "dateFormat": "DD/MM/YYYY",
+            "sizes": {
+                "sx": 48,
+                "sy": 48,
+                "gx": 6,
+                "gy": 6,
+                "cx": 6,
+                "cy": 6,
+                "px": 0,
+                "py": 0
+            }
+        }
+    },
+    {
+        "id": "c4cf38c51d0969b8",
+        "type": "ui_group",
+        "name": "esp32-data",
+        "tab": "66c7331b3b4ab98e",
+        "order": 1,
+        "disp": true,
+        "width": "15",
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "10fb7ce484cb034b",
+        "type": "ui_tab",
+        "name": "Kart",
+        "icon": "dashboard",
+        "order": 4,
+        "disabled": false,
+        "hidden": false
+    },
+    {
+        "id": "9b40c8b89fc662e2",
+        "type": "ui_group",
+        "name": "Form_kart",
+        "tab": "10fb7ce484cb034b",
+        "order": 1,
+        "disp": true,
+        "width": 16,
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "70d97fe9e54ff745",
+        "type": "ui_group",
+        "name": "sensor",
+        "tab": "66c7331b3b4ab98e",
+        "order": 2,
+        "disp": true,
+        "width": "8",
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "10e78a89.5b4fd5",
+        "type": "mqtt-broker",
+        "name": "",
+        "broker": "localhost",
+        "port": "1880",
+        "clientid": "",
+        "autoConnect": true,
+        "usetls": false,
+        "protocolVersion": "4",
+        "keepalive": "60",
+        "cleansession": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closeQos": "0",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willPayload": "",
+        "willMsg": {},
+        "sessionExpiry": ""
+    },
+    {
+        "id": "61285987.c20328",
+        "type": "ui_group",
+        "name": "Main",
+        "tab": "e7c46d5e.a1283",
+        "order": 1,
+        "disp": true,
+        "width": "6",
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "e7c46d5e.a1283",
+        "type": "ui_tab",
+        "name": "Dashboard",
+        "icon": "dashboard",
+        "order": 1,
+        "disabled": false,
+        "hidden": false
+    },
+    {
+        "id": "76cba69668d18fc8",
+        "type": "ui_group",
+        "name": "esp32",
+        "tab": "",
+        "order": 1,
+        "disp": true,
+        "width": "6",
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "6c757c4139ad9d1a",
+        "type": "mqtt-broker",
+        "name": "",
+        "broker": "epstin.com",
+        "port": "1883",
+        "clientid": "",
+        "autoConnect": true,
+        "usetls": false,
+        "protocolVersion": "4",
+        "keepalive": "60",
+        "cleansession": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closeQos": "0",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willPayload": "",
+        "willMsg": {},
+        "sessionExpiry": ""
+    },
+    {
+        "id": "1eb9ccb9733a1a2b",
+        "type": "ui_group",
+        "name": "Lamp",
+        "tab": "",
+        "order": 1,
+        "disp": true,
+        "width": "6",
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "a1f66a54d6b18ca2",
+        "type": "ui_group",
+        "name": "Sensor",
+        "tab": "",
+        "order": 2,
+        "disp": true,
+        "width": "6",
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "d7df50a632282260",
+        "type": "ui_spacer",
+        "z": "290674bad5d75c28",
+        "name": "spacer",
+        "group": "c4cf38c51d0969b8",
+        "order": 5,
+        "width": 12,
+        "height": 1
+    },
+    {
+        "id": "386a9e80a3db35cb",
+        "type": "ui_spacer",
+        "z": "290674bad5d75c28",
+        "name": "spacer",
+        "group": "c4cf38c51d0969b8",
+        "order": 6,
+        "width": 12,
+        "height": 1
+    },
+    {
+        "id": "c1e859782d60c0e4",
+        "type": "ui_spacer",
+        "z": "290674bad5d75c28",
+        "name": "spacer",
+        "group": "c4cf38c51d0969b8",
+        "order": 7,
+        "width": 12,
+        "height": 1
+    },
+    {
+        "id": "6d8f04688f63a7e8",
+        "type": "ui_group",
+        "name": "ESP32-Batteristatus",
+        "tab": "e7c46d5e.a1283",
+        "order": 2,
+        "disp": true,
+        "width": "6",
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "7b23a1fee9da84e0",
+        "type": "mqtt-broker",
+        "name": "rasberry",
+        "broker": "pearpie.is-very-sweet.org",
+        "port": "1883",
+        "clientid": "",
+        "autoConnect": true,
+        "usetls": false,
+        "protocolVersion": "4",
+        "keepalive": "60",
+        "cleansession": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closeQos": "0",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willPayload": "",
+        "willMsg": {},
+        "sessionExpiry": ""
+    },
+    {
+        "id": "de68e67a0484d1b3",
+        "type": "mqtt-broker",
+        "name": "mqtt-docker-compose",
+        "broker": "10.22.230.151",
+        "port": "1883",
+        "clientid": "",
+        "autoConnect": true,
+        "usetls": false,
+        "protocolVersion": "4",
+        "keepalive": "60",
+        "cleansession": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closeQos": "0",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willPayload": "",
+        "willMsg": {},
+        "sessionExpiry": ""
+    },
+    {
+        "id": "02d7ea726b6fb94d",
+        "type": "ui_group",
+        "name": "Økonomi og logistikk",
+        "tab": "e7c46d5e.a1283",
+        "order": 4,
+        "disp": true,
+        "width": 16,
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "f1c624965927cf87",
+        "type": "ui_group",
+        "name": "Parkering",
+        "tab": "e7c46d5e.a1283",
+        "order": 3,
+        "disp": true,
+        "width": "6",
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "686bd7d3a00fd97c",
+        "type": "ui_tab",
+        "name": "Weather",
+        "icon": "dashboard",
+        "order": 2,
+        "disabled": false,
+        "hidden": false
+    },
+    {
+        "id": "3d710461e887afda",
+        "type": "ui_group",
+        "name": "windpower",
+        "tab": "686bd7d3a00fd97c",
+        "order": 1,
+        "disp": true,
+        "width": 7,
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "18e0a22dc77edd23",
+        "type": "ui_group",
+        "name": "solarpower",
+        "tab": "686bd7d3a00fd97c",
+        "order": 2,
+        "disp": true,
+        "width": 7,
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "d9348da327ce5eb0",
+        "type": "ui_group",
+        "name": "energyprice",
+        "tab": "686bd7d3a00fd97c",
+        "order": 3,
+        "disp": true,
+        "width": "7",
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "3557ce5a552e8e07",
+        "type": "ui_group",
+        "name": "thermalpower",
+        "tab": "686bd7d3a00fd97c",
+        "order": 4,
+        "disp": true,
+        "width": "6",
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "8924e22f.e375e",
+        "type": "ui_group",
+        "name": "Teste",
+        "tab": "",
+        "order": 1,
+        "disp": false,
+        "width": "6"
+    },
+    {
+        "id": "e6542ddfcdb575a3",
+        "type": "ui_tab",
+        "name": "Kundeapp",
+        "icon": "dashboard",
+        "disabled": false,
+        "hidden": false
+    },
+    {
+        "id": "bf4a73a2a122ca58",
+        "type": "ui_group",
+        "name": "bestilling",
+        "tab": "e6542ddfcdb575a3",
+        "order": 1,
+        "disp": true,
+        "width": "6",
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "5bebfcb0025404e7",
+        "type": "ui_spacer",
+        "z": "213feba8b3519970",
+        "name": "spacer",
+        "group": "6d8f04688f63a7e8",
+        "order": 3,
+        "width": 6,
+        "height": 1
+    },
+    {
+        "id": "d164e15765076acf",
+        "type": "remote-config",
+        "name": "Node-RED UI",
+        "host": "10.22.230.151",
+        "protocol": "http",
+        "port": "1880",
+        "baseurl": "/ui",
+        "instancehash": "plw3k05j5voypqm1njrfjlkpsotjdz3aekq8pcqbm950iuysj5b3135g2b5hu466",
+        "server": "nodered02.remote-red.com",
+        "region": "de"
+    },
+    {
+        "id": "b81e5af5acce9ccc",
+        "type": "mqtt in",
+        "z": "290674bad5d75c28",
+        "name": "Batteri",
+        "topic": "esp32/battery",
+        "qos": "2",
+        "datatype": "json",
+        "broker": "de68e67a0484d1b3",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 90,
+        "y": 40,
+        "wires": [
+            [
+                "658b8456de8979fd"
+            ]
+        ]
+    },
+    {
+        "id": "410fe4c31d6f703e",
+        "type": "mqtt in",
+        "z": "290674bad5d75c28",
+        "name": "Plassering/GPS",
+        "topic": "esp32/gps",
+        "qos": "2",
+        "datatype": "auto",
+        "broker": "de68e67a0484d1b3",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 1040,
+        "y": 200,
+        "wires": [
+            [
+                "47a7432b41372b85"
+            ]
+        ]
+    },
+    {
+        "id": "d57495067bef9cac",
+        "type": "ui_joystick",
+        "z": "290674bad5d75c28",
+        "name": "",
+        "group": "70d97fe9e54ff745",
+        "order": 4,
+        "width": 3,
+        "height": 3,
+        "trigger": "all",
+        "timeInterval": 0,
+        "useThemeColor": true,
+        "color": "#000000",
+        "threshold": 0.1,
+        "directions": "all",
+        "shape": "circle",
+        "centerAtRelease": true,
+        "x": 1250,
+        "y": 420,
+        "wires": [
+            [
+                "f5d728b325956cb6"
+            ]
+        ]
+    },
+    {
+        "id": "549ef0400e6cf8e1",
+        "type": "ui_gauge",
+        "z": "290674bad5d75c28",
+        "name": "",
+        "group": "6d8f04688f63a7e8",
+        "order": 2,
+        "width": 0,
+        "height": 0,
+        "gtype": "gage",
+        "title": "Batteri",
+        "label": "units",
+        "format": "{{value}}",
+        "min": 0,
+        "max": "100",
+        "colors": [
+            "#b3001b",
+            "#e6e600",
+            "#3acb4a"
+        ],
+        "seg1": "",
+        "seg2": "",
+        "className": "",
+        "x": 350,
+        "y": 40,
+        "wires": []
+    },
+    {
+        "id": "47a7432b41372b85",
+        "type": "ui_worldmap",
+        "z": "290674bad5d75c28",
+        "group": "c4cf38c51d0969b8",
+        "order": 2,
+        "width": 0,
+        "height": 0,
+        "name": "",
+        "lat": "",
+        "lon": "",
+        "zoom": "",
+        "layer": "OSMG",
+        "cluster": "",
+        "maxage": "",
+        "usermenu": "hide",
+        "layers": "hide",
+        "panit": "false",
+        "panlock": "false",
+        "zoomlock": "false",
+        "hiderightclick": "true",
+        "coords": "none",
+        "showgrid": "false",
+        "allowFileDrop": "false",
+        "path": "/worldmap",
+        "overlist": "DR,CO,RA,DN,HM",
+        "maplist": "OSMG,OSMC,EsriC,EsriS,EsriT,EsriDG,UKOS",
+        "mapname": "",
+        "mapurl": "",
+        "mapopt": "",
+        "mapwms": false,
+        "x": 1060,
+        "y": 280,
+        "wires": []
+    },
+    {
+        "id": "291b8ab13072b1ca",
+        "type": "ui_form",
+        "z": "290674bad5d75c28",
+        "name": "",
+        "label": "Data til kart",
+        "group": "c4cf38c51d0969b8",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "options": [
+            {
+                "label": "Navn",
+                "value": "name",
+                "type": "text",
+                "required": true,
+                "rows": null
+            },
+            {
+                "label": "Breddegrad",
+                "value": "lat",
+                "type": "number",
+                "required": true,
+                "rows": null
+            },
+            {
+                "label": "Lengdegrad",
+                "value": "lon",
+                "type": "number",
+                "required": true,
+                "rows": null
+            }
+        ],
+        "formValue": {
+            "name": "",
+            "lat": "",
+            "lon": ""
+        },
+        "payload": "",
+        "submit": "submit",
+        "cancel": "cancel",
+        "topic": "topic",
+        "topicType": "msg",
+        "splitLayout": "",
+        "className": "",
+        "x": 1050,
+        "y": 460,
+        "wires": [
+            [
+                "47a7432b41372b85"
+            ]
+        ]
+    },
+    {
+        "id": "124cd4e787a628e1",
+        "type": "mqtt out",
+        "z": "290674bad5d75c28",
+        "name": "",
+        "topic": "esp32/output",
+        "qos": "2",
+        "retain": "",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "de68e67a0484d1b3",
+        "x": 510,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "f5d728b325956cb6",
+        "type": "debug",
+        "z": "290674bad5d75c28",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1070,
+        "y": 340,
+        "wires": []
+    },
+    {
+        "id": "105b2cbba8be5006",
+        "type": "ui_switch",
+        "z": "290674bad5d75c28",
+        "name": "",
+        "label": "switch",
+        "tooltip": "",
+        "group": "6d8f04688f63a7e8",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "passthru": true,
+        "decouple": "false",
+        "topic": "",
+        "topicType": "str",
+        "style": "",
+        "onvalue": "on",
+        "onvalueType": "str",
+        "onicon": "",
+        "oncolor": "",
+        "offvalue": "off",
+        "offvalueType": "str",
+        "officon": "",
+        "offcolor": "",
+        "animate": false,
+        "className": "",
+        "x": 310,
+        "y": 180,
+        "wires": [
+            [
+                "124cd4e787a628e1"
+            ]
+        ]
+    },
+    {
+        "id": "6948837ab9796af3",
+        "type": "mqtt out",
+        "z": "290674bad5d75c28",
+        "name": "",
+        "topic": "esp32/output_2",
+        "qos": "2",
+        "retain": "",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "de68e67a0484d1b3",
+        "x": 680,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "9971893f04d26e19",
+        "type": "ui_switch",
+        "z": "290674bad5d75c28",
+        "name": "",
+        "label": "switch",
+        "tooltip": "",
+        "group": "02d7ea726b6fb94d",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "passthru": true,
+        "decouple": "false",
+        "topic": "",
+        "topicType": "str",
+        "style": "",
+        "onvalue": "on",
+        "onvalueType": "str",
+        "onicon": "",
+        "oncolor": "",
+        "offvalue": "off",
+        "offvalueType": "str",
+        "officon": "",
+        "offcolor": "",
+        "animate": false,
+        "className": "",
+        "x": 310,
+        "y": 240,
+        "wires": [
+            [
+                "6948837ab9796af3"
+            ]
+        ]
+    },
+    {
+        "id": "ca4224793acb8ba9",
+        "type": "ui_chart",
+        "z": "290674bad5d75c28",
+        "name": "",
+        "group": "6d8f04688f63a7e8",
+        "order": 4,
+        "width": 0,
+        "height": 0,
+        "label": "Batteri_chart",
+        "chartType": "line",
+        "legend": "false",
+        "xformat": "HH:mm:ss",
+        "interpolate": "linear",
+        "nodata": "",
+        "dot": false,
+        "ymin": "",
+        "ymax": "",
+        "removeOlder": 1,
+        "removeOlderPoints": "",
+        "removeOlderUnit": "3600",
+        "cutout": 0,
+        "useOneColor": false,
+        "useUTC": false,
+        "colors": [
+            "#1f77b4",
+            "#aec7e8",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "outputs": 1,
+        "useDifferentColor": false,
+        "className": "",
+        "x": 370,
+        "y": 80,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "ea758474e743472a",
+        "type": "ui_button",
+        "z": "290674bad5d75c28",
+        "name": "",
+        "group": "6d8f04688f63a7e8",
+        "order": 5,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "label": "Reset chart",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "payload": "[]",
+        "payloadType": "json",
+        "topic": "payload",
+        "topicType": "msg",
+        "x": 110,
+        "y": 380,
+        "wires": [
+            [
+                "ca4224793acb8ba9",
+                "549ef0400e6cf8e1"
+            ]
+        ]
+    },
+    {
+        "id": "658b8456de8979fd",
+        "type": "change",
+        "z": "290674bad5d75c28",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "payload.amount",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 120,
+        "y": 160,
+        "wires": [
+            [
+                "ca4224793acb8ba9",
+                "549ef0400e6cf8e1"
+            ]
+        ]
+    },
+    {
+        "id": "d8ee0d15d1a2d1e3",
+        "type": "function",
+        "z": "290674bad5d75c28",
+        "name": "tell antall plasser",
+        "func": "let current = global.get(\"parkering\")\nif(isNaN(current)){\n    current = 0;\n}\nmsg.payload = Number(msg.payload)\n//hvis jeg får null endre til negativ (plass optatt)\nif (msg.payload < 1){\n    msg.payload = -1\n}\nvar val = current + msg.payload\nif(val < 0){\n    val = 0\n}\nif(val > 3){\n    val = 3\n}\nglobal.set(\"parkering\", val)\nmsg.payload = val\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 910,
+        "y": 140,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "eeeed7dbf65dcfdd",
+        "type": "remote-access",
+        "z": "290674bad5d75c28",
+        "confignode": "d164e15765076acf",
+        "name": "Prosjekt-kundeapp",
+        "verbose": 0,
+        "x": 390,
+        "y": 360,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "30a52515c87c49c7",
+        "type": "comment",
+        "z": "290674bad5d75c28",
+        "name": "Klikk for å se paletter man trenger",
+        "info": "# Paletter:\n - Først klikk øverst til høyre på burgermeny, velg \"manage palette\"\n - klikk på install tab\n - Last ned:\n\nnode-red\n2.2.2\nnode-red-contrib-remote (for app på telefon)\n1.4.0\nnode-red-contrib-ui-joystick (trengs ikke)\n1.0.0\nnode-red-contrib-web-worldmap (trengs ikke)\n2.28.1\nnode-red-contrib-xkeys_joystick (trengs ikke)\n0.2.1\nnode-red-dashboard\n3.1.6\n\nEtter dette er lastet ned skal alt være i orden\nFor å få fram dashboard, skriv inn url fra node-red + ui\nAltså: ip-adresse:port/ui\n",
+        "x": 710,
+        "y": 260,
+        "wires": []
+    },
+    {
+        "id": "44835e77db8fc328",
+        "type": "ui_button",
+        "z": "eb7979a31ca6fdab",
+        "name": "",
+        "group": "c4cf38c51d0969b8",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "label": "button",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "payload": "hei kristian",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 110,
+        "y": 80,
+        "wires": [
+            [
+                "a8046ec67a35975a"
+            ]
+        ]
+    },
+    {
+        "id": "a8046ec67a35975a",
+        "type": "ui_text",
+        "z": "eb7979a31ca6fdab",
+        "group": "c4cf38c51d0969b8",
+        "order": 2,
+        "width": 0,
+        "height": 0,
+        "name": "",
+        "label": "text",
+        "format": "{{msg.payload}}",
+        "layout": "row-spread",
+        "className": "",
+        "x": 330,
+        "y": 80,
+        "wires": []
+    },
+    {
+        "id": "d42834b2ae8b4330",
+        "type": "ui_form",
+        "z": "403154b9dbad052b",
+        "name": "",
+        "label": "Data til kart",
+        "group": "9b40c8b89fc662e2",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "options": [
+            {
+                "label": "Navn",
+                "value": "name",
+                "type": "text",
+                "required": true,
+                "rows": null
+            },
+            {
+                "label": "Breddegrad",
+                "value": "lat",
+                "type": "number",
+                "required": true,
+                "rows": null
+            },
+            {
+                "label": "Lengdegrad",
+                "value": "lon",
+                "type": "number",
+                "required": true,
+                "rows": null
+            }
+        ],
+        "formValue": {
+            "name": "",
+            "lat": "",
+            "lon": ""
+        },
+        "payload": "",
+        "submit": "submit",
+        "cancel": "cancel",
+        "topic": "topic",
+        "topicType": "msg",
+        "splitLayout": "",
+        "className": "",
+        "x": 130,
+        "y": 80,
+        "wires": [
+            [
+                "e1779bb2f9ced919",
+                "441a2086846907d8"
+            ]
+        ]
+    },
+    {
+        "id": "e1779bb2f9ced919",
+        "type": "debug",
+        "z": "403154b9dbad052b",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 310,
+        "y": 80,
+        "wires": []
+    },
+    {
+        "id": "441a2086846907d8",
+        "type": "ui_worldmap",
+        "z": "403154b9dbad052b",
+        "group": "9b40c8b89fc662e2",
+        "order": 2,
+        "width": 0,
+        "height": 0,
+        "name": "",
+        "lat": "",
+        "lon": "",
+        "zoom": "",
+        "layer": "OSMG",
+        "cluster": "",
+        "maxage": "",
+        "usermenu": "hide",
+        "layers": "hide",
+        "panit": "true",
+        "panlock": "false",
+        "zoomlock": "false",
+        "hiderightclick": "true",
+        "coords": "none",
+        "showgrid": "false",
+        "allowFileDrop": "false",
+        "path": "/worldmap",
+        "overlist": "DR,CO,RA,DN,HM",
+        "maplist": "OSMG,OSMC,EsriC,EsriS,EsriT,EsriDG,UKOS",
+        "mapname": "",
+        "mapurl": "",
+        "mapopt": "",
+        "mapwms": false,
+        "x": 320,
+        "y": 160,
+        "wires": []
+    },
+    {
+        "id": "bb99462388ec0997",
+        "type": "mqtt in",
+        "z": "637d6cd14b3b778f",
+        "name": "",
+        "topic": "esp32/weather/windpower",
+        "qos": "2",
+        "datatype": "auto",
+        "broker": "de68e67a0484d1b3",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 150,
+        "y": 60,
+        "wires": [
+            [
+                "585f82bbeef7636c"
+            ]
+        ]
+    },
+    {
+        "id": "aea0f2c1077e791e",
+        "type": "mqtt in",
+        "z": "637d6cd14b3b778f",
+        "name": "",
+        "topic": "esp32/weather/solarpower",
+        "qos": "2",
+        "datatype": "auto",
+        "broker": "de68e67a0484d1b3",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 150,
+        "y": 120,
+        "wires": [
+            [
+                "358fb65de045bac5"
+            ]
+        ]
+    },
+    {
+        "id": "0fbe5d7846cc2c6c",
+        "type": "mqtt in",
+        "z": "637d6cd14b3b778f",
+        "name": "",
+        "topic": "esp32/weather/energyprice",
+        "qos": "2",
+        "datatype": "auto",
+        "broker": "de68e67a0484d1b3",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 150,
+        "y": 240,
+        "wires": [
+            [
+                "6a6bd7d601baa67a"
+            ]
+        ]
+    },
+    {
+        "id": "585f82bbeef7636c",
+        "type": "ui_gauge",
+        "z": "637d6cd14b3b778f",
+        "name": "",
+        "group": "3d710461e887afda",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "gtype": "gage",
+        "title": "Wind power",
+        "label": "%",
+        "format": "{{value}}",
+        "min": 0,
+        "max": "100",
+        "colors": [
+            "#00b500",
+            "#e6e600",
+            "#ca3838"
+        ],
+        "seg1": "",
+        "seg2": "",
+        "className": "",
+        "x": 450,
+        "y": 60,
+        "wires": []
+    },
+    {
+        "id": "358fb65de045bac5",
+        "type": "ui_gauge",
+        "z": "637d6cd14b3b778f",
+        "name": "",
+        "group": "3d710461e887afda",
+        "order": 2,
+        "width": 0,
+        "height": 0,
+        "gtype": "gage",
+        "title": "Solar power",
+        "label": "%",
+        "format": "{{value}}",
+        "min": 0,
+        "max": "100",
+        "colors": [
+            "#00b500",
+            "#e6e600",
+            "#ca3838"
+        ],
+        "seg1": "",
+        "seg2": "",
+        "className": "",
+        "x": 450,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "6a6bd7d601baa67a",
+        "type": "ui_chart",
+        "z": "637d6cd14b3b778f",
+        "name": "",
+        "group": "d9348da327ce5eb0",
+        "order": 2,
+        "width": 0,
+        "height": 0,
+        "label": "Energy price ($/KWh)",
+        "chartType": "line",
+        "legend": "false",
+        "xformat": "HH:mm:ss",
+        "interpolate": "linear",
+        "nodata": "",
+        "dot": false,
+        "ymin": "0",
+        "ymax": "100",
+        "removeOlder": "3",
+        "removeOlderPoints": "",
+        "removeOlderUnit": "3600",
+        "cutout": 0,
+        "useOneColor": false,
+        "useUTC": false,
+        "colors": [
+            "#1f77b4",
+            "#aec7e8",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "outputs": 1,
+        "useDifferentColor": false,
+        "className": "",
+        "x": 480,
+        "y": 240,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "6175e109ad6eb8e4",
+        "type": "ui_button",
+        "z": "637d6cd14b3b778f",
+        "name": "",
+        "group": "d9348da327ce5eb0",
+        "order": 3,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "label": "Reset chart",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "payload": "[]",
+        "payloadType": "json",
+        "topic": "payload",
+        "topicType": "msg",
+        "x": 130,
+        "y": 380,
+        "wires": [
+            [
+                "585f82bbeef7636c",
+                "358fb65de045bac5",
+                "6a6bd7d601baa67a",
+                "531819d08ee32fbc"
+            ]
+        ]
+    },
+    {
+        "id": "ccd99b0da15ea7bc",
+        "type": "mqtt in",
+        "z": "637d6cd14b3b778f",
+        "name": "",
+        "topic": "esp32/weather/thermalpower",
+        "qos": "2",
+        "datatype": "auto",
+        "broker": "de68e67a0484d1b3",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 160,
+        "y": 180,
+        "wires": [
+            [
+                "531819d08ee32fbc"
+            ]
+        ]
+    },
+    {
+        "id": "531819d08ee32fbc",
+        "type": "ui_gauge",
+        "z": "637d6cd14b3b778f",
+        "name": "",
+        "group": "3557ce5a552e8e07",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "gtype": "gage",
+        "title": "Thermal power",
+        "label": "%",
+        "format": "{{value}}",
+        "min": 0,
+        "max": "100",
+        "colors": [
+            "#00b500",
+            "#e6e600",
+            "#ca3838"
+        ],
+        "seg1": "",
+        "seg2": "",
+        "className": "",
+        "x": 460,
+        "y": 180,
+        "wires": []
+    },
+    {
+        "id": "7a290689d0134043",
+        "type": "inject",
+        "z": "637d6cd14b3b778f",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "6",
+        "payloadType": "str",
+        "x": 410,
+        "y": 360,
+        "wires": [
+            [
+                "6a6bd7d601baa67a"
+            ]
+        ]
+    },
+    {
+        "id": "48454abd6ca3dfd1",
+        "type": "debug",
+        "z": "213feba8b3519970",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 830,
+        "y": 200,
+        "wires": []
+    },
+    {
+        "id": "7cfecde6adfa67ca",
+        "type": "inject",
+        "z": "213feba8b3519970",
+        "name": "json profitt 100",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"owner\": \"foodora\", \"amount\": \" 100 \"}",
+        "payloadType": "json",
+        "x": 120,
+        "y": 120,
+        "wires": [
+            [
+                "e6117e19d94e0459"
+            ]
+        ]
+    },
+    {
+        "id": "649ff2919ffe49ea",
+        "type": "inject",
+        "z": "213feba8b3519970",
+        "name": "json toll 100",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"owner\": \"toll\", \"amount\": \" -100 \"}",
+        "payloadType": "json",
+        "x": 110,
+        "y": 40,
+        "wires": [
+            [
+                "e6117e19d94e0459"
+            ]
+        ]
+    },
+    {
+        "id": "17f1b2b5c5b5e2d7",
+        "type": "mqtt in",
+        "z": "213feba8b3519970",
+        "name": "",
+        "topic": "esp32/transactions",
+        "qos": "2",
+        "datatype": "json",
+        "broker": "de68e67a0484d1b3",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 170,
+        "y": 200,
+        "wires": [
+            [
+                "84748564e6ff9a40",
+                "2029dbc001240ebd"
+            ]
+        ]
+    },
+    {
+        "id": "d2d8b2c6af60473f",
+        "type": "mqtt out",
+        "z": "213feba8b3519970",
+        "name": "",
+        "topic": "esp32/transactions",
+        "qos": "",
+        "retain": "",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "de68e67a0484d1b3",
+        "x": 550,
+        "y": 80,
+        "wires": []
+    },
+    {
+        "id": "da4ac774f084b614",
+        "type": "ui_form",
+        "z": "213feba8b3519970",
+        "name": "",
+        "label": "",
+        "group": "bf4a73a2a122ca58",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "options": [
+            {
+                "label": "Navn",
+                "value": "name",
+                "type": "text",
+                "required": true,
+                "rows": null
+            },
+            {
+                "label": "Sone (1-3)",
+                "value": "zone",
+                "type": "number",
+                "required": true,
+                "rows": null
+            },
+            {
+                "label": "Burger",
+                "value": "burger",
+                "type": "checkbox",
+                "required": false,
+                "rows": null
+            },
+            {
+                "label": "Cola",
+                "value": "cola",
+                "type": "checkbox",
+                "required": false,
+                "rows": null
+            },
+            {
+                "label": "Pizza",
+                "value": "pizza",
+                "type": "checkbox",
+                "required": false,
+                "rows": null
+            }
+        ],
+        "formValue": {
+            "name": "",
+            "zone": "",
+            "burger": false,
+            "cola": false,
+            "pizza": false
+        },
+        "payload": "",
+        "submit": "submit",
+        "cancel": "cancel",
+        "topic": "topic",
+        "topicType": "msg",
+        "splitLayout": "",
+        "className": "",
+        "x": 110,
+        "y": 460,
+        "wires": [
+            [
+                "76f48662eb018b26",
+                "1558815982642314"
+            ]
+        ]
+    },
+    {
+        "id": "76f48662eb018b26",
+        "type": "debug",
+        "z": "213feba8b3519970",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 310,
+        "y": 520,
+        "wires": []
+    },
+    {
+        "id": "e26d168e55dc33e7",
+        "type": "mqtt in",
+        "z": "213feba8b3519970",
+        "name": "Toll",
+        "topic": "esp32/toll",
+        "qos": "2",
+        "datatype": "json",
+        "broker": "de68e67a0484d1b3",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 110,
+        "y": 400,
+        "wires": [
+            [
+                "a36a5f5efa89d11f"
+            ]
+        ]
+    },
+    {
+        "id": "b530fe280388a4d7",
+        "type": "ui_chart",
+        "z": "213feba8b3519970",
+        "name": "",
+        "group": "02d7ea726b6fb94d",
+        "order": 2,
+        "width": 0,
+        "height": 0,
+        "label": "Saldo",
+        "chartType": "line",
+        "legend": "false",
+        "xformat": "HH:mm:ss",
+        "interpolate": "linear",
+        "nodata": "",
+        "dot": false,
+        "ymin": "",
+        "ymax": "",
+        "removeOlder": 1,
+        "removeOlderPoints": "",
+        "removeOlderUnit": "3600",
+        "cutout": 0,
+        "useOneColor": false,
+        "useUTC": false,
+        "colors": [
+            "#1f77b4",
+            "#aec7e8",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "outputs": 1,
+        "useDifferentColor": false,
+        "className": "",
+        "x": 850,
+        "y": 360,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "9f4b0a03564d0fe6",
+        "type": "ui_button",
+        "z": "213feba8b3519970",
+        "name": "",
+        "group": "02d7ea726b6fb94d",
+        "order": 3,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "label": "Reset chart",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "payload": "[]",
+        "payloadType": "json",
+        "topic": "payload",
+        "topicType": "msg",
+        "x": 710,
+        "y": 420,
+        "wires": [
+            [
+                "b530fe280388a4d7"
+            ]
+        ]
+    },
+    {
+        "id": "da769a13b63420c4",
+        "type": "inject",
+        "z": "213feba8b3519970",
+        "name": "json-50",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"owner\": \"esp\", \"amount\": \" 50 \"}",
+        "payloadType": "json",
+        "x": 90,
+        "y": 160,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "6d87f146d0d514de",
+        "type": "mqtt out",
+        "z": "213feba8b3519970",
+        "name": "",
+        "topic": "esp32/transactions",
+        "qos": "",
+        "retain": "",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "de68e67a0484d1b3",
+        "x": 530,
+        "y": 400,
+        "wires": []
+    },
+    {
+        "id": "ffc5ecaf84b18ed4",
+        "type": "inject",
+        "z": "213feba8b3519970",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "esp",
+        "payload": "1000",
+        "payloadType": "json",
+        "x": 580,
+        "y": 320,
+        "wires": [
+            [
+                "b530fe280388a4d7"
+            ]
+        ]
+    },
+    {
+        "id": "e826adae3c9ed040",
+        "type": "change",
+        "z": "213feba8b3519970",
+        "name": "fra ...amount -> payload",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "payload.amount",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 550,
+        "y": 140,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "e6117e19d94e0459",
+        "type": "function",
+        "z": "213feba8b3519970",
+        "name": "Oppdater g(saldo)",
+        "func": "let current = global.get(\"saldo\")\nif(isNaN(current)){\n    current = 0;\n}\nmsg.payload.amount = Number(msg.payload.amount)\nconst val = current + msg.payload.amount\nglobal.set(\"saldo\", val)\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 330,
+        "y": 80,
+        "wires": [
+            [
+                "d2d8b2c6af60473f"
+            ]
+        ]
+    },
+    {
+        "id": "2029dbc001240ebd",
+        "type": "function",
+        "z": "213feba8b3519970",
+        "name": "",
+        "func": "let current = global.get(\"saldo\")\nmsg.topic = \"saldo\"\nmsg.payload = current\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 500,
+        "y": 260,
+        "wires": [
+            [
+                "48454abd6ca3dfd1",
+                "b530fe280388a4d7"
+            ]
+        ]
+    },
+    {
+        "id": "84748564e6ff9a40",
+        "type": "function",
+        "z": "213feba8b3519970",
+        "name": "",
+        "func": "//henter ut verdier fra json-string og setter inn i topic og payload\nmsg.topic = msg.payload.owner\nmsg.payload = msg.payload.amount\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 460,
+        "y": 200,
+        "wires": [
+            [
+                "48454abd6ca3dfd1",
+                "b530fe280388a4d7"
+            ]
+        ]
+    },
+    {
+        "id": "a36a5f5efa89d11f",
+        "type": "function",
+        "z": "213feba8b3519970",
+        "name": "Oppdater g(saldo)",
+        "func": "// henter global variabel \"saldo\"\nlet current = global.get(\"saldo\")\n\nif(isNaN(current)){\n    current = 0;\n}\n\nmsg.payload.amount = Number(msg.payload.amount)\nconst val = current + msg.payload.amount\n// oppdaterer global variabel\nglobal.set(\"saldo\", val)\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 290,
+        "y": 400,
+        "wires": [
+            [
+                "6d87f146d0d514de"
+            ]
+        ]
+    },
+    {
+        "id": "1558815982642314",
+        "type": "function",
+        "z": "213feba8b3519970",
+        "name": "Oppdater g(saldo)",
+        "func": "//henter global variabel \"saldo\"\nlet current = global.get(\"saldo\")\nvar salg = 0;\nif(isNaN(current)){\n    current = 0;\n}\n\nif(msg.payload.burger){\n salg += 80   \n}\nif(msg.payload.cola){\n salg += 30   \n}\nif(msg.payload.pizza){\n salg += 100   \n}\n//oppdaterer verdier og formaterer til /transactions\nsalg = salg * msg.payload.zone\nconst val = current + salg\nglobal.set(\"saldo\", val)\nmsg.payload.owner = msg.payload.name + \"-kundeapp\"\nmsg.payload.amount = salg\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 310,
+        "y": 460,
+        "wires": [
+            [
+                "6d87f146d0d514de"
+            ]
+        ]
+    },
+    {
+        "id": "cd148e6d96829765",
+        "type": "comment",
+        "z": "213feba8b3519970",
+        "name": "Testdata",
+        "info": "",
+        "x": 100,
+        "y": 80,
+        "wires": []
+    },
+    {
+        "id": "327d263744847a64",
+        "type": "comment",
+        "z": "213feba8b3519970",
+        "name": "sub på transactions og kjører gjennom filter",
+        "info": "",
+        "x": 160,
+        "y": 260,
+        "wires": []
+    },
+    {
+        "id": "7757c69a55aaaf2a",
+        "type": "mqtt in",
+        "z": "670415cffd96c617",
+        "name": "",
+        "topic": "esp32/parking_1",
+        "qos": "2",
+        "datatype": "json",
+        "broker": "de68e67a0484d1b3",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 180,
+        "y": 80,
+        "wires": [
+            [
+                "4dc7515e8b03f737",
+                "a138f17c35351a6d",
+                "f1660e35bcc25795",
+                "9140efb4dd87395a",
+                "6846e5cdae4eb05e"
+            ]
+        ]
+    },
+    {
+        "id": "8a772d98ad663437",
+        "type": "mqtt in",
+        "z": "670415cffd96c617",
+        "name": "",
+        "topic": "esp32/parking_2",
+        "qos": "2",
+        "datatype": "json",
+        "broker": "de68e67a0484d1b3",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 180,
+        "y": 140,
+        "wires": [
+            [
+                "4dc7515e8b03f737",
+                "0708578bf2a744e4",
+                "87ef0103b217222d",
+                "9140efb4dd87395a",
+                "8dfc774eb4091f81"
+            ]
+        ]
+    },
+    {
+        "id": "fe59f5b4c2dd6654",
+        "type": "mqtt in",
+        "z": "670415cffd96c617",
+        "name": "",
+        "topic": "esp32/parking_3",
+        "qos": "2",
+        "datatype": "json",
+        "broker": "de68e67a0484d1b3",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 180,
+        "y": 200,
+        "wires": [
+            [
+                "4dc7515e8b03f737",
+                "34537d8789041c17",
+                "962d44c1cf7fe464",
+                "9140efb4dd87395a",
+                "01c1eb59b8e9c271"
+            ]
+        ]
+    },
+    {
+        "id": "57edec0e3e9bf92c",
+        "type": "ui_text",
+        "z": "670415cffd96c617",
+        "group": "f1c624965927cf87",
+        "order": 2,
+        "width": 0,
+        "height": 0,
+        "name": "",
+        "label": "Parkering 1",
+        "format": "<font color= {{msg.color}} > {{msg.payload}} </font>",
+        "layout": "row-spread",
+        "className": "",
+        "x": 690,
+        "y": 40,
+        "wires": []
+    },
+    {
+        "id": "9c3f8eabada9607a",
+        "type": "function",
+        "z": "670415cffd96c617",
+        "name": "fra tall til ord - endring av farge",
+        "func": "if(msg.payload == 0){\n    msg.payload = \"OPTATT\"\n}\nelse{\n    msg.payload = \"LEDIG\"\n}\nswitch (msg.payload) {\n\ncase \"OPTATT\" : \n    msg.color = \"red\";\n    break;\n    \ncase \"LEDIG\" : \n    msg.color = \"green\";\n    break;\n    \ndefault : \n    msg.color = \"red\";\n    break;\n}\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 650,
+        "y": 320,
+        "wires": [
+            [
+                "57edec0e3e9bf92c"
+            ]
+        ]
+    },
+    {
+        "id": "a138f17c35351a6d",
+        "type": "change",
+        "z": "670415cffd96c617",
+        "name": "fra ...amount -> payload",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "payload.amount",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 390,
+        "y": 320,
+        "wires": [
+            [
+                "9c3f8eabada9607a"
+            ]
+        ]
+    },
+    {
+        "id": "4dc7515e8b03f737",
+        "type": "debug",
+        "z": "670415cffd96c617",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 450,
+        "y": 60,
+        "wires": []
+    },
+    {
+        "id": "62c3935260c6fd02",
+        "type": "ui_text",
+        "z": "670415cffd96c617",
+        "group": "f1c624965927cf87",
+        "order": 3,
+        "width": 0,
+        "height": 0,
+        "name": "1",
+        "label": "Blir brukt av",
+        "format": "{{msg.payload}}",
+        "layout": "row-spread",
+        "className": "",
+        "x": 670,
+        "y": 80,
+        "wires": []
+    },
+    {
+        "id": "f1660e35bcc25795",
+        "type": "function",
+        "z": "670415cffd96c617",
+        "name": "hvis optatt skriv hvem, ellers ingen",
+        "func": "if(msg.payload.amount == 0){\n    msg.payload = msg.payload.owner\n}\nelse{\n    msg.payload = \"INGEN\"\n}\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 520,
+        "y": 360,
+        "wires": [
+            [
+                "62c3935260c6fd02"
+            ]
+        ]
+    },
+    {
+        "id": "3150fa8425f0074e",
+        "type": "ui_text",
+        "z": "670415cffd96c617",
+        "group": "f1c624965927cf87",
+        "order": 4,
+        "width": 0,
+        "height": 0,
+        "name": "",
+        "label": "Parkering 2",
+        "format": "<font color= {{msg.color}} > {{msg.payload}} </font>",
+        "layout": "row-spread",
+        "className": "",
+        "x": 790,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "8a0e547e9e297499",
+        "type": "function",
+        "z": "670415cffd96c617",
+        "name": "fra tall til ord - endring av farge",
+        "func": "if(msg.payload == 0){\n    msg.payload = \"OPTATT\"\n}\nelse{\n    msg.payload = \"LEDIG\"\n}\nswitch (msg.payload) {\n\ncase \"OPTATT\" : \n    msg.color = \"red\";\n    break;\n    \ncase \"LEDIG\" : \n    msg.color = \"green\";\n    break;\n    \ndefault : \n    msg.color = \"red\";\n    break;\n}\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 650,
+        "y": 420,
+        "wires": [
+            [
+                "3150fa8425f0074e"
+            ]
+        ]
+    },
+    {
+        "id": "0708578bf2a744e4",
+        "type": "change",
+        "z": "670415cffd96c617",
+        "name": "fra ...amount -> payload",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "payload.amount",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 390,
+        "y": 420,
+        "wires": [
+            [
+                "8a0e547e9e297499"
+            ]
+        ]
+    },
+    {
+        "id": "1897cac474d1a938",
+        "type": "ui_text",
+        "z": "670415cffd96c617",
+        "group": "f1c624965927cf87",
+        "order": 5,
+        "width": 0,
+        "height": 0,
+        "name": "2",
+        "label": "Blir brukt av",
+        "format": "{{msg.payload}}",
+        "layout": "row-spread",
+        "className": "",
+        "x": 770,
+        "y": 160,
+        "wires": []
+    },
+    {
+        "id": "87ef0103b217222d",
+        "type": "function",
+        "z": "670415cffd96c617",
+        "name": "hvis optatt skriv hvem, ellers ingen",
+        "func": "if(msg.payload.amount == 0){\n    msg.payload = msg.payload.owner\n}\nelse{\n    msg.payload = \"INGEN\"\n}\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 520,
+        "y": 460,
+        "wires": [
+            [
+                "1897cac474d1a938"
+            ]
+        ]
+    },
+    {
+        "id": "ec7fd42cef28b9ba",
+        "type": "ui_text",
+        "z": "670415cffd96c617",
+        "group": "f1c624965927cf87",
+        "order": 6,
+        "width": 0,
+        "height": 0,
+        "name": "",
+        "label": "Parkering 3",
+        "format": "<font color= {{msg.color}} > {{msg.payload}} </font>",
+        "layout": "row-spread",
+        "className": "",
+        "x": 690,
+        "y": 200,
+        "wires": []
+    },
+    {
+        "id": "e0d073a6191bc2dc",
+        "type": "function",
+        "z": "670415cffd96c617",
+        "name": "fra tall til ord - endring av farge",
+        "func": "if(msg.payload == 0){\n    msg.payload = \"OPTATT\"\n}\nelse{\n    msg.payload = \"LEDIG\"\n}\nswitch (msg.payload) {\n\ncase \"OPTATT\" : \n    msg.color = \"red\";\n    break;\n    \ncase \"LEDIG\" : \n    msg.color = \"green\";\n    break;\n    \ndefault : \n    msg.color = \"red\";\n    break;\n}\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 650,
+        "y": 520,
+        "wires": [
+            [
+                "ec7fd42cef28b9ba"
+            ]
+        ]
+    },
+    {
+        "id": "34537d8789041c17",
+        "type": "change",
+        "z": "670415cffd96c617",
+        "name": "fra ...amount -> payload",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "payload.amount",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 390,
+        "y": 520,
+        "wires": [
+            [
+                "e0d073a6191bc2dc"
+            ]
+        ]
+    },
+    {
+        "id": "df04c7559d24c3d0",
+        "type": "ui_text",
+        "z": "670415cffd96c617",
+        "group": "f1c624965927cf87",
+        "order": 7,
+        "width": 0,
+        "height": 0,
+        "name": "3",
+        "label": "Blir brukt av",
+        "format": "{{msg.payload}}",
+        "layout": "row-spread",
+        "className": "",
+        "x": 670,
+        "y": 240,
+        "wires": []
+    },
+    {
+        "id": "962d44c1cf7fe464",
+        "type": "function",
+        "z": "670415cffd96c617",
+        "name": "hvis optatt skriv hvem, ellers ingen",
+        "func": "if(msg.payload.amount == 0){\n    msg.payload = msg.payload.owner\n}\nelse{\n    msg.payload = \"INGEN\"\n}\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 520,
+        "y": 560,
+        "wires": [
+            [
+                "df04c7559d24c3d0"
+            ]
+        ]
+    },
+    {
+        "id": "1a2977f9de7daa62",
+        "type": "ui_gauge",
+        "z": "670415cffd96c617",
+        "name": "",
+        "group": "f1c624965927cf87",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "gtype": "gage",
+        "title": "Ledige plasser",
+        "label": "%",
+        "format": "{{value}}",
+        "min": 0,
+        "max": "3",
+        "colors": [
+            "#b3003e",
+            "#e6e600",
+            "#3acb57"
+        ],
+        "seg1": "",
+        "seg2": "",
+        "className": "",
+        "x": 460,
+        "y": 240,
+        "wires": []
+    },
+    {
+        "id": "799a6fbb3d43d2d8",
+        "type": "ui_button",
+        "z": "670415cffd96c617",
+        "name": "",
+        "group": "f1c624965927cf87",
+        "order": 8,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "label": "Reset chart",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "payload": "[]",
+        "payloadType": "json",
+        "topic": "payload",
+        "topicType": "msg",
+        "x": 170,
+        "y": 380,
+        "wires": [
+            [
+                "1a2977f9de7daa62"
+            ]
+        ]
+    },
+    {
+        "id": "9140efb4dd87395a",
+        "type": "change",
+        "z": "670415cffd96c617",
+        "name": "fra ...amount -> payload",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "payload.amount",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 490,
+        "y": 120,
+        "wires": [
+            [
+                "1a2977f9de7daa62",
+                "4c4eac82e602d960"
+            ]
+        ]
+    },
+    {
+        "id": "94b93ccbe12820fd",
+        "type": "inject",
+        "z": "670415cffd96c617",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "1",
+        "payloadType": "json",
+        "x": 150,
+        "y": 340,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "4c4eac82e602d960",
+        "type": "function",
+        "z": "670415cffd96c617",
+        "name": "tell antall plasser",
+        "func": "let current = global.get(\"parkering\")\nif(isNaN(current)){\n    current = 0;\n}\nmsg.payload = Number(msg.payload)\n//hvis jeg får null endre til negativ (plass optatt)\nif (msg.payload < 1){\n    msg.payload = -1\n}\nvar val = current + msg.payload\nif(val < 0){\n    val = 0\n}\nif(val > 3){\n    val = 3\n}\nglobal.set(\"parkering\", val)\nmsg.payload = val\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 470,
+        "y": 180,
+        "wires": [
+            [
+                "1a2977f9de7daa62"
+            ]
+        ]
+    },
+    {
+        "id": "378c2d191a35d042",
+        "type": "inject",
+        "z": "670415cffd96c617",
+        "name": "json0",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"owner\": \"esp\", \"amount\": \" 0 \"}",
+        "payloadType": "json",
+        "x": 150,
+        "y": 300,
+        "wires": [
+            [
+                "a138f17c35351a6d",
+                "f1660e35bcc25795",
+                "9140efb4dd87395a",
+                "4dc7515e8b03f737",
+                "87ef0103b217222d"
+            ]
+        ]
+    },
+    {
+        "id": "6b23a9f8024ee4bc",
+        "type": "inject",
+        "z": "670415cffd96c617",
+        "name": "json1",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"owner\": \"esp\", \"amount\": \" 1 \"}",
+        "payloadType": "json",
+        "x": 150,
+        "y": 260,
+        "wires": [
+            [
+                "a138f17c35351a6d",
+                "f1660e35bcc25795",
+                "9140efb4dd87395a",
+                "4dc7515e8b03f737"
+            ]
+        ]
+    },
+    {
+        "id": "6846e5cdae4eb05e",
+        "type": "function",
+        "z": "670415cffd96c617",
+        "name": "park1",
+        "func": "if(msg.payload.amount == 1){\n    msg.payload.owner = \"parkering_1\"\n    msg.payload.amount = -msg.payload.time\n}\nlet current = global.get(\"saldo\")\nif(isNaN(current)){\n    current = 0;\n}\nconst val = current + msg.payload.amount\nglobal.set(\"saldo\", val)\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1010,
+        "y": 60,
+        "wires": [
+            [
+                "c19f9539be444e12"
+            ]
+        ]
+    },
+    {
+        "id": "c19f9539be444e12",
+        "type": "mqtt out",
+        "z": "670415cffd96c617",
+        "name": "",
+        "topic": "esp32/transactions",
+        "qos": "",
+        "retain": "",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "de68e67a0484d1b3",
+        "x": 1230,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "8dfc774eb4091f81",
+        "type": "function",
+        "z": "670415cffd96c617",
+        "name": "park2",
+        "func": "if(msg.payload.amount == 1){\n    msg.payload.owner = \"parkering_2\"\n    msg.payload.amount = -msg.payload.time\n}\nlet current = global.get(\"saldo\")\nif(isNaN(current)){\n    current = 0;\n}\nconst val = current + msg.payload.amount\nglobal.set(\"saldo\", val)\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1010,
+        "y": 120,
+        "wires": [
+            [
+                "c19f9539be444e12"
+            ]
+        ]
+    },
+    {
+        "id": "01c1eb59b8e9c271",
+        "type": "function",
+        "z": "670415cffd96c617",
+        "name": "park3",
+        "func": "if(msg.payload.amount == 1){\n    msg.payload.owner = \"parkering_3\"\n    msg.payload.amount = -msg.payload.time\n}\nlet current = global.get(\"saldo\")\nif(isNaN(current)){\n    current = 0;\n}\nconst val = current + msg.payload.amount\nglobal.set(\"saldo\", val)\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1010,
+        "y": 180,
+        "wires": [
+            [
+                "c19f9539be444e12"
+            ]
+        ]
+    }
+]
