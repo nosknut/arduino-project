@@ -12,6 +12,7 @@ services:
       - differential-drive
       - node-red
       - webviz
+      - move-base
 
   catkin:
     image: ros:noetic-ros-base

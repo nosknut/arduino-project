@@ -13,7 +13,7 @@ On Windows
 Now run the following commands in order. After running the last one, you should see a blue window with a turtle a few seconds after all the docker images have started.
 ```
 docker-compose run install-node-red
-docker-compose up -d master mqtt mqtt-ros-bridge rosserial differential-drive node-red turtlesim
+docker-compose up -d master mqtt mqtt-ros-bridge rosserial differential-drive node-red move-base turtlesim
 ```
 Node-RED will be hosted on http://localhost:1880 and the Node-RED UI will be hosted on http://localhost:1880/ui
 
