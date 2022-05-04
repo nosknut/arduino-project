@@ -249,8 +249,7 @@
         "y": 360,
         "wires": [
             [
-                "c245092ec9f39d52",
-                "cb863f7285b7476e"
+                "c245092ec9f39d52"
             ]
         ]
     },
@@ -278,22 +277,6 @@
                 "df230dabd097cce8"
             ]
         ]
-    },
-    {
-        "id": "cb863f7285b7476e",
-        "type": "debug",
-        "z": "519f41f181c369f6",
-        "name": "",
-        "active": true,
-        "tosidebar": true,
-        "console": false,
-        "tostatus": false,
-        "complete": "false",
-        "statusVal": "",
-        "statusType": "auto",
-        "x": 870,
-        "y": 460,
-        "wires": []
     },
     {
         "id": "a51db3a2a3d3f538",
@@ -350,8 +333,7 @@
         "wires": [
             [
                 "024b93b03043bd10",
-                "97c68b3bee98892d",
-                "3df332fb4521def1"
+                "97c68b3bee98892d"
             ]
         ]
     },
@@ -368,13 +350,13 @@
         "rap": true,
         "rh": 0,
         "inputs": 0,
-        "x": 1000,
-        "y": 860,
+        "x": 960,
+        "y": 840,
         "wires": [
             [
                 "5fb6bd5a9cc05766",
                 "872ac5d5b2564d9e",
-                "88979def5160412c"
+                "32b9e69a0cd5aad9"
             ]
         ]
     },
@@ -566,22 +548,6 @@
         ]
     },
     {
-        "id": "3df332fb4521def1",
-        "type": "debug",
-        "z": "519f41f181c369f6",
-        "name": "",
-        "active": true,
-        "tosidebar": true,
-        "console": false,
-        "tostatus": false,
-        "complete": "false",
-        "statusVal": "",
-        "statusType": "auto",
-        "x": 1530,
-        "y": 720,
-        "wires": []
-    },
-    {
         "id": "4476f5363ad940d4",
         "type": "ui_joystick",
         "z": "519f41f181c369f6",
@@ -731,8 +697,7 @@
         "y": 1140,
         "wires": [
             [
-                "a51db3a2a3d3f538",
-                "445105e66c46d4c6"
+                "a51db3a2a3d3f538"
             ]
         ]
     },
@@ -1000,7 +965,7 @@
         "format": "{{msg.payload}}",
         "layout": "row-left",
         "className": "",
-        "x": 1690,
+        "x": 1790,
         "y": 900,
         "wires": []
     },
@@ -1008,15 +973,15 @@
         "id": "32b9e69a0cd5aad9",
         "type": "function",
         "z": "519f41f181c369f6",
-        "name": "rad to 2 decimal angle",
-        "func": "\nreturn {\n    payload: ((180/3.14159) * Number(msg.payload)).toFixed(2)\n};",
+        "name": "PoseStamped to yaw 2 decimals",
+        "func": "\nlet quaternionZ = Number(msg.payload.pose.pose.orientation.z)\nlet yawRadians = 2 * Math.asin(quaternionZ)\nlet yawDegrees = (180/Math.PI) * yawRadians\nlet twoDecimals = yawDegrees.toFixed(2)\nreturn {\n    payload: twoDecimals\n};",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1480,
-        "y": 900,
+        "x": 1390,
+        "y": 940,
         "wires": [
             [
                 "322143228061f0fd"
@@ -1062,25 +1027,6 @@
         ]
     },
     {
-        "id": "88979def5160412c",
-        "type": "template",
-        "z": "519f41f181c369f6",
-        "name": "get rotation",
-        "field": "payload",
-        "fieldType": "msg",
-        "format": "handlebars",
-        "syntax": "mustache",
-        "template": "{{payload.pose.pose.orientation.z}}",
-        "output": "str",
-        "x": 1250,
-        "y": 900,
-        "wires": [
-            [
-                "32b9e69a0cd5aad9"
-            ]
-        ]
-    },
-    {
         "id": "8d40fa6c5cd0ab1a",
         "type": "template",
         "z": "519f41f181c369f6",
@@ -1098,23 +1044,6 @@
                 "16f155e1d00463d3"
             ]
         ]
-    },
-    {
-        "id": "445105e66c46d4c6",
-        "type": "debug",
-        "z": "519f41f181c369f6",
-        "name": "",
-        "active": true,
-        "tosidebar": true,
-        "console": false,
-        "tostatus": false,
-        "complete": "true",
-        "targetType": "full",
-        "statusVal": "",
-        "statusType": "auto",
-        "x": 1150,
-        "y": 1020,
-        "wires": []
     },
     {
         "id": "9baec202.fcc6e",
