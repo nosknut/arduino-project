@@ -7,23 +7,21 @@ TrajectoryPlannerROS:
   max_vel_x: 0.4
   min_vel_x: -0.4
   max_vel_trans: 0.4
-  min_vel_trans: 0.15
+  min_vel_trans: 0.10
   max_vel_y: 0.0 # zero for a differential drive robot
   min_vel_y: 0.0
   max_rot_vel: 6.28
-  min_rot_vel: -6.28
-  min_in_place_vel_theta: 1
-  escape_vel: -0.1
-  acc_lim_x: 0.2
+  min_rot_vel: 2
+  min_in_place_vel_theta: 2
+  escape_vel: -0.3
+  acc_lim_x: 0.4
   acc_lim_y: 0.0 # zero for a differential drive robot
-  acc_lim_th: 1.2
+  acc_lim_th: 5
 
   holonomic_robot: false
-  yaw_goal_tolerance: 1.57 # 90 degrees
-  xy_goal_tolerance: 0.15 # 15 cm
+  yaw_goal_tolerance: 6.27 # almost 360 degrees
+  xy_goal_tolerance: 0.1 # 15 cm
   latch_xy_goal_tolerance: false
-  pdist_scale: 0.4
-  gdist_scale: 0.8
   meter_scoring: true
 
   heading_lookahead: 0.325
