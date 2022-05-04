@@ -18,3 +18,13 @@ bridge:
     msg_type: geometry_msgs.msg:PoseStamped
     topic_from: /zumo/goal
     topic_to: /move_base_simple/goal
+
+  - factory: mqtt_bridge.bridge:RosToMqttBridge
+    msg_type: nav_msgs.msg:Odometry
+    topic_from: /zumo/odom
+    topic_to: /odom
+
+  - factory: mqtt_bridge.bridge:RosToMqttBridge
+    msg_type: nav_msgs.msg:Odometry
+    topic_from: /zumo/differential_drive/odom
+    topic_to: /zumo/differential_drive/odom
