@@ -36,13 +36,18 @@ protected:
 private:
     // TODO: Test if this is assigned before pub and sub are instantiated
     const String nodeName;
+    const String inNodeName;
 
     ros::Publisher pub = ros::Publisher(nodeName.c_str(), &msg);
 
 public:
-    RosserialSubscriberBridge(String nodeName) : nodeName(nodeName)
+    RosserialSubscriberBridge(String inNodeName, String nodeName) : inNodeName(inNodeName), nodeName(nodeName)
     {
         static_assert(std::is_base_of<ros::Msg, MessageType>::value, "MessageType type parameter of this class must derive from ros::Msg");
+    }
+
+    RosserialSubscriberBridge(String nodeName) : RosserialSubscriberBridge(nodeName, nodeName)
+    {
     }
 
     void setup(OutputNodeHandle &outputNh)
@@ -52,7 +57,7 @@ public:
 
     void loop(JsonDocument &inputDoc, OutputNodeHandle &outputNh)
     {
-        if (inputDoc["topic"] == nodeName)
+        if (inputDoc["topic"] == inNodeName)
         {
             mapMessages(outputNh, inputDoc, msg);
             pub.publish(&msg);

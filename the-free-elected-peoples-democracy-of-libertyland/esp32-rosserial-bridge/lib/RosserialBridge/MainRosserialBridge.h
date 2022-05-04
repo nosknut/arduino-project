@@ -70,14 +70,25 @@ public:
     }
 };
 
-class Int16SubscriberBridge : public RosserialSubscriberBridge<std_msgs::Int16, WiFi_NodeHandle>
+class RightEncoderSubscriberBridge : public RosserialSubscriberBridge<std_msgs::Int16, WiFi_NodeHandle>
 {
 public:
-    Int16SubscriberBridge(String nodeName) : RosserialSubscriberBridge<std_msgs::Int16, WiFi_NodeHandle>(nodeName) {}
+    RightEncoderSubscriberBridge() : RosserialSubscriberBridge<std_msgs::Int16, WiFi_NodeHandle>("encoders", "right_ticks") {}
 
     void mapMessages(WiFi_NodeHandle &nh, JsonDocument &inDoc, std_msgs::Int16 &outMsg)
     {
-        outMsg.data = inDoc["data"];
+        outMsg.data = inDoc["data_r"];
+    }
+};
+
+class LeftEncoderSubscriberBridge : public RosserialSubscriberBridge<std_msgs::Int16, WiFi_NodeHandle>
+{
+public:
+    LeftEncoderSubscriberBridge() : RosserialSubscriberBridge<std_msgs::Int16, WiFi_NodeHandle>("encoders", "left_ticks") {}
+
+    void mapMessages(WiFi_NodeHandle &nh, JsonDocument &inDoc, std_msgs::Int16 &outMsg)
+    {
+        outMsg.data = inDoc["data_l"];
     }
 };
 
@@ -107,8 +118,8 @@ private:
 
     ImuBridge imuBridge = ImuBridge("imu", "imu_link");
 
-    Int16SubscriberBridge leftEncoderBridge = Int16SubscriberBridge("left_ticks");
-    Int16SubscriberBridge rightEncoderBridge = Int16SubscriberBridge("right_ticks");
+    LeftEncoderSubscriberBridge leftEncoderBridge;
+    RightEncoderSubscriberBridge rightEncoderBridge;
 
     RangeBridge flRangeBridge = RangeBridge("fl_range", "fl_range_link");
     RangeBridge frRangeBridge = RangeBridge("fr_range", "fr_range_link");

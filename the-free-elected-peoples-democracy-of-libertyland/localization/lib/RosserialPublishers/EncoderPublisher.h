@@ -15,21 +15,17 @@ class EncoderPublisher
 {
 private:
     Timer timer;
-    DynamicJsonDocument leftOutputDocument = DynamicJsonDocument(200);
-    DynamicJsonDocument rightOutputDocument = DynamicJsonDocument(200);
+    DynamicJsonDocument outputDocument = DynamicJsonDocument(200);
 
     Zumo32U4Encoders encoders;
 
 public:
     EncoderPublisher()
     {
-        rightOutputDocument["topic"] = "right_ticks";
-        rightOutputDocument["data"] = (int16_t)0;
-        rightOutputDocument.shrinkToFit();
-
-        leftOutputDocument["topic"] = "left_ticks";
-        leftOutputDocument["data"] = (int16_t)0;
-        leftOutputDocument.shrinkToFit();
+        outputDocument["topic"] = "encoders";
+        outputDocument["data_l"] = (int16_t)0;
+        outputDocument["data_r"] = (int16_t)0;
+        outputDocument.shrinkToFit();
     }
 
     void setup()
@@ -38,22 +34,17 @@ public:
 
     void loop()
     {
-        if (timer.loopWait(100))
+        if (timer.loopWait(10))
         {
             int16_t rightTicks = encoders.getCountsRight();
             int16_t leftTicks = encoders.getCountsLeft();
-            auto prevRightTicks = rightOutputDocument["data"];
-            auto prevLeftTicks = leftOutputDocument["data"];
-            if (rightTicks != prevRightTicks)
+            auto prevRightTicks = outputDocument["data_r"];
+            auto prevLeftTicks = outputDocument["data_l"];
+            if ((rightTicks != prevRightTicks) || (leftTicks != prevLeftTicks))
             {
-                rightOutputDocument["data"] = rightTicks;
-                serializeJson(rightOutputDocument, DATA_SERIAL_CLASS);
-            }
-
-            if (leftTicks != prevLeftTicks)
-            {
-                leftOutputDocument["data"] = leftTicks;
-                serializeJson(leftOutputDocument, DATA_SERIAL_CLASS);
+                outputDocument["data_r"] = rightTicks;
+                outputDocument["data_l"] = leftTicks;
+                serializeJson(outputDocument, DATA_SERIAL_CLASS);
             }
         }
     }
