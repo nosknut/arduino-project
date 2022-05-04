@@ -110,7 +110,7 @@ services:
     build: dockerfiles/webviz
     # https://webviz.io/
     # http://wiki.ros.org/rosbridge_suite/Tutorials/RunningRosbridge
-    command: roslaunch rosbridge_server rosbridge_websocket.launch
+    command: roslaunch rosbridge_server rosbridge_websocket.launch --wait
 
   mqtt-ros-bridge:
     container_name: mqtt-ros-bridge
@@ -139,6 +139,8 @@ services:
     container_name: move-base
     environment:
       - ROS_MASTER_URI=http://master:11311
+    depends_on:
+      - master
     volumes:
       - .ros_logs/move-base:/root/.ros/
       - ./move-base-configs:/move-base-configs
