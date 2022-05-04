@@ -7,6 +7,7 @@
         <rosparam file="/move-base-configs/blind/config/local_costmap_params.yaml" command="load" />
         <rosparam file="/move-base-configs/blind/config/global_costmap_params.yaml" command="load" />
         <rosparam file="/move-base-configs/blind/config/base_local_planner_params.yaml" command="load" />
+        <remap from="cmd_vel" to="/zumo/differential_drive/cmd_vel" />
     </node>
 
 </launch>
