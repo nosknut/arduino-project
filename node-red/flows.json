@@ -509,6 +509,18 @@
         "height": 1
     },
     {
+        "id": "d164e15765076acf",
+        "type": "remote-config",
+        "name": "Node-RED UI",
+        "host": "10.22.230.151",
+        "protocol": "http",
+        "port": "1880",
+        "baseurl": "/ui",
+        "instancehash": "plw3k05j5voypqm1njrfjlkpsotjdz3aekq8pcqbm950iuysj5b3135g2b5hu466",
+        "server": "nodered02.remote-red.com",
+        "region": "de"
+    },
+    {
         "id": "b81e5af5acce9ccc",
         "type": "mqtt in",
         "z": "290674bad5d75c28",
@@ -542,8 +554,8 @@
         "rap": true,
         "rh": 0,
         "inputs": 0,
-        "x": 580,
-        "y": 280,
+        "x": 1040,
+        "y": 200,
         "wires": [
             [
                 "47a7432b41372b85"
@@ -567,8 +579,8 @@
         "directions": "all",
         "shape": "circle",
         "centerAtRelease": true,
-        "x": 550,
-        "y": 400,
+        "x": 1250,
+        "y": 420,
         "wires": [
             [
                 "f5d728b325956cb6"
@@ -682,8 +694,8 @@
         "topicType": "msg",
         "splitLayout": "",
         "className": "",
-        "x": 570,
-        "y": 340,
+        "x": 1050,
+        "y": 460,
         "wires": [
             [
                 "47a7432b41372b85"
@@ -876,7 +888,7 @@
         "topic": "payload",
         "topicType": "msg",
         "x": 110,
-        "y": 400,
+        "y": 380,
         "wires": [
             [
                 "ca4224793acb8ba9",
@@ -903,8 +915,8 @@
         "from": "",
         "to": "",
         "reg": false,
-        "x": 380,
-        "y": 440,
+        "x": 120,
+        "y": 160,
         "wires": [
             [
                 "ca4224793acb8ba9",
@@ -928,6 +940,29 @@
         "wires": [
             []
         ]
+    },
+    {
+        "id": "eeeed7dbf65dcfdd",
+        "type": "remote-access",
+        "z": "290674bad5d75c28",
+        "confignode": "d164e15765076acf",
+        "name": "Prosjekt-kundeapp",
+        "verbose": 0,
+        "x": 390,
+        "y": 360,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "30a52515c87c49c7",
+        "type": "comment",
+        "z": "290674bad5d75c28",
+        "name": "Klikk for å se paletter man trenger",
+        "info": "# Paletter:\n - Først klikk øverst til høyre på burgermeny, velg \"manage palette\"\n - klikk på install tab\n - Last ned:\n\nnode-red\n2.2.2\nnode-red-contrib-remote (for app på telefon)\n1.4.0\nnode-red-contrib-ui-joystick (trengs ikke)\n1.0.0\nnode-red-contrib-web-worldmap (trengs ikke)\n2.28.1\nnode-red-contrib-xkeys_joystick (trengs ikke)\n0.2.1\nnode-red-dashboard\n3.1.6\n\nEtter dette er lastet ned skal alt være i orden\nFor å få fram dashboard, skriv inn url fra node-red + ui\nAltså: ip-adresse:port/ui\n",
+        "x": 710,
+        "y": 260,
+        "wires": []
     },
     {
         "id": "44835e77db8fc328",
@@ -1321,6 +1356,31 @@
         "wires": []
     },
     {
+        "id": "7a290689d0134043",
+        "type": "inject",
+        "z": "637d6cd14b3b778f",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "6",
+        "payloadType": "str",
+        "x": 410,
+        "y": 360,
+        "wires": [
+            [
+                "6a6bd7d601baa67a"
+            ]
+        ]
+    },
+    {
         "id": "48454abd6ca3dfd1",
         "type": "debug",
         "z": "213feba8b3519970",
@@ -1624,8 +1684,8 @@
         "topic": "",
         "payload": "{\"owner\": \"esp\", \"amount\": \" 50 \"}",
         "payloadType": "json",
-        "x": 390,
-        "y": 320,
+        "x": 90,
+        "y": 160,
         "wires": [
             []
         ]
@@ -1746,7 +1806,7 @@
         "type": "function",
         "z": "213feba8b3519970",
         "name": "",
-        "func": "msg.topic = msg.payload.owner\nmsg.payload = msg.payload.amount\nreturn msg;",
+        "func": "//henter ut verdier fra json-string og setter inn i topic og payload\nmsg.topic = msg.payload.owner\nmsg.payload = msg.payload.amount\n\nreturn msg;",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
@@ -1766,7 +1826,7 @@
         "type": "function",
         "z": "213feba8b3519970",
         "name": "Oppdater g(saldo)",
-        "func": "let current = global.get(\"saldo\")\nif(isNaN(current)){\n    current = 0;\n}\nmsg.payload.amount = Number(msg.payload.amount)\nconst val = current + msg.payload.amount\nglobal.set(\"saldo\", val)\nreturn msg;",
+        "func": "// henter global variabel \"saldo\"\nlet current = global.get(\"saldo\")\n\nif(isNaN(current)){\n    current = 0;\n}\n\nmsg.payload.amount = Number(msg.payload.amount)\nconst val = current + msg.payload.amount\n// oppdaterer global variabel\nglobal.set(\"saldo\", val)\n\nreturn msg;",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
@@ -1785,7 +1845,7 @@
         "type": "function",
         "z": "213feba8b3519970",
         "name": "Oppdater g(saldo)",
-        "func": "let current = global.get(\"saldo\")\nvar salg = 0;\nif(isNaN(current)){\n    current = 0;\n}\nif(msg.payload.burger){\n salg += 80   \n}\nif(msg.payload.cola){\n salg += 30   \n}\nif(msg.payload.pizza){\n salg += 100   \n}\nsalg = salg * msg.payload.zone\nconst val = current + salg\nglobal.set(\"saldo\", val)\nmsg.payload.owner = msg.payload.name + \"-kundeapp\"\nmsg.payload.amount = salg\nreturn msg;",
+        "func": "//henter global variabel \"saldo\"\nlet current = global.get(\"saldo\")\nvar salg = 0;\nif(isNaN(current)){\n    current = 0;\n}\n\nif(msg.payload.burger){\n salg += 80   \n}\nif(msg.payload.cola){\n salg += 30   \n}\nif(msg.payload.pizza){\n salg += 100   \n}\n//oppdaterer verdier og formaterer til /transactions\nsalg = salg * msg.payload.zone\nconst val = current + salg\nglobal.set(\"saldo\", val)\nmsg.payload.owner = msg.payload.name + \"-kundeapp\"\nmsg.payload.amount = salg\nreturn msg;",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
@@ -1798,6 +1858,26 @@
                 "6d87f146d0d514de"
             ]
         ]
+    },
+    {
+        "id": "cd148e6d96829765",
+        "type": "comment",
+        "z": "213feba8b3519970",
+        "name": "Testdata",
+        "info": "",
+        "x": 100,
+        "y": 80,
+        "wires": []
+    },
+    {
+        "id": "327d263744847a64",
+        "type": "comment",
+        "z": "213feba8b3519970",
+        "name": "sub på transactions og kjører gjennom filter",
+        "info": "",
+        "x": 160,
+        "y": 260,
+        "wires": []
     },
     {
         "id": "7757c69a55aaaf2a",
@@ -2337,7 +2417,8 @@
                 "a138f17c35351a6d",
                 "f1660e35bcc25795",
                 "9140efb4dd87395a",
-                "4dc7515e8b03f737"
+                "4dc7515e8b03f737",
+                "87ef0103b217222d"
             ]
         ]
     },
