@@ -3,6 +3,7 @@ FROM ros:noetic-ros-base
 RUN apt-get update
 
 RUN apt-get install -y ros-${ROS_DISTRO}-move-base
+RUN apt-get install -y ros-${ROS_DISTRO}-map-server
 
 RUN rm -rf /var/lib/apt/lists/*
 
