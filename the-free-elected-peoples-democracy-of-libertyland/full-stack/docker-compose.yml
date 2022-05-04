@@ -135,9 +135,28 @@ services:
       dockerfile: dockerfiles/mqtt-ros-bridge/Dockerfile
     command: roslaunch /mqtt-bridge-configs/mqtt_bridge.launch --wait
 
-  # Required to install npm dependencies for the node-red container
-  # The folder mounted here is shared between them
-  # This container should be run before the node-red container
+  move-base:
+    container_name: move-base
+    environment:
+      - ROS_MASTER_URI=http://master:11311
+    volumes:
+      - .ros_logs/move-base:/root/.ros/
+      - ./move-base-configs:/move-base-configs
+    deploy:
+      restart_policy:
+        condition: any
+    build:
+      # context must be specified so that the Dockerfile gets access to the
+      # top level directory that contains the mqtt-bridge-configs directory
+      # https://stackoverflow.com/questions/47785706/docker-using-copy-when-the-dockerfile-is-located-in-a-subdirectory
+      context: ./
+      dockerfile: dockerfiles/move-base/Dockerfile
+    command: roslaunch /move-base-configs/blind/launch/fake_move_base_blank_map.launch --wait
+    #cat /move-base-configs/blind/config/base_local_planner_params.yaml
+
+    # Required to install npm dependencies for the node-red container
+    # The folder mounted here is shared between them
+    # This container should be run before the node-red container
   install-node-red:
     image: node:latest
     volumes:

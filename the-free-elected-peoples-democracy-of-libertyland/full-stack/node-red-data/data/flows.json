@@ -227,5 +227,89 @@
         "x": 970,
         "y": 460,
         "wires": []
+    },
+    {
+        "id": "42e8b5f33ea0ce19",
+        "type": "inject",
+        "z": "519f41f181c369f6",
+        "name": "",
+        "props": [
+            {
+                "p": "payload.x",
+                "v": "5",
+                "vt": "num"
+            },
+            {
+                "p": "payload.y",
+                "v": "10",
+                "vt": "num"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "x": 370,
+        "y": 180,
+        "wires": [
+            [
+                "a51db3a2a3d3f538"
+            ]
+        ]
+    },
+    {
+        "id": "a51db3a2a3d3f538",
+        "type": "function",
+        "z": "519f41f181c369f6",
+        "name": "",
+        "func": "\nreturn {\n    payload: {\n        position: {\n            x: msg.payload.x,\n            y: msg.payload.y,\n            z: 0,\n        },\n        orientation: {\n            x: 0,\n            y: 0,\n            z: 0,\n            w: 1,\n        },\n    }\n};",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 600,
+        "y": 180,
+        "wires": [
+            [
+                "3ee22f9028d46804",
+                "e358bddc47cff0c2"
+            ]
+        ]
+    },
+    {
+        "id": "3ee22f9028d46804",
+        "type": "mqtt out",
+        "z": "519f41f181c369f6",
+        "name": "",
+        "topic": "/zumo/goal",
+        "qos": "2",
+        "retain": "true",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "ac9023fa9aff9274",
+        "x": 870,
+        "y": 180,
+        "wires": []
+    },
+    {
+        "id": "e358bddc47cff0c2",
+        "type": "debug",
+        "z": "519f41f181c369f6",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 970,
+        "y": 240,
+        "wires": []
     }
 ]

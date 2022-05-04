@@ -13,3 +13,8 @@ bridge:
     msg_type: geometry_msgs.msg:Twist
     topic_from: /zumo/cmd_vel
     topic_to: /zumo/differential_drive/cmd_vel
+
+  - factory: mqtt_bridge.bridge:MqttToRosBridge
+    msg_type: geometry_msgs.msg:PoseStamped
+    topic_from: /zumo/goal
+    topic_to: /move_base_simple/goal
