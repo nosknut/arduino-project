@@ -1,3 +1,4 @@
+// inkluderer nødvendige biblioteker
 #include <HCSR04.h>
 #include <Arduino.h>
 #include <WiFi.h>
@@ -5,12 +6,12 @@
 #include <Wire.h>
 
 // Wifi navn (ssid) og passord
-const char *ssid = "esp";
-const char *password = "12345678";
+const char *ssid = "zenbook-kristian";
+const char *password = "hansen123";
 
-// Add your MQTT Broker IP address (mulig?: epstin.com)
-// const char *mqtt_server = "IP_ADRESSE"; får ikke ip til å fungere...
-const char *mqtt_server = "10.24.3.237";
+// Legger til MQTT Broker IP addresse
+// const char *mqtt_server = "IP_ADRESSE";
+const char *mqtt_server = "10.22.223.162";
 const int mqtt_port = 1883;
 
 // deklarerer navn og variabler
@@ -20,25 +21,28 @@ long lastMsg = 0;
 char msg[50];
 int value = 0;
 
-// flag for registering passing
+// flag for å registrere passering
 int paymentflag = 0;
-// consts for LED
+// consts til LED
 const int LED = 32;
 const int channelLED = 0;
 
-HCSR04 hc(5, 18); // initialisation class HCSR04 (trig pin , echo pin)
+/*funksjon som setter opp og tar input fra HCsr04 sensoren
+ class HCSR04 (trig pin , echo pin)*/
+HCSR04 hc(5, 18);
 
+// funksjon som kobler til wifi
 void setup_wifi()
 {
   delay(10);
-  // We start by connecting to a WiFi network
+  // Starter med å koble til wifi
   Serial.println();
   Serial.print("Connecting to ");
   Serial.println(ssid);
 
   WiFi.begin(ssid, password);
 
-  while (WiFi.status() != WL_CONNECTED)
+  while (WiFi.status() != WL_CONNECTED) // mens den prøver å koble til
   {
     delay(500);
     Serial.print(".");
@@ -55,19 +59,19 @@ void setup()
   pinMode(LED, OUTPUT);
   ledcSetup(channelLED, 2000, 8);
   ledcAttachPin(LED, channelLED);
-  ledcWrite(channelLED, 0); // Turns the light off at start
+  ledcWrite(channelLED, 0); // Starter med lyset av
   // starter wifi:
   setup_wifi();
   client.setServer(mqtt_server, mqtt_port);
 }
-
+// funksjon som sørger for at esp32en forblir koblet til wifiet
 void reconnect()
 {
-  // Loop until we're reconnected
+  // Loop frem til en koblet på igjen
   while (!client.connected())
   {
     Serial.print("Attempting MQTT connection...");
-    // Attempt to connect
+    // prøve å koble til
     if (client.connect("ESP8266Client"))
     {
       Serial.println("connected");
@@ -79,50 +83,47 @@ void reconnect()
       Serial.print("failed, rc=");
       Serial.print(client.state());
       Serial.println(" try again in 5 seconds");
-      // Wait 5 seconds before retrying
+      // Vent 5 sekunder for å ikke bombadere message queue
       delay(5000);
     }
   }
 }
 
+// funksjonen som sjekker hcsr04 og sender dataen
 void tollSensor()
 {
-  float Distance = hc.dist(); // return current distance (cm) in serial
+  float Distance = hc.dist(); // hc.dist returner avstand i cm
   Serial.println(Distance);
-  if (Distance <= 10)
+  if (Distance <= 10) // hvis et objekt ikke er foran sensoren
   {
-    paymentflag = 1;
+    paymentflag = 1; // flagget settes høyt slik at den kan gå i if
     ledcWrite(channelLED, 0);
   }
-  if (Distance > 10)
+  if (Distance > 10) // hvis et objekt er foran sensoren
   {
-    if (paymentflag == 1)
+    if (paymentflag == 1) // sørger for at signal kun sendes en gang i passeringen av bommen
     {
-      const int moneyPaidToToll = 50;
-      String moneyString = String(moneyPaidToToll);
-      int str_len = moneyString.length() + 1;
-      char char_array[str_len];
-      // kopierer string over til char
-      moneyString.toCharArray(char_array, str_len);
-      client.publish("esp32/battery", char_array);
-      ledcWrite(channelLED, 255);
+      int moneyPaidToToll = -50;                                                             // sender en verdi -50
+      String jsonOut = "{\"owner\": \"Zumo\", \"amount\": " + String(moneyPaidToToll) + "}"; // gjør om verdien til string
+      client.publish("esp32/toll", jsonOut.c_str());                                         // sender json string til topicet esp32/toll
+      ledcWrite(channelLED, 255);                                                            // indikerer at stringen har blitt published
       delay(2000);
-      paymentflag = 0;
+      paymentflag = 0; // setter flagget til 0 for å kun registrere selve passeringen og ikke om den står i ro
     }
-    else
+    else // hvis bilen blir stående foran sensoren
     {
       ledcWrite(channelLED, 0);
     }
   }
-  delay(60);
+  delay(60); // delay for stabil hcsr04 lesninger
 }
 
 void loop()
 {
-  if (!client.connected())
+  if (!client.connected()) // hvis den ikke er koblet til
   {
     reconnect();
   }
-  client.loop();
+  client.loop(); // holde klienten gående
   tollSensor();
 }
