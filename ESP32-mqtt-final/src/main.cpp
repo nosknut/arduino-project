@@ -6,12 +6,11 @@
 // Wifi navn (ssid) og passord
 // const char *ssid = "Get-2G-DC8011";
 // const char *password = "BC3A88DD73";
-const char *ssid = "zenbook-kristian";
-const char *password = "hansen123";
+const char *ssid = "fyll-inn-ssid";
+const char *password = "fyll-inn-passord";
 
-// Add your MQTT Broker IP address (mulig?: epstin.com)
-// const char *mqtt_server = "IP_ADRESSE"; får ikke ip til å fungere...
-const char *mqtt_server = "10.22.230.151";
+// Legg til MQTT Broker IP address
+const char *mqtt_server = "IP_ADRESSE";
 const int mqtt_port = 1883;
 
 // deklarerer navn og variabler
@@ -54,9 +53,10 @@ void setup_wifi()
     }
     if ((now - time_reconnect > 5000))
     {
+      //restarer esp etter 5 sekunder for raskere oppkobling til wifi
       Serial.print("Restarter esp32");
       time_reconnect = now;
-      ESP.restart();
+      ESP.restart(); 
     }
   }
   Serial.println("");
@@ -172,8 +172,8 @@ void loop()
     String batteryString = String(battery);
     int str_len = batteryString.length() + 1;
     char char_array[str_len];
-    // kopierer string over til char
-    batteryString.toCharArray(char_array, str_len);
+    // kopierer string over til char, kan brukes istedenfor jsonOut hvis man ikke ønsker .json-string
+    batteryString.toCharArray(char_array, str_len); 
 
     Serial.print("Batteriprosent: ");
     Serial.print(battery);
