@@ -4,23 +4,23 @@ recovery_behavior_enabled: false
 clearing_rotation_allowed: false
 
 TrajectoryPlannerROS:
-  max_vel_x: 0.4
-  min_vel_x: -0.4
+  max_vel_x: 0.8
+  min_vel_x: -0.8
   max_vel_trans: 0.4
   min_vel_trans: 0.10
   max_vel_y: 0.0 # zero for a differential drive robot
   min_vel_y: 0.0
   max_rot_vel: 6.28
   min_rot_vel: 2
-  min_in_place_vel_theta: 2
+  min_in_place_vel_theta: 2.6
   escape_vel: -0.3
   acc_lim_x: 0.4
   acc_lim_y: 0.0 # zero for a differential drive robot
   acc_lim_th: 5
 
   holonomic_robot: false
-  yaw_goal_tolerance: 6.27 # almost 360 degrees
-  xy_goal_tolerance: 0.1 # 15 cm
+  yaw_goal_tolerance: 1 # almost 360 degrees
+  xy_goal_tolerance: 0.05 # 15 cm
   latch_xy_goal_tolerance: false
   meter_scoring: true
 
@@ -32,8 +32,14 @@ TrajectoryPlannerROS:
   publish_cost_grid_pc: false
   prune_plan: true
 
-  sim_time: 1.0
+  # Most important for smooth pathing!!!
+  sim_time: 3.2
+  # Forces the local path to follow the global one
+  path_distance_bias: 1.5
+
+  # Increases resolution of the path steps
   sim_granularity: 0.05
+  # Increases resolution of the path steps
   angular_sim_granularity: 0.1
   vx_samples: 8
   vy_samples: 0 # zero for a differential drive robot

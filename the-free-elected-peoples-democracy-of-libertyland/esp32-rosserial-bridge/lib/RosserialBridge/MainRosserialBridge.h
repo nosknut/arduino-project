@@ -98,12 +98,12 @@ public:
     Float32PublisherBridge(String nodeName) : RosserialPublisherBridge<std_msgs::Float32, WiFi_NodeHandle>(nodeName)
     {
         this->outputDocument["topic"] = nodeName;
-        this->outputDocument["data"] = (int16_t)0;
+        this->outputDocument["data"] = (float)0;
     }
 
     void mapMessages(const std_msgs::Float32 &inMsg, JsonDocument &outDoc)
     {
-        outDoc["data"] = (int16_t)inMsg.data;
+        outDoc["data"] = inMsg.data;
     }
 };
 

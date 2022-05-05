@@ -18,10 +18,10 @@
           <node pkg="differential_drive" type="pid_velocity.py" name="pid" required="true">
             <remap from="wheel" to="/$(arg robot_name)/wheels/left/encoder/ticks" />
             <remap from="wheel_vel" to="pid/current_vel" />
-            <remap from="wheel_vtarget" to="pid/cmd_target_vel" />
+            <remap from="wheel_vtarget" to="/$(arg robot_name)/wheels/left/motor/cmd_effort" />
             <!--TODO: Implement move_base-->
             <!--<remap from="motor_cmd" to="pid/effort" />-->
-            <remap from="motor_cmd" to="/$(arg robot_name)/wheels/left/motor/cmd_effort" />
+            <remap from="motor_cmd" to="/$(arg robot_name)/wheels/left/motor/cmd_effort/trash" />
           </node>
           <node name="dynparam" pkg="dynamic_reconfigure" type="dynparam" args="set_from_parameters pid">
             <rosparam param="Kp">359</rosparam>
@@ -40,10 +40,10 @@
           <node pkg="differential_drive" type="pid_velocity.py" name="pid" required="true">
             <remap from="wheel" to="/$(arg robot_name)/wheels/right/encoder/ticks" />
             <remap from="wheel_vel" to="pid/current_vel" />
-            <remap from="wheel_vtarget" to="pid/cmd_target_vel" />
+            <remap from="wheel_vtarget" to="/$(arg robot_name)/wheels/right/motor/cmd_effort" />
             <!--TODO: Implement move_base-->
             <!--<remap from="motor_cmd" to="pid/effort" />-->
-            <remap from="motor_cmd" to="/$(arg robot_name)/wheels/right/motor/cmd_effort" />
+            <remap from="motor_cmd" to="/$(arg robot_name)/wheels/right/motor/cmd_effort/trash" />
           </node>
           <node name="dynparam" pkg="dynamic_reconfigure" type="dynparam" args="set_from_parameters pid">
             <rosparam param="Kp">359</rosparam>
@@ -51,8 +51,8 @@
             <rosparam param="Kd">2</rosparam>
             <rosparam param="out_min">-400</rosparam>
             <rosparam param="out_max">400</rosparam>
-            <rosparam param="rate">5</rosparam>
-            <rosparam param="timeout_ticks">4</rosparam>
+            <rosparam param="rate">10</rosparam>
+            <rosparam param="timeout_ticks">10</rosparam>
             <rosparam param="rolling_pts">5</rosparam>
             <param name="ticks_meter" value="$(arg ticks_meter)" />
           </node>
@@ -62,8 +62,8 @@
       <node pkg="differential_drive" type="twist_to_motors.py" name="twist_to_motors" output="screen" required="true">
         <remap from="twist" to="cmd_vel" />
         <param name="base_width" value="$(arg base_width)" />
-        <remap from="rwheel_vtarget" to="wheels/right/pid/cmd_target_vel" />
-        <remap from="lwheel_vtarget" to="wheels/left/pid/cmd_target_vel" />
+        <remap from="rwheel_vtarget" to="/$(arg robot_name)/wheels/right/motor/cmd_effort" />
+        <remap from="lwheel_vtarget" to="/$(arg robot_name)/wheels/left/motor/cmd_effort" />
       </node>
 
       <!-- diff_tf.py requires param ticks_meter to be a sibling of itself -->

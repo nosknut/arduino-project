@@ -5,7 +5,7 @@
 class Timer
 {
 private:
-    long startTime;
+    unsigned long startTime;
 
 public:
     Timer()
@@ -19,16 +19,25 @@ public:
      */
     void reset()
     {
-        startTime = millis();
+        startTime = micros();
     }
 
+    /**
+     * @brief Get the time in microseconds since the timer was started or reset
+     *
+     */
+    unsigned long getElapsedTimeMicros()
+    {
+        return micros() - startTime;
+    }
+    
     /**
      * @brief Get the time in milliseconds since the timer was started or reset
      *
      */
     unsigned long getElapsedTime()
     {
-        return millis() - startTime;
+        return getElapsedTimeMicros() / 1000;
     }
 
     /**

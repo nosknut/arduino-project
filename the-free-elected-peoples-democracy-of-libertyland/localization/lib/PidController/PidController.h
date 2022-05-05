@@ -75,10 +75,10 @@ public:
             Range(-inputRangeWidth, inputRangeWidth),
             pidConfig.outputRange);
 
-        previousUpdateOutput =
-            clampOutput
-                ? Scaling::clamp(scaledOutput, pidConfig.outputRange)
-                : scaledOutput;
+        previousUpdateOutput = output;
+//            clampOutput
+//                ? Scaling::clamp(scaledOutput, pidConfig.outputRange)
+//                : scaledOutput;
 
         return previousUpdateOutput;
     }
