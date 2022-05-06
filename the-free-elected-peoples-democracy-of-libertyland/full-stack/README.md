@@ -1,6 +1,8 @@
 ## Starting the entire stack
 Run ```ipconfig``` in a terminal to find your ip address, and update the
 existing ip address at the following path in [docker-compose.yml](docker-compose.yml)
+
+You have to do this for each service that you wish to use. Below only demonstrates this for the turtlesim service.
 ```
 services:
   turtlesim:
