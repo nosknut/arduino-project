@@ -1,54 +1,54 @@
-// inkluderer nødvendige biblioteker
+// includes necessary libraries
 #include <Arduino.h>
 #include <WiFi.h>
 #include <PubSubClient.h>
 #include <Wire.h>
 
-// Wifi navn (ssid) og passord
-const char *ssid = "zenbook-kristian";
-const char *password = "hansen123";
+// Wifi name (ssid) and password
+const char *ssid = "kristianIPHONE";
+const char *password = "";
 
-// Legger til MQTT Broker IP addresse
-// const char *mqtt_server = "IP_ADRESSE";
-const char *mqtt_server = "10.22.223.162";
+// Adds MQTT Broker IP adress
+// const char *mqtt_server = "IP_ADRESS";
+const char *mqtt_server = "172.20.10.10";
 const int mqtt_port = 1883;
 
-// deklarerer navn og variabler
+// declair names and variables
 WiFiClient espClient;
 PubSubClient client(espClient);
 long lastMsg = 0;
 char msg[50];
 int value = 0;
-// verdier som representer forrige loops verdier
+// variables that represent last loops values
 int previousParkingOne = 1;
 int previousParkingTwo = 1;
 int previousParkingThree = 1;
-// verdier brukt til timing
+// variables used for timing
 unsigned long previousTimeOne;
 unsigned long previousTimeTwo;
 unsigned long previousTimeThree;
-// counter som representerer sekunder
+// counter that represents seconds
 int timeParkedAtOne;
 int timeParkedAtTwo;
 int timeParkedAtThree;
 
-// portene som blir brukt
+// pins that are used
 #define ParkingOne 5
 #define ParkingTwo 18
 #define ParkingThree 19
 
-// funksjon som kobler til wifi
+// function that connects to wifi
 void setup_wifi()
 {
   delay(10);
-  // Starter med å koble til wifi
+  // Start by connecting to wifi
   Serial.println();
   Serial.print("Connecting to ");
   Serial.println(ssid);
 
   WiFi.begin(ssid, password);
 
-  while (WiFi.status() != WL_CONNECTED) // mens den prøver å koble til
+  while (WiFi.status() != WL_CONNECTED) // while trying to connect
   {
     delay(500);
     Serial.print(".");
@@ -62,19 +62,19 @@ void setup_wifi()
 void setup()
 {
   Serial.begin(9600);
-  // starter wifi:
+  // start wifi:
   setup_wifi();
   client.setServer(mqtt_server, mqtt_port);
 }
 
-// funksjon som sørger for at esp32en forblir koblet til wifiet
+// function that makes sure that the ESP32 stays connected to wifi
 void reconnect()
 {
-  // Loop frem til en koblet på igjen
+  // Loop until connected to wifi
   while (!client.connected())
   {
     Serial.print("Attempting MQTT connection...");
-    // prøve å koble til
+    // try to connect
     if (client.connect("ESP8266Client"))
     {
       Serial.println("connected");
@@ -85,21 +85,21 @@ void reconnect()
       Serial.print("failed, rc=");
       Serial.print(client.state());
       Serial.println(" try again in 5 seconds");
-      // Vent 5 sekunder for å ikke bombadere message queuen
+      // wait 5 seconds to not spam message queue
       delay(5000);
     }
   }
 }
 
-// funksjon som sender data til parking_1 topicet
+// function that sends data to the parking_1 topic
 void sendDataToTopicOne(int parkedInSlotOneState)
 {
-  int parkedInSlotOne = parkedInSlotOneState;                                                                                      // sender staten 1 eller 0
-  String jsonOut = "{\"owner\": \"esp\", \"amount\": " + String(parkedInSlotOne) + ", \"time\": " + String(timeParkedAtOne) + "}"; // setter i json string
-  client.publish("esp32/parking_1", jsonOut.c_str());                                                                              // publisher til topicet
+  int parkedInSlotOne = parkedInSlotOneState;                                                                                      // sends state 1 or 0
+  String jsonOut = "{\"owner\": \"esp\", \"amount\": " + String(parkedInSlotOne) + ", \"time\": " + String(timeParkedAtOne) + "}"; // puts value in json string
+  client.publish("esp32/parking_1", jsonOut.c_str());                                                                              // publishes to the topic
 }
 
-// funksjon som sender data til parking_2 topicet med samme struktur som sendDataToTopicOne
+// function that sends data to the parking_2 topic with the same structur as sendDataToTopicOne
 void sendDataToTopicTwo(int parkedInSlotTwoState)
 {
   int parkedInSlotTwo = parkedInSlotTwoState;
@@ -107,7 +107,7 @@ void sendDataToTopicTwo(int parkedInSlotTwoState)
   client.publish("esp32/parking_2", jsonOut.c_str());
 }
 
-// funksjon som sender data til parking_3 topicet med samme struktur som sendDataToTopicOne
+// function that sends data to the parking_3 topic with the same structur as sendDataToTopicOne
 void sendDataToTopicThree(int parkedInSlotThreeState)
 {
   int parkedInSlotThree = parkedInSlotThreeState;
@@ -115,18 +115,18 @@ void sendDataToTopicThree(int parkedInSlotThreeState)
   client.publish("esp32/parking_3", jsonOut.c_str());
 }
 
-// timed interval for å telle sekunder parkert på 1
+// timed interval for counting seconds parked at parking1
 void paymentParkedAtOne()
 {
   unsigned long now = millis();
   if (now - previousTimeOne >= 1000)
   {
-    timeParkedAtOne++; //øker med 1 hvert sekund
+    timeParkedAtOne++; // increases by one every second
     previousTimeOne = millis();
   }
 }
 
-// timed interval for å telle sekunder parkert på 2
+// timed interval for counting seconds parked at parking2
 void paymentParkedAtTwo()
 {
   unsigned long now = millis();
@@ -137,7 +137,7 @@ void paymentParkedAtTwo()
   }
 }
 
-// timed interval for å telle sekunder parkert på 3
+// timed interval for counting seconds parked at parking3
 void paymentParkedAtThree()
 {
   unsigned long now = millis();
@@ -148,11 +148,11 @@ void paymentParkedAtThree()
   }
 }
 
-// funksjon som sjekker status på alle parkeringsplassene
+// function that checks state on every parking
 void parkingWithPhotoRes()
 {
-  /*leser om pinnen er høy eller lav, hvis det er noen parkert er pinnen lav
-  og hvis den er ledig står den high*/
+  /*reads if pin is high or low, if somthing is parked the pin is low
+  and if it is available the pin is high*/
   int parkingStateOne = digitalRead(ParkingOne);
   int parkingStateTwo = digitalRead(ParkingTwo);
   int parkingStateThree = digitalRead(ParkingThree);
@@ -161,42 +161,42 @@ void parkingWithPhotoRes()
   Serial.println(parkingStateTwo);
   Serial.println(parkingStateThree);
 
-  if (parkingStateOne == 0) // hvis noen står på parkeringsplass 1
+  if (parkingStateOne == 0) // checks if something is parked on parking1
   {
-    paymentParkedAtOne(); // teller sekunder
+    paymentParkedAtOne(); // counts seconds
   }
 
-  if (parkingStateTwo == 0) // parkeringsplass2
+  if (parkingStateTwo == 0) // parking2
   {
     paymentParkedAtTwo();
   }
 
-  if (parkingStateThree == 0) // parkeringsplass3
+  if (parkingStateThree == 0) // parking3
   {
     paymentParkedAtThree();
   }
 
-  if (parkingStateOne != previousParkingOne) // hvis en bil kjører på eller av parkering1
+  if (parkingStateOne != previousParkingOne) // if a something moves on or of parking1
   {
-    sendDataToTopicOne(parkingStateOne); // sender tid stått og om ledig eller opptatt
+    sendDataToTopicOne(parkingStateOne); // sends time parked and if available or taken
     Serial.println("Sent from one");
-    timeParkedAtOne = 0; // setter tiden til null for neste parkeringstid
+    timeParkedAtOne = 0; // sets time to zero for next parkingstime
   }
 
-  if (parkingStateTwo != previousParkingTwo) // parkering2
+  if (parkingStateTwo != previousParkingTwo) // parking2
   {
     sendDataToTopicTwo(parkingStateTwo);
     Serial.println("Sent from two");
     timeParkedAtTwo = 0;
   }
 
-  if (parkingStateThree != previousParkingThree) // parkering3
+  if (parkingStateThree != previousParkingThree) // parking3
   {
     sendDataToTopicThree(parkingStateThree);
     Serial.println("Sent from three");
     timeParkedAtThree = 0;
   }
-  // registrerer loopens parkering verdier
+  // registrers the loops pin readings
   previousParkingOne = parkingStateOne;
   previousParkingTwo = parkingStateTwo;
   previousParkingThree = parkingStateThree;
@@ -205,10 +205,10 @@ void parkingWithPhotoRes()
 
 void loop()
 {
-  if (!client.connected()) // hvis den ikke er koblet til
+  if (!client.connected()) // if not connected to MQTT broker
   {
     reconnect();
   }
-  client.loop(); // holde klienten gående
-  parkingWithPhotoRes();
+  client.loop();         // keeps client running
+  parkingWithPhotoRes(); // runs main
 }
