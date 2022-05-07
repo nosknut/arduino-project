@@ -12,14 +12,11 @@ services:
 On Windows
 - Install [VcXsrv Windows X Server Download](https://sourceforge.net/projects/vcxsrv/) and double click [config.xlaunch](config.xlaunch) while in file explorer to run it. You can open file explorer by typing ```start .``` (include the period) in your terminal
 
-Now run the following commands in order. After running the last one, you should see a blue window with a turtle a few seconds after all the docker images have started.
 ```
 docker-compose run install-node-red
 docker-compose up -d nav
 ```
 Node-RED will be hosted on http://localhost:1880 and the Node-RED UI will be hosted on http://localhost:1880/ui
-
-You can now control the blue turtlesim simulation window with the Node-RED website.
 
 Run the following command to shut everything down
 ```
