@@ -1,56 +1,111 @@
-#include <ArduinoJson.h>
 #include <Arduino.h>
+#include <ArduinoJson.h>
 
-class Timer {
+class Timer
+{
 private:
     unsigned long startTime;
 
 public:
-    Timer() {
+    Timer()
+    {
         restart();
     }
 
-    void restart() {
+    void restart()
+    {
         startTime = millis();
     }
-    
-    unsigned long getElapsedTime() {
+
+    unsigned long getElapsedTime()
+    {
         return millis() - startTime;
     }
 
-    bool isFinished(unsigned long duration) {
+    bool isFinished(unsigned long duration)
+    {
         return getElapsedTime() >= duration;
     }
 
-    bool loopWait(unsigned long duration) {
-        if (isFinished(duration)) {
+    bool loopWait(unsigned long duration)
+    {
+        if (isFinished(duration))
+        {
             restart();
             return true;
-        } else {
-        return false;
+        }
+        else
+        {
+            return false;
         }
     }
 };
 
+class TemperatureSensor
+{
+private:
+    int temperature = 0;
+
+public:
+    int getTemperature()
+    {
+        temperature += 1;
+        return temperature;
+    }
+};
+
+class SoftwareBattery
+{
+private:
+    int maxCapacity = 100;
+    int capacity = maxCapacity;
+
+public:
+    void reset()
+    {
+        capacity = maxCapacity;
+    }
+
+    int getCapacity()
+    {
+        if (capacity > 0)
+        {
+            capacity -= 1;
+        }
+        else
+        {
+            capacity = maxCapacity;
+        }
+
+        return capacity;
+    }
+};
+
+Timer timer;
+TemperatureSensor temperatureSensor;
+SoftwareBattery softwareBattery;
 
 DynamicJsonDocument jsonDoc = DynamicJsonDocument(200);
 
+void updateJsonDoc()
+{
+    jsonDoc["temperature"] = temperatureSensor.getTemperature();
+    jsonDoc["battery"] = softwareBattery.getCapacity();
+}
+
 void setup()
 {
-    jsonDoc["topic"] = "encoders";
-    jsonDoc["data_l"] = (int16_t)0;
-    jsonDoc["data_r"] = (int16_t)0;
+    Serial.begin(9600);
+    updateJsonDoc();
     jsonDoc.shrinkToFit();
 }
 
 void loop()
 {
-    if (timer.loopWait(10))
+    if (timer.loopWait(500))
     {
-        if ((rightTicks != prevRightTicks) || (leftTicks != prevLeftTicks))
-        {
-            jsonDoc["data_r"] = rightTicks;
-            jsonDoc["data_l"] = leftTicks;
-            serializeJson(jsonDoc, Serial);
-        }
+        updateJsonDoc();
+        serializeJson(jsonDoc, Serial);
+        Serial.println("");
     }
+}

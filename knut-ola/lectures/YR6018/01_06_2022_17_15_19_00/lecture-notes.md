@@ -8,10 +8,7 @@
 
 NB! Ikke ta med ```#include <Arduno.h>``` når du kopierer kode fra eksemplene inn i Tinkercad eller ArduinoIDE
 
-### [Mal med klasser](demo-6/src/main.cpp)
-### [Treningsoppgaver_v2](Treningsoppgaver_v2.docx)
+NB! Denne koden vil ikke fungere i Tinkercad
 
-## Løsningsforslag
-1. [Stimm-Leroy](demo-3/src/main.cpp)
-1. [Stimm-Primlu](demo-4/src/main.cpp)
-1. [Stimm-Alvin](demo-5/src/main.cpp)
+### [Sende data med ArduinoJson](demo-2/src/main.cpp)
+### [Motta data med ArduinoJson](demo-3/src/main.cpp)
