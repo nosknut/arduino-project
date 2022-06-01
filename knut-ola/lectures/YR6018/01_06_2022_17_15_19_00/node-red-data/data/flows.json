@@ -259,8 +259,8 @@
         "rap": true,
         "rh": 0,
         "inputs": 0,
-        "x": 660,
-        "y": 540,
+        "x": 600,
+        "y": 580,
         "wires": [
             [
                 "dc8cf328c56cc81b",
@@ -333,7 +333,7 @@
         "outputs": 1,
         "useDifferentColor": false,
         "className": "",
-        "x": 880,
+        "x": 860,
         "y": 620,
         "wires": [
             []
