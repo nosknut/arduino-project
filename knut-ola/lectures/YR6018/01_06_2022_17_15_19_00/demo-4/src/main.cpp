@@ -1,600 +1,133 @@
+#include <WiFi.h>
 #include <Arduino.h>
+#include <ArduinoJson.h>
+#include <PubSubClient.h>
 
-class Timer
-{
-private:
-    unsigned long startTime;
-    unsigned long endTime;
-    // Allows the timer to return true the first run of a loop
-    // For example if you want to print something every 2 seconds,
-    // calling this will print once immedietly and then every 2 seconds
-    bool loopWaitHasReturnedTrueOnce = true;
+String ssid = "Telenor1959bak";
+String password = "yzefbjbqzgxqu";
 
-public:
-    Timer()
-    {
-        reset();
-    }
+// https://mntolia.com/10-free-public-private-mqtt-brokers-for-testing-prototyping/
+const String mqtt_server = "mqtt.eclipse.org";
+const int mqtt_port = 1883;
 
-    /**
-     * @brief Will reset the timer
-     *
-     */
-    void reset()
-    {
-        startTime = millis();
-        endTime = 0;
-    }
+WiFiClient espClient;
+PubSubClient client(espClient);
 
-    /**
-     * @brief Will reset the timer
-     *
-     */
-    void stop()
-    {
-        endTime = millis();
-    }
+String LED_TOPIC = "esp32/led";
+String BATTERY_TOPIC = "esp32/battery";
 
-    /**
-     * @brief Get the time in milliseconds since the timer was started or reset
-     *
-     */
-    unsigned long getElapsedTime()
-    {
-        if (endTime == 0)
-        {
-            return millis() - startTime;
-        }
-        else
-        {
-            return endTime - startTime;
-        }
-    }
-
-    /**
-     *  Will check if the time since last reset()
-     *  call is greater than the given time
-     *  Note that while loopWait() automatically resets after
-     *  the given time, this function does not
-     */
-    bool isFinished(const unsigned long durationMs)
-    {
-        return getElapsedTime() >= durationMs;
-    }
-
-    // Allows the timer to return true the first run of a loop
-    // For example if you want to print something every 2 seconds,
-    // calling this will print once immedietly and then every 2 seconds
-    void loopWaitShouldReturnTrueNextTime()
-    {
-        loopWaitHasReturnedTrueOnce = false;
-    }
-
-    /**
-     * Will return false until the given time has passed
-     * Then it will return true and start counting down the same amount again
-     * \code{.cpp}
-     * // Example
-     * Timer timer;
-     * while(true) {
-     *     if(timer.loopWait(1000)) {
-     *         // Will run every 1000ms
-     *     }
-     * }
-     * \endcode
-     */
-    bool loopWait(const unsigned long durationMs)
-    {
-        // Allows the timer to return true the first run of a loop
-        // For example if you want to print something every 2 seconds,
-        // calling this will print once immedietly and then every 2 seconds
-        if (!loopWaitHasReturnedTrueOnce)
-        {
-            loopWaitHasReturnedTrueOnce = true;
-            return true;
-        }
-        if (isFinished(durationMs))
-        {
-            reset();
-            return true;
-        }
-        return false;
-    }
+String topics[] = {
+    LED_TOPIC,
+    BATTERY_TOPIC,
 };
 
-class ChangeDetector
+void ensureWifiIsConnected()
 {
-
-private:
-    bool value;
-    bool changedThisCycle = false;
-
-public:
-    ChangeDetector(bool initialValue) : value(initialValue)
+    if (WiFi.status() != WL_CONNECTED)
     {
-    }
+        Serial.print("WiFi connecting to ");
+        Serial.println(ssid);
 
-    void update(bool currentValue)
-    {
-        if (currentValue != value)
+        WiFi.begin(ssid.c_str(), password.c_str());
+
+        while (WiFi.status() != WL_CONNECTED)
         {
-            value = currentValue;
-            changedThisCycle = true;
+            delay(500);
+            Serial.print(".");
         }
-        else
-        {
-            changedThisCycle = false;
-        }
-    }
 
-    bool detectedChange()
-    {
-        return changedThisCycle;
+        Serial.println("");
+        Serial.println("WiFi connected");
+        Serial.println("IP address: ");
+        Serial.println(WiFi.localIP());
     }
+}
 
-    bool changedToTrue()
-    {
-        return (value == true) && detectedChange();
-    }
-
-    bool changedToFalse()
-    {
-        return (value == false) && detectedChange();
-    }
-
-    bool getCurrentValue()
-    {
-        return value;
-    }
-
-    bool getPreviousValue()
-    {
-        if (detectedChange())
-        {
-            // If there was a change then the previous value
-            // is the opposite of the current value
-            return !value;
-        }
-        else
-        {
-            return value;
-        }
-    }
-};
-
-class Button
+void subscribeToTopics()
 {
-    // private means that all variables and functions
-    // below this line will NOT be accessible outside
-    // of this class
-private:
-    // Configs
-    // (const means that the variable can not be changed after it has been set)
-    const int buttonPin;
-    const bool isPullup;
-
-    // Button states
-    ChangeDetector pressChangeDetector = ChangeDetector(false);
-    // Button is released when the arduino starts
-    ChangeDetector releaseChangeDetector = ChangeDetector(true);
-
-    // Timers
-    Timer durationOfCurrentPressTimer;
-    Timer timeSinceLastPressTimer;
-    Timer timeSinceLastReleaseTimer;
-
-    // Click counters
-    unsigned int timesPressed = 0;
-    unsigned int timesReleased = 0;
-
-    bool readButtonValue()
+    for (String topic : topics)
     {
-        if (isPullup)
-        {
-            return digitalRead(buttonPin) == LOW;
-        }
-        else
-        {
-            return digitalRead(buttonPin) == HIGH;
-        }
+        client.subscribe(topic.c_str());
     }
+}
 
-    // public means that all variables and functions
-    // below this line WILL be accessible outside of
-    // this class
-public:
-    // This is the constructor of the class
-    // It is called when you create a new button
-    // Use it like this:
-    // Button button(5, true);
-    // This will create a button you can use in your code,
-    // that will listen to pin 5, and will assume you have used
-    // a pullup resistor in the button circuit
-    Button(int pin, bool pullup = true)
-        : buttonPin(pin),
-          isPullup(pullup)
-    {
-        // We should not start counting down the
-        // release timer until the button is pressed
-        // for the first time
-        timeSinceLastReleaseTimer.stop();
-    }
-
-    // Call this function once, and only once, per loop
-    // If possible, call it at the top of your loop
-    void update()
-    {
-        bool buttonValue = readButtonValue();
-
-        pressChangeDetector.update(buttonValue);
-        releaseChangeDetector.update(!buttonValue);
-
-        if (pressChangeDetector.changedToTrue())
-        {
-            timesPressed++;
-            timeSinceLastPressTimer.reset();
-            durationOfCurrentPressTimer.reset();
-        }
-
-        if (releaseChangeDetector.changedToTrue())
-        {
-            timesReleased++;
-            timeSinceLastReleaseTimer.reset();
-            durationOfCurrentPressTimer.stop();
-        }
-    }
-
-    bool isPressed()
-    {
-        return pressChangeDetector.getCurrentValue();
-    }
-
-    bool wasPressedThisCycle()
-    {
-        return pressChangeDetector.changedToTrue();
-    }
-
-    bool wasReleasedThisCycle()
-    {
-        return releaseChangeDetector.changedToTrue();
-    }
-
-    /**
-     * @return the duration of the most recent press
-     * The timer stops counting after the button is
-     * released and starts counting again when the button
-     * is pressed again
-     */
-    unsigned long getTimePressed()
-    {
-        return durationOfCurrentPressTimer.getElapsedTime();
-    }
-
-    /**
-     * @return the duration of the most recent release
-     * The timer returns 0 (zero) after the button is
-     * pressed and starts counting again when the button
-     * is released again
-     */
-    unsigned long getTimeReleased()
-    {
-        if (isPressed())
-        {
-            return 0;
-        }
-        return timeSinceLastReleaseTimer.getElapsedTime();
-    }
-
-    unsigned int getTimesPressed()
-    {
-        return timesPressed;
-    }
-
-    unsigned int getTimesReleased()
-    {
-        return timesReleased;
-    }
-
-    void resetTimesPressed()
-    {
-        timesPressed = 0;
-    }
-
-    void resetTimesReleased()
-    {
-        timesReleased = 0;
-    }
-
-    void resetClickCounters()
-    {
-        resetTimesPressed();
-        resetTimesReleased();
-    }
-
-    void resetTimers()
-    {
-        timeSinceLastPressTimer.reset();
-        timeSinceLastReleaseTimer.reset();
-        durationOfCurrentPressTimer.reset();
-    }
-
-    void reset()
-    {
-        resetClickCounters();
-        resetTimers();
-    }
-
-    /**
-     * @param durationMs how long the button must be pressed for the function to return true
-     * @return true If the button was pressed for the given duration
-     */
-    bool hasBeenPressedFor(const unsigned long durationMs)
-    {
-        if (isPressed())
-        {
-            return getTimePressed() >= durationMs;
-        }
-        else
-        {
-            return false;
-        }
-    }
-
-    /**
-     * @param durationMs how long the button must be released for the function to return true
-     * @return true If the button was released for the given duration
-     */
-    bool hasBeenReleasedFor(const unsigned long durationMs)
-    {
-        if (isPressed())
-        {
-            return false;
-        }
-        else
-        {
-            return getTimeReleased() >= durationMs;
-        }
-    }
-
-    bool wasReleasedWithin(const unsigned long durationMs)
-    {
-        if (isPressed())
-        {
-            return false;
-        }
-        else
-        {
-            // The timer stops counting after the button is released
-            return getTimePressed() <= durationMs;
-        }
-    }
-
-    void setupButton()
-    {
-        pinMode(buttonPin, INPUT);
-    }
-};
-
-class ShortPressCounter
+void ensureMqttClientIsConnected()
 {
-private:
-    // button.wasReleasedWithin() will be true when the microcontroller starts
-    ChangeDetector changeDetector = ChangeDetector(true);
-    unsigned int timesShortPressed = 0;
-
-public:
-    void reset()
+    // Loop until we're reconnected
+    while (!client.connected())
     {
-        timesShortPressed = 0;
-    }
-
-    bool countedUpThisCycle()
-    {
-        return changeDetector.changedToTrue();
-    }
-
-    unsigned int getCount()
-    {
-        return timesShortPressed;
-    }
-
-    bool atLeast(unsigned int times)
-    {
-        return timesShortPressed >= times;
-    }
-
-    bool atMost(unsigned int times)
-    {
-        return timesShortPressed <= times;
-    }
-
-    bool exactly(unsigned int times)
-    {
-        return timesShortPressed == times;
-    }
-
-    /**
-     * @param numberOfPresses how many presses between each time the function returns true
-     * @return true every time the button is pressed numberOfPresses times
-     */
-    bool every(unsigned int numberOfPresses)
-    {
-        if (timesShortPressed == 0)
+        Serial.print("Attempting MQTT connection...");
+        // Attempt to connect
+        if (client.connect("ESP8266Client"))
         {
-            return false;
+            Serial.println("connected");
+
+            // Subscribe
+            subscribeToTopics();
         }
-        return (timesShortPressed % numberOfPresses) == 0;
-    }
-
-    /**
-     * @brief Used to keep track of short presses.
-     *
-     * @param maxPressDurationMs the maximum duration of a press.
-     * If this duration is exceeded, the counter will be reset
-     */
-    // void update(Button &button, unsigned long maxPressDurationMs)
-    // Use the version below if this code is running in tinkercad
-    // https://stackoverflow.com/questions/66213706/tinkercad-function-return-user-defined-class-does-not-name-type-in-arduino
-    void update(class Button &button, unsigned long maxPressDurationMs)
-    {
-        if (button.hasBeenPressedFor(maxPressDurationMs))
+        else
         {
-            // Reset the click counter if the button has been pressed for too long
-            reset();
-        }
-
-        // We use the change detector to make sure we only count clicks one time
-        changeDetector.update(button.wasReleasedWithin(maxPressDurationMs));
-        if (changeDetector.changedToTrue())
-        {
-            timesShortPressed++;
+            Serial.print("failed, rc=");
+            Serial.print(client.state());
+            Serial.println(" try again in 5 seconds");
+            // Wait 5 seconds before retrying
+            delay(5000);
         }
     }
-};
+}
 
-class LongPressCounter
+void onLedMessage(String message)
 {
-private:
-    ChangeDetector changeDetector = ChangeDetector(false);
-    unsigned int timesLongPressed = 0;
-
-public:
-    void reset()
+    if (message == "on")
     {
-        timesLongPressed = 0;
+        Serial.println("Turning led on");
     }
-
-    bool countedUpThisCycle()
+    else if (message == "off")
     {
-        return changeDetector.changedToTrue();
+        Serial.println("Turning led off");
     }
+}
 
-    unsigned int getCount()
-    {
-        return timesLongPressed;
-    }
-
-    bool atLeast(unsigned int times)
-    {
-        return timesLongPressed >= times;
-    }
-
-    bool atMost(unsigned int times)
-    {
-        return timesLongPressed <= times;
-    }
-
-    bool exactly(unsigned int times)
-    {
-        return timesLongPressed == times;
-    }
-
-    /**
-     * @param numberOfPresses how many presses between each time the function returns true
-     * @return true every time the button is pressed numberOfPresses times
-     */
-    bool every(unsigned int numberOfPresses)
-    {
-        if (timesLongPressed == 0)
-        {
-            return false;
-        }
-        return (timesLongPressed % numberOfPresses) == 0;
-    }
-
-    /**
-     *
-     * @brief Used to detect a specific number of long presses
-     *
-     * @param minPressDurationMs the minimum duration of a press.
-     * If this duration is not exceeded, the counter will be reset
-     */
-    // void update(Button &button, unsigned long minPressDurationMs)
-    // Use the version below if this code is running in tinkercad
-    // https://stackoverflow.com/questions/66213706/tinkercad-function-return-user-defined-class-does-not-name-type-in-arduino
-    void update(class Button &button, unsigned long minPressDurationMs)
-    {
-        // We use the change detector to make sure we only count clicks one time
-        changeDetector.update(button.hasBeenPressedFor(minPressDurationMs));
-        if (changeDetector.changedToTrue())
-        {
-            timesLongPressed++;
-        }
-
-        if (button.wasReleasedWithin(minPressDurationMs))
-        {
-            // If the button was released within the
-            // minimum duration, it was not a long press
-            reset();
-        }
-    }
-};
-
-class BlinkController
+void onBatteryMessage(String message)
 {
-private:
-    Timer timer;
-    unsigned int timesToBlink = 0;
-    bool state = false;
-
-public:
-    void reset()
+    if (message == "reset")
     {
-        timesToBlink = 0;
-        state = false;
-        timer.reset();
+        Serial.println("Resetting battery");
+    }
+}
+
+void callback(char *topic, byte *message, unsigned int length)
+{
+    String topicString = String(topic);
+    String messageString = String((char *)message);
+
+    if (topicString == LED_TOPIC)
+    {
+        onLedMessage(messageString);
     }
 
-    void setBlinks(unsigned int numBlinks)
+    if (topicString == BATTERY_TOPIC)
     {
-        reset();
-        timesToBlink = numBlinks;
-        timer.loopWaitShouldReturnTrueNextTime();
+        onBatteryMessage(messageString);
     }
-
-    /**
-     * @param ledPin pin of the led to blink (remember pinMode in setup())
-     * @param interval time in ms per blink
-     */
-    void update(int ledPin, unsigned long interval)
-    {
-        if ((timesToBlink > 0) && timer.loopWait(interval))
-        {
-            if (state)
-            {
-                timesToBlink--;
-            }
-
-            state = !state;
-            digitalWrite(ledPin, state);
-        }
-    }
-};
-
-Button button(2, true);
-int greenLedPin = 3;
-BlinkController blinkController;
-int blinkIntervalMs = 500;
+}
 
 void setup()
 {
     Serial.begin(9600);
-    button.setupButton();
-    pinMode(greenLedPin, OUTPUT);
+    ensureWifiIsConnected();
+    client.setServer(mqtt_server.c_str(), mqtt_port);
+    client.setCallback(callback);
+    ensureMqttClientIsConnected();
 }
 
-/**
- * Stimm-Primlu
- * Solution without classes:
- * https://www.tinkercad.com/things/hLEIZOocfCv
- */
 void loop()
 {
-    button.update();
-    blinkController.update(greenLedPin, blinkIntervalMs);
+    ensureWifiIsConnected();
 
-    if (button.wasPressedThisCycle())
+    if (Serial.available())
     {
-        blinkController.setBlinks(button.getTimesPressed());
+        String message = Serial.readString();
+        client.publish("esp32/input", message.c_str());
     }
 }
