@@ -126,7 +126,7 @@
         "id": "50dc5ca0d01fdc84",
         "type": "mqtt-broker",
         "name": "",
-        "broker": "mqtt.eclipse.org",
+        "broker": "test.mosquitto.org",
         "port": "1883",
         "clientid": "",
         "autoConnect": true,
@@ -244,6 +244,99 @@
             [
                 "a2bd779e8ba70cdb"
             ]
+        ]
+    },
+    {
+        "id": "abdccfee05957b49",
+        "type": "mqtt in",
+        "z": "7ec54ff3784b4493",
+        "name": "",
+        "topic": "esp32/battery/capacity",
+        "qos": "2",
+        "datatype": "auto",
+        "broker": "50dc5ca0d01fdc84",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 660,
+        "y": 540,
+        "wires": [
+            [
+                "dc8cf328c56cc81b",
+                "7bdac0eb71d93061"
+            ]
+        ]
+    },
+    {
+        "id": "dc8cf328c56cc81b",
+        "type": "ui_gauge",
+        "z": "7ec54ff3784b4493",
+        "name": "",
+        "group": "63cbefd9668ecca1",
+        "order": 2,
+        "width": 0,
+        "height": 0,
+        "gtype": "gage",
+        "title": "Battery",
+        "label": "units",
+        "format": "{{value}}",
+        "min": 0,
+        "max": 10,
+        "colors": [
+            "#00b500",
+            "#e6e600",
+            "#ca3838"
+        ],
+        "seg1": "",
+        "seg2": "",
+        "className": "",
+        "x": 860,
+        "y": 540,
+        "wires": []
+    },
+    {
+        "id": "7bdac0eb71d93061",
+        "type": "ui_chart",
+        "z": "7ec54ff3784b4493",
+        "name": "",
+        "group": "63cbefd9668ecca1",
+        "order": 3,
+        "width": 0,
+        "height": 0,
+        "label": "Battery",
+        "chartType": "line",
+        "legend": "false",
+        "xformat": "HH:mm:ss",
+        "interpolate": "linear",
+        "nodata": "",
+        "dot": false,
+        "ymin": "",
+        "ymax": "",
+        "removeOlder": 1,
+        "removeOlderPoints": "",
+        "removeOlderUnit": "3600",
+        "cutout": 0,
+        "useOneColor": false,
+        "useUTC": false,
+        "colors": [
+            "#1f77b4",
+            "#aec7e8",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "outputs": 1,
+        "useDifferentColor": false,
+        "className": "",
+        "x": 880,
+        "y": 620,
+        "wires": [
+            []
         ]
     }
 ]
